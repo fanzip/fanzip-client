@@ -1,11 +1,14 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import DesignGuidePage from './pages/DesignGuidePage.vue';
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+  <!-- <div class="min-h-screen bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
     <h1 class="text-4xl font-bold text-orange">Hello fanzip members</h1>
-  </div>
+  </div> -->
+
+  <router-view></router-view>
 </template>
 
 <style>

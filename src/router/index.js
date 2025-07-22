@@ -1,8 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import DesignGuidePage from '@/pages/DesignGuidePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/guide',
+      name: 'Guide',
+      component: DesignGuidePage, // 👈 여기 추가
+    },
+    
     // {
     //   path: '/',
     //   name: 'home',
