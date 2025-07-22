@@ -6,10 +6,7 @@
       <code>.btn-primary</code>, <code>.badge-vip</code> 와 같이
       <strong>클래스를 붙여 쓰면 동일한 디자인</strong>을 바로 적용할 수 있습니다.
     </p>
-    <p class="text-subtle-text text-[1.2rem] mb-8">
-      ✅ <strong>REM 변환:</strong> <code>1rem = 10px</code> 기준으로 설정됨 (root font-size: 62.5%)
-    </p>
-
+    
     <!-- 컬러 팔레트 -->
     <section>
       <h2 class="text-[2rem] font-semibold mb-4">🎨 Color Palette</h2>
