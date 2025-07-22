@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Pretendard', sans-serif;
+  }
+}
+
+@layer base {
+  html {
+    font-size: 62.5%; /* 16px * 62.5% = 10px */
+  }
+}
+
+@layer utilities {
+  .bg-brand-primary { background-color: #FFD633; }
+  .hover\:bg-brand-accent:hover { background-color: #FFBC00; }
+  .text-base { color: #000000; }
+  .bg-base { background-color: #FFFFFF; }
+  .border-base { border-color: #EAEAEA; }
+  .hover\:bg-subtle-bg:hover { background-color: #F6F6F6; }
+  .bg-nav-stroke { background-color: #EFEFEF; }
+  .bg-text { background-color: #000000; } /* 뱃지용 */
+  .text-inverse { color: #FFFFFF; }       /* 뱃지용 */
+}
+
+/* 공통 버튼 */
+.btn {
+  @apply rounded-[12px] font-semibold text-center transition duration-200;
+}
+
+/* 1. 기본 주요 버튼 */
+.btn-primary {
+  @apply bg-brand-primary text-base w-[353px] h-[48px] text-[16px] shadow-sm hover:bg-brand-accent;
+}
+
+/* 2. 장바구니 담기 버튼 (화이트 배경 + border) */
+.btn-cart {
+  @apply bg-base text-base w-[169px] h-[48px] text-[16px] border border-base hover:bg-subtle-bg;
+}
+
+/* 2. 바로 구매하기 버튼 (primary 배경) */
+.btn-buy {
+  @apply bg-brand-primary text-base w-[169px] h-[48px] text-[16px] hover:bg-brand-accent;
+}
+
+/* 3. 취소 버튼 (회색 배경) */
+.btn-cancel {
+  @apply bg-nav-stroke text-base w-[140px] h-[48px] text-[16px];
+}
+
+/* 3. 수정 완료 버튼 (primary 배경) */
+.btn-confirm {
+  @apply bg-brand-primary text-base w-[140px] h-[48px] text-[16px];
+}
+
+/* 공통 뱃지 스타일 */
+.badge {
+  @apply rounded-[16px] text-[16px] font-bold w-[80px] h-[24px] flex items-center justify-center;
+}
+
+/* 1. VIP */
+.badge-vip {
+  @apply bg-text text-text-inverse; /* 배경: 검정(#000000), 글씨: 흰색(#FFFFFF) */
+}
+
+/* 2. GOLD */
+.badge-gold {
+  @apply bg-brand-primary; /* 배경: primary, 글씨: 검정(#000000) */
+}
+
+/* 3. SILVER */
+.badge-silver {
+  @apply bg-[#D9D9D9]; /* 배경: #D9D9D9, 글씨: 검정 */
+}
+
+/* 4. WHITE */
+.badge-white {
+  @apply bg-nav-stroke; /* 배경: #EFEFEF, 글씨: 검정 */
+}
