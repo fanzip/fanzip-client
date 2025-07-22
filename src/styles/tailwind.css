@@ -8,12 +8,6 @@
   }
 }
 
-@layer base {
-  html {
-    font-size: 62.5%; /* 16px * 62.5% = 10px */
-  }
-}
-
 @layer utilities {
   .bg-brand-primary { background-color: #FFD633; }
   .hover\:bg-brand-accent:hover { background-color: #FFBC00; }
@@ -22,8 +16,8 @@
   .border-base { border-color: #EAEAEA; }
   .hover\:bg-subtle-bg:hover { background-color: #F6F6F6; }
   .bg-nav-stroke { background-color: #EFEFEF; }
-  .bg-text { background-color: #000000; } /* 뱃지용 */
-  .text-inverse { color: #FFFFFF; }       /* 뱃지용 */
+  .bg-text { background-color: #000000; }
+  .text-inverse { color: #FFFFFF; }
 }
 
 /* 공통 버튼 */
