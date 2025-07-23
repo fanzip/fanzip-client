@@ -6,6 +6,12 @@ export default {
       fontFamily: {
         sans: ['Pretendard', 'sans-serif'],
       },
+      theme: {
+        screens: {
+          sm: '393px',
+          md: '430px',
+        },
+      },
       colors: {
         nav: {
           active: '#A8A8A8',
@@ -33,5 +39,5 @@ export default {
       },
     },
     plugins: [],
-  }
+  },
 }
