@@ -1,17 +1,27 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import DesignGuidePage from './pages/DesignGuidePage.vue';
+import DesignGuidePage from './pages/DesignGuidePage.vue'
 </script>
 
 <template>
-  <!-- <div class="min-h-screen bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-    <h1 class="text-4xl font-bold text-orange">Hello fanzip members</h1>
-  </div> -->
-
-  <router-view></router-view>
-</template>
+   <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
+    <router-view />
+  </div>
+</template> 
 
 <style>
+.app-container {
+  max-width: 430px; /* 393 → 430 */
+  margin: 0 auto;
+  background-color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden; /* 좌우 스크롤 방지 */
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
