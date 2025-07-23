@@ -1,11 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import DesignGuidePage from './pages/DesignGuidePage.vue'
+import AppNav from './components/layout/AppNav.vue';
 </script>
 
 <template>
    <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
+    <app-nav></app-nav>
   </div>
 </template> 
 
