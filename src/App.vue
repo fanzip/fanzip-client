@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+
 import AppNav from './components/layout/AppNav.vue';
 </script>
 
@@ -12,11 +13,11 @@ import AppNav from './components/layout/AppNav.vue';
 
 <style>
 .app-container {
-  max-width: 430px; /* 393 → 430 */
+  max-width: 430px; 
   margin: 0 auto;
   background-color: #fff;
   min-height: 100vh;
-  overflow-x: hidden; /* 좌우 스크롤 방지 */
+  overflow-x: hidden;
 }
 
 html, body {
