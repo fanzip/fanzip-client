@@ -1,7 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
 
-// SVG 아이콘 import
 import Home from '@/assets/Navigation/Home.svg'
 import HomeActive from '@/assets/Navigation/HomeActive.svg'
 import Reservation from '@/assets/Navigation/Reservation.svg'
@@ -23,7 +22,6 @@ const navItems = [
   { name: '마이페이지', path: '/mypage', icon: Person, iconActive: PersonActive },
 ]
 
-// 현재 path가 active인지 판단
 const isActive = (path) => route.path === path
 </script>
 <template>
