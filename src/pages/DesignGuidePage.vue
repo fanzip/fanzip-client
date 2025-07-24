@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-subtle-bg px-4 space-y-6 font-sans mx-auto w-full max-w-[393px] md:max-w-[430px]">
+  <div
+    class="min-h-screen bg-subtle-bg px-4 space-y-6 font-sans mx-auto w-full max-w-[393px] md:max-w-[430px]"
+  >
     <h1 class="text-[1.5rem] font-bold mb-4">🎨 Design System Guide</h1>
     <p class="text-subtle-text text-[0.875rem] mb-6 leading-relaxed">
       ✅ 이 프로젝트의 UI 요소는 <strong>Tailwind 커스텀 클래스</strong>로 미리 정의되어 있어,
@@ -25,7 +27,8 @@
     <section class="mt-8">
       <h2 class="text-[1.25rem] font-semibold mb-3">🖱️ Buttons</h2>
       <p class="text-subtle-text text-[0.75rem] mb-3">
-        버튼은 공통 클래스(<code>.btn</code>)로 정의되며 일관된 높이(48px), 둥근 모서리(12px)를 갖습니다.
+        버튼은 공통 클래스(<code>.btn</code>)로 정의되며 일관된 높이(48px), 둥근 모서리(12px)를
+        갖습니다.
       </p>
       <div class="space-y-3">
         <button class="btn btn-primary w-full">Primary Button</button>
@@ -59,24 +62,144 @@
       </div>
     </section>
   </div>
+  <section class="p-4 space-y-8 pb-[112px]">
+    <h2 class="text-xl font-bold">🎨 BaseButton 예시 모음</h2>
+
+    <div class="space-y-4">
+      <h3 class="font-semibold">📌 Large Buttons (353x48)</h3>
+      <BaseButton variant="primary" size="lg">기본 버튼</BaseButton>
+      <BaseButton variant="primary" size="lg">
+        <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-[20px] h-[20px]" />
+        장바구니 담기
+      </BaseButton>
+
+      <BaseButton variant="primary" size="lg">
+        <strong class="font-extrabold">12,000원</strong>
+        <span class="ml-1 font-semibold">결제하기</span>
+      </BaseButton>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="font-semibold">📌 Medium Buttons (169x48)</h3>
+      <div class="flex gap-4">
+        <BaseButton variant="cart" size="md">
+          <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-[20px] h-[20px]" />
+          장바구니 담기
+        </BaseButton>
+
+        <BaseButton variant="buy" size="md">바로 구매하기</BaseButton>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="font-semibold">📌 Small Buttons (140x48)</h3>
+      <div class="flex gap-4">
+        <BaseButton variant="cancel" size="sm">취소</BaseButton>
+        <BaseButton variant="confirm" size="sm">수정 완료</BaseButton>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
+import ShoppingBag from '@/assets/button/shopping-bag.svg'
 
 const colorPalette = [
-  { name: 'brand-primary', hex: '#FFD633', bg: 'bg-brand-primary', text: 'text-text-inverse', description: '✔ 메인 컬러 (Primary 버튼, 포인트 강조)' },
-  { name: 'brand-accent', hex: '#FFBC00', bg: 'bg-brand-accent', text: 'text-text-inverse', description: '✔ Hover 효과 및 보조 컬러' },
-  { name: 'base-bg', hex: '#FFFFFF', bg: 'bg-base-bg', text: 'text-text-base', border: 'border border-base-border', description: '✔ 기본 배경색' },
-  { name: 'base-border', hex: '#EAEAEA', bg: 'bg-base-bg', text: 'text-text-base', border: 'border border-base-border', description: '✔ 기본 테두리 색상' },
-  { name: 'subtle-bg', hex: '#F6F6F6', bg: 'bg-subtle-bg', text: 'text-text-base', description: '✔ 서브 배경 (카드, 인풋)' },
-  { name: 'subtle-border', hex: '#D8D8D8', bg: 'bg-subtle-border', text: 'text-text-base', description: '✔ 서브 테두리' },
-  { name: 'subtle-text', hex: '#808080', bg: 'bg-subtle-bg', text: 'text-subtle-text', description: '✔ 서브 텍스트 (비활성화 상태)' },
-  { name: 'nav-active', hex: '#A8A8A8', bg: 'bg-nav-active', text: 'text-text-inverse', description: '✔ 활성화 네비게이션' },
-  { name: 'nav-deactivated', hex: '#A7A7A7', bg: 'bg-nav-deactivated', text: 'text-text-inverse', description: '✔ 비활성화 네비게이션' },
-  { name: 'nav-stroke', hex: '#EFEFEF', bg: 'bg-nav-stroke', text: 'text-text-base', description: '✔ 네비게이션 구분선' },
-  { name: 'text-base', hex: '#000000', bg: 'bg-base-bg', text: 'text-text-base', border: 'border border-base-border', description: '✔ 기본 본문 텍스트' },
-  { name: 'text-emphasis', hex: '#F50000', bg: 'bg-text-emphasis', text: 'text-text-inverse', description: '✔ 강조 텍스트' },
-  { name: 'text-inverse', hex: '#FFFFFF', bg: 'bg-text-base', text: 'text-text-inverse', description: '✔ 반전 텍스트 (다크 배경용)' },
+  {
+    name: 'brand-primary',
+    hex: '#FFD633',
+    bg: 'bg-brand-primary',
+    text: 'text-text-inverse',
+    description: '✔ 메인 컬러 (Primary 버튼, 포인트 강조)',
+  },
+  {
+    name: 'brand-accent',
+    hex: '#FFBC00',
+    bg: 'bg-brand-accent',
+    text: 'text-text-inverse',
+    description: '✔ Hover 효과 및 보조 컬러',
+  },
+  {
+    name: 'base-bg',
+    hex: '#FFFFFF',
+    bg: 'bg-base-bg',
+    text: 'text-text-base',
+    border: 'border border-base-border',
+    description: '✔ 기본 배경색',
+  },
+  {
+    name: 'base-border',
+    hex: '#EAEAEA',
+    bg: 'bg-base-bg',
+    text: 'text-text-base',
+    border: 'border border-base-border',
+    description: '✔ 기본 테두리 색상',
+  },
+  {
+    name: 'subtle-bg',
+    hex: '#F6F6F6',
+    bg: 'bg-subtle-bg',
+    text: 'text-text-base',
+    description: '✔ 서브 배경 (카드, 인풋)',
+  },
+  {
+    name: 'subtle-border',
+    hex: '#D8D8D8',
+    bg: 'bg-subtle-border',
+    text: 'text-text-base',
+    description: '✔ 서브 테두리',
+  },
+  {
+    name: 'subtle-text',
+    hex: '#808080',
+    bg: 'bg-subtle-bg',
+    text: 'text-subtle-text',
+    description: '✔ 서브 텍스트 (비활성화 상태)',
+  },
+  {
+    name: 'nav-active',
+    hex: '#A8A8A8',
+    bg: 'bg-nav-active',
+    text: 'text-text-inverse',
+    description: '✔ 활성화 네비게이션',
+  },
+  {
+    name: 'nav-deactivated',
+    hex: '#A7A7A7',
+    bg: 'bg-nav-deactivated',
+    text: 'text-text-inverse',
+    description: '✔ 비활성화 네비게이션',
+  },
+  {
+    name: 'nav-stroke',
+    hex: '#EFEFEF',
+    bg: 'bg-nav-stroke',
+    text: 'text-text-base',
+    description: '✔ 네비게이션 구분선',
+  },
+  {
+    name: 'text-base',
+    hex: '#000000',
+    bg: 'bg-base-bg',
+    text: 'text-text-base',
+    border: 'border border-base-border',
+    description: '✔ 기본 본문 텍스트',
+  },
+  {
+    name: 'text-emphasis',
+    hex: '#F50000',
+    bg: 'bg-text-emphasis',
+    text: 'text-text-inverse',
+    description: '✔ 강조 텍스트',
+  },
+  {
+    name: 'text-inverse',
+    hex: '#FFFFFF',
+    bg: 'bg-text-base',
+    text: 'text-text-inverse',
+    description: '✔ 반전 텍스트 (다크 배경용)',
+  },
 ]
 </script>
