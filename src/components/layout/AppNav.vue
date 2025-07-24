@@ -22,7 +22,12 @@ const navItems = [
   { name: '마이페이지', path: '/mypage', icon: Person, iconActive: PersonActive },
 ]
 
-const isActive = (path) => route.path === path
+const isActive = (path) => {
+  if (path === '/') {
+    return route.path === '/'
+  }
+  return route.path.startsWith(path)
+}
 </script>
 <template>
   <nav
