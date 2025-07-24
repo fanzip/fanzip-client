@@ -5,6 +5,7 @@ import MyPage from '@/pages/MyPage.vue'
 import FanCardPage from '@/pages/FanCardPage.vue'
 import FanMeetingPage from '@/pages/FanMeetingPage.vue'
 import HomePage from '@/pages/HomePage.vue'
+import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,18 @@ const router = createRouter({
       name: 'Guide',
       component: DesignGuidePage, // 👈 여기 추가
     },
+    {
+      path: '/reservation/:id',
+      name: 'FanMeetingDetail',
+      component: FanMeetingDetailPage
+    },
+    // 아래는 테스트용이라 추후 삭제 예정
+    {
+      path: '/reservation/detail',
+      name: 'FanMeetingDetail',
+      component: FanMeetingDetailPage
+    }
+    
     
     // {
     //   path: '/',
