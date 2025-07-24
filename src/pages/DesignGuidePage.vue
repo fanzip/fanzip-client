@@ -74,8 +74,8 @@
       </BaseButton>
 
       <BaseButton variant="primary" size="lg">
-        <strong class="font-extrabold">12,000원</strong>
-        <span class="ml-1 font-semibold">결제하기</span>
+        <span class="font-extrabold">12,000원</span>
+        <span class="font-semibold">결제하기</span>
       </BaseButton>
     </div>
 
