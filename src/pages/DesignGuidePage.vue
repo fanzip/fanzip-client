@@ -99,12 +99,23 @@
       </div>
     </div>
   </section>
+
+  <section class="pb-[112px]">
+    <h2 class="text-[1.25rem] font-semibold mb-3">🔍 Search Bar</h2>
+    <p class="text-subtle-text text-[0.75rem] mb-3">
+      검색창은 입력 상태에 따라 동적으로 너비와 아이콘이 바뀌며, placeholder는 "검색어를
+      입력해주세요."입니다.
+    </p>
+    <div class="bg-white rounded-lg p-4 border border-subtle-border">
+      <SearchBar />
+    </div>
+  </section>
 </template>
 
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import ShoppingBag from '@/assets/button/shopping-bag.svg'
+import SearchBar from '@/components/common/SearchBar.vue'
 
 const colorPalette = [
   {
