@@ -1,24 +1,29 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { useRoute } from 'vue-router'
+import AppNav from './components/layout/AppNav.vue'
 
+const route = useRoute()
 </script>
 
 <template>
-   <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
+  <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
+    <app-nav v-if="!route.meta.hideNavbar"></app-nav>
   </div>
-</template> 
+</template>
 
 <style>
 .app-container {
-  max-width: 430px; 
+  max-width: 430px;
   margin: 0 auto;
   background-color: #fff;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
