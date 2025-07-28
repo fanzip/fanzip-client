@@ -15,8 +15,8 @@
     <div class="px-4 py-3 bg-gray-50">
       <div class="flex items-center mb-1">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z" stroke="#6B7280" stroke-width="2"/>
-          <circle cx="12" cy="10" r="3" stroke="#6B7280" stroke-width="2"/>
+          <path d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z" stroke="#808080" stroke-width="2"/>
+          <circle cx="12" cy="10" r="3" stroke="#808080" stroke-width="2"/>
         </svg>
         <span class="ml-1 text-sm text-gray-600">{{ currentFanMeeting.venue }}</span>
       </div>
@@ -88,7 +88,7 @@
     </div>
 
     <!-- Bottom Button -->
-    <div class="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-gray-200" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));">
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));">
       <div class="max-w-sm mx-auto px-4">
         <button 
           @click="proceedToPayment"
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Bottom Spacer for Navigation -->
-    <div class="h-32"></div>
+    <div class="h-20"></div>
   </div>
 </template>
 

@@ -1,13 +1,28 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 import AppNav from './components/layout/AppNav.vue';
+
+const route = useRoute()
+
+// 네비게이션 바를 숨길 페이지들
+const hideNavPages = [
+  '/fan-meeting/',
+  '/seat-select/',
+  '/payment/',
+  '/payment-success'
+]
+
+const shouldShowNav = computed(() => {
+  return !hideNavPages.some(page => route.path.includes(page))
+})
 </script>
 
 <template>
    <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
-    <app-nav></app-nav>
+    <app-nav v-if="shouldShowNav"></app-nav>
   </div>
 </template> 
 
