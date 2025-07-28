@@ -1,147 +1,144 @@
 <template>
-  <div class="w-full min-h-screen" style="background-color: #f6f6f6">
+  <div class="w-full min-h-screen bg-white">
     <!-- Header -->
-    <AppHeader type="back-title" title="" />
+    <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200">
+      <button @click="goBack" class="p-2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="#000000"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <h1 class="text-lg font-semibold text-black">좌석 선택</h1>
+      <div class="w-6"></div>
+    </div>
 
-    <!-- White Container -->
-    <div class="w-full max-w-[393px] mx-auto min-h-screen">
-      <!-- Content with spacing -->
-      <div class="px-5 md:px-0 pt-5 pb-7 space-y-5">
-        <!-- Fan Meeting Info -->
-        <div class="bg-white rounded-lg p-4">
-          <h3 class="text-lg font-bold text-black mb-4.5">{{ currentFanMeeting.title }}</h3>
-          <p class="text-sm mb-2" style="color: #808080">{{ currentFanMeeting.date }}</p>
-          <div class="flex items-center">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"
-                stroke="#808080"
-                stroke-width="2"
-              />
-              <circle cx="12" cy="10" r="3" stroke="#808080" stroke-width="2" />
-            </svg>
-            <span class="ml-1 text-sm text-black">{{ currentFanMeeting.venue }}</span>
-          </div>
-        </div>
+    <!-- Fan Meeting Info -->
+    <div class="px-4 py-3 bg-gray-50">
+      <div class="flex items-center mb-1">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"
+            stroke="#6B7280"
+            stroke-width="2"
+          />
+          <circle cx="12" cy="10" r="3" stroke="#6B7280" stroke-width="2" />
+        </svg>
+        <span class="ml-1 text-sm text-gray-600">{{ currentFanMeeting.venue }}</span>
+      </div>
+      <h2 class="text-lg font-bold text-black mb-1">{{ currentFanMeeting.title }}</h2>
+      <p class="text-sm text-gray-600">{{ currentFanMeeting.date }}</p>
+    </div>
 
-        <!-- Seat Map -->
-        <div class="bg-white rounded-lg p-4">
-          <!-- Stage -->
-          <div
-            class="rounded-xl py-2 mt-4 mb-4 w-[313px] h-8 mx-auto flex items-center justify-center"
-            style="background-color: #60584c"
-          >
-            <p class="text-center text-white text-base font-normal">STAGE</p>
-          </div>
+    <!-- Stage -->
+    <div class="px-4 py-6">
+      <div class="bg-gray-800 rounded-xl py-4 mb-8">
+        <p class="text-center text-white font-bold text-lg">STAGE</p>
+      </div>
 
-          <!-- Seat Map -->
-          <div class="mb-6">
-            <!-- Row Labels -->
-            <div class="flex">
-              <div class="text-lg text-gray-600 mr-3 flex-shrink-0 flex flex-col gap-1">
-                <div v-for="row in seatRows" :key="row" class="h-6 flex items-center">
-                  {{ row }}
-                </div>
-              </div>
-
-              <!-- Seats Grid -->
-              <div class="min-w-fit">
-                <div class="flex flex-col gap-1">
-                  <div v-for="(row, rowIndex) in seatMap" :key="rowIndex" class="flex gap-0.5">
-                    <button
-                      v-for="(seat, seatIndex) in row"
-                      :key="seatIndex"
-                      @click="selectSeat(rowIndex, seatIndex)"
-                      :disabled="seat.status === 'occupied'"
-                      :class="getSeatClass(seat)"
-                      :style="
-                        seat.status === 'occupied'
-                          ? 'background-color: #CCCCCC; border-color: #666666; color: #60584C;'
-                          : seat.selected
-                            ? 'background-color: #FFE685; border-color: #666666; color: #60584C;'
-                            : 'border-color: #666666; color: #60584C;'
-                      "
-                      class="w-6 h-6 rounded text-xs font-medium transition-colors flex-shrink-0"
-                      style="font-size: 12px"
-                    >
-                      {{ seat.number }}
-                    </button>
-                  </div>
-                </div>
-              </div>
+      <!-- Seat Map -->
+      <div class="space-y-4">
+        <!-- Row Labels -->
+        <div class="flex justify-center mb-4">
+          <div class="text-xs text-gray-600 space-y-2 mr-4">
+            <div v-for="row in seatRows" :key="row" class="h-8 flex items-center">
+              {{ row }}
             </div>
           </div>
 
-          <!-- Seat Legend -->
-          <div class="flex justify-center mt-8 mb-8 gap-4">
-            <div class="flex items-center">
-              <div
-                class="w-6 h-6 bg-white border-2 rounded mr-2"
-                style="border-color: #3a3a3a"
-              ></div>
-              <span class="text-base text-gray-600">선택 가능</span>
-            </div>
-            <div class="flex items-center">
-              <div
-                class="w-6 h-6 border-2 rounded mr-2"
-                style="background-color: #ffe685; border-color: #3a3a3a"
-              ></div>
-              <span class="text-base text-gray-600">선택 완료</span>
-            </div>
-            <div class="flex items-center">
-              <div
-                class="w-6 h-6 border-2 rounded mr-2"
-                style="background-color: #cccccc; border-color: #3a3a3a"
-              ></div>
-              <span class="text-base text-gray-600">선택 불가</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Selected Seat Info -->
-        <div v-if="selectedSeat" class="bg-white rounded-lg">
-          <div class="pt-4 pb-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-base text-gray-600 ml-4">선택</span>
-              <span class="text-base text-black font-medium mr-5"
-                >{{ selectedSeat.row }}{{ selectedSeat.number }}</span
+          <!-- Seats Grid -->
+          <div class="space-y-2">
+            <div v-for="(row, rowIndex) in seatMap" :key="rowIndex" class="flex space-x-1">
+              <button
+                v-for="(seat, seatIndex) in row"
+                :key="seatIndex"
+                @click="selectSeat(rowIndex, seatIndex)"
+                :disabled="seat.status === 'occupied'"
+                :class="getSeatClass(seat)"
+                class="w-8 h-8 rounded text-xs font-medium transition-colors"
               >
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-base text-gray-600 ml-4">가격</span>
-              <span class="text-xl font-bold mr-5" style="color: #ffbc00">36,000원</span>
+                {{ seat.number }}
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Seat Legend -->
+      <div class="flex justify-center space-x-6 mb-6">
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-white border-2 border-gray-300 rounded mr-2"></div>
+          <span class="text-xs text-gray-600">선택 가능</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-brand-primary rounded mr-2"></div>
+          <span class="text-xs text-gray-600">선택됨</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-gray-400 rounded mr-2"></div>
+          <span class="text-xs text-gray-600">선택 불가</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Seat Info -->
+    <div v-if="selectedSeat" class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm text-gray-600">선택</span>
+        <span class="text-sm font-medium text-black"
+          >{{ selectedSeat.row }}{{ selectedSeat.number }}</span
+        >
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-sm text-gray-600">가격</span>
+        <span class="text-lg font-bold text-brand-accent">36,000원</span>
+      </div>
     </div>
 
     <!-- Bottom Button -->
-    <BottomButton
-      @click="proceedToPayment"
-      :disabled="!selectedSeat"
-      :variant="selectedSeat ? 'primary' : 'cancel'"
-      size="lg"
+    <div
+      class="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-gray-200"
+      style="padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px))"
     >
-      예매하기
-    </BottomButton>
+      <div class="max-w-sm mx-auto px-4">
+        <button
+          @click="proceedToPayment"
+          :disabled="!selectedSeat"
+          :class="{
+            'bg-brand-primary text-black': selectedSeat,
+            'bg-gray-300 text-gray-500': !selectedSeat,
+          }"
+          class="w-full py-4 rounded-xl font-bold text-lg transition-colors"
+        >
+          예매하기
+        </button>
+      </div>
+    </div>
 
     <!-- Bottom Spacer for Navigation -->
-    <div class="h-24"></div>
+    <div class="h-32"></div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import AppHeader from '@/components/layout/AppHeader.vue'
-import BottomButton from '@/components/common/ButtonNav.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -244,12 +241,16 @@ const selectSeat = (rowIndex, seatIndex) => {
 
 const getSeatClass = (seat) => {
   if (seat.status === 'occupied') {
-    return 'cursor-not-allowed border-2'
+    return 'bg-gray-400 text-white cursor-not-allowed'
   }
   if (seat.selected) {
-    return 'border-2'
+    return 'bg-brand-primary text-black border-2 border-brand-accent'
   }
-  return 'bg-white border-2 hover:border-brand-primary'
+  return 'bg-white border-2 border-gray-300 text-gray-700 hover:border-brand-primary'
+}
+
+const goBack = () => {
+  router.go(-1)
 }
 
 const proceedToPayment = () => {
@@ -257,7 +258,7 @@ const proceedToPayment = () => {
 
   // 선택된 좌석 정보를 쿼리 파라미터로 전달
   router.push({
-    path: `/reservation/${route.params.id}/payment`,
+    path: `/payment/${route.params.id}`,
     query: {
       seat: `${selectedSeat.value.row}${selectedSeat.value.number}`,
       price: '36000',
