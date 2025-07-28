@@ -2,7 +2,6 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
 const instance = axios.create({
-  baseURL: '/api', // 자동으로 앞에 '/api' 붙여줌
   withCredentials: true, //쿠키 전송
   timeout: 1000, //1초 안에 응답이 오지 않으면 요청을 취소하고 timeout error 발생
 })
