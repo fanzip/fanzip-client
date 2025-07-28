@@ -231,7 +231,7 @@ const proceedToPayment = () => {
   
   // 선택된 좌석 정보를 쿼리 파라미터로 전달
   router.push({
-    path: `/payment/${route.params.id}`,
+    path: `/reservation/${route.params.id}/payment`,
     query: {
       seat: `${selectedSeat.value.row}${selectedSeat.value.number}`,
       price: '36000'

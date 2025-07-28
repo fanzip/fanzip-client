@@ -1,11 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DesignGuidePage from '@/pages/DesignGuidePage.vue'
-// import MarketPage from '@/pages/MarketPage.vue'
-// import MyPage from '@/pages/MyPage.vue'
-// import FanCardPage from '@/pages/FanCardPage.vue'
-// import FanMeetingPage from '@/pages/FanMeetingPage.vue'
 import HomePage from '@/pages/HomePage.vue'
-import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -19,7 +14,6 @@ const routes = [
   // 기본 라우트
   { path: '/', name: 'home', component: HomePage },
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
-  { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
 
   // 도메인 라우트
   ...authRoutes,

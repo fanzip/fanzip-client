@@ -16,7 +16,7 @@
       <div class="flex items-center bg-gray-50 rounded-2xl px-4 py-3 border border-gray-200">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="11" cy="11" r="8" stroke="#9CA3AF" stroke-width="2"/>
-          <path d="21 21L16.65 16.65" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 21L16.65 16.65" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <input 
           type="text" 
@@ -226,7 +226,7 @@ const goBack = () => {
 }
 
 const goToDetail = (id) => {
-  router.push(`/fan-meeting/${id}`)
+  router.push(`/reservation/${id}`)
 }
 
 const goToSeatSelection = (id) => {
