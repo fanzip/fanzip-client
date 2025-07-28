@@ -20,7 +20,7 @@ const redirectToKakao = async () => {
       class="kakao-button btn relative w-[265px] h-[36px] bg-[#FEE500] mt-7"
     >
       <img
-        src="@/assets/icons/KaKaoSymbol.svg"
+        src="@/assets/icons/KakaoSymbol.svg"
         class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4"
         alt="naver"
       />
