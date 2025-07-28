@@ -39,11 +39,11 @@ const router = createRouter({
       component: DesignGuidePage, // 👈 여기 추가
     },
     {
-      path: '/reservation/:id',
+      path: '/fan-meeting/:id',
       name: 'FanMeetingDetail',
       component: FanMeetingDetailPage,
     },
-    // 아래는 테스트용이라 추후 삭제 예정
+
     {
       path: '/reservation/detail',
       name: 'FanMeetingDetailTest',
