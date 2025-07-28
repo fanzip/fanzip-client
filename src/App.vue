@@ -4,6 +4,13 @@ import { useRoute } from 'vue-router'
 // import AppNav from './components/layout/AppNav.vue'
 
 const route = useRoute()
+
+// 네비게이션 바를 숨길 페이지들
+const hideNavPages = ['/fan-meeting/', '/seat-select/', '/payment/', '/payment-success']
+
+const shouldShowNav = computed(() => {
+  return !hideNavPages.some((page) => route.path.includes(page))
+})
 </script>
 
 <template>
