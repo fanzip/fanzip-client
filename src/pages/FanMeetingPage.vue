@@ -2,6 +2,7 @@
   <div class="w-full min-h-screen bg-white">
     <!-- Header -->
     <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200">
+    <div class="flex items-center justify-between p-4 bg-white border-b border-gray-200">
       <button @click="goBack" class="p-2">
         <svg
           width="24"
@@ -26,58 +27,28 @@
     <!-- Search Bar -->
     <div class="px-4 mb-6">
       <div class="flex items-center bg-gray-50 rounded-2xl px-4 py-3 border border-gray-200">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="11" cy="11" r="8" stroke="#9CA3AF" stroke-width="2" />
-          <path
-            d="M21 21L16.65 16.65"
-            stroke="#9CA3AF"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <input
-          type="text"
-          placeholder="검색어를 입력해주세요."
+        <input 
+          type="text" 
+          placeholder="검색어를 입력해주세요." 
           class="bg-transparent flex-1 text-gray-700 placeholder-gray-400 outline-none"
           v-model="searchQuery"
         />
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="11" cy="11" r="8" stroke="#808080" stroke-width="2" fill="none" />
-          <path
-            d="m21 21-4.35-4.35"
-            stroke="#808080"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="8" stroke="#808080" stroke-width="2" fill="none"/>
+          <path d="m21 21-4.35-4.35" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
 
     <!-- Influencer List -->
     <div class="px-4 space-y-6 pb-24">
-      <div
-        v-for="influencer in filteredInfluencers"
+      <div 
+        v-for="influencer in filteredInfluencers" 
         :key="influencer.id"
-        class="flex items-center cursor-pointer"
+        class="flex items-center cursor-pointer" 
         @click="goToDetail(influencer.id)"
       >
-        <div
-          :class="`w-16 h-16 rounded-full bg-gradient-to-br ${influencer.bgColor} overflow-hidden mr-6`"
-        >
+        <div :class="`w-16 h-16 rounded-full bg-gradient-to-br ${influencer.bgColor} overflow-hidden mr-6`">
           <div class="w-full h-full flex items-center justify-center">
             <span class="text-white font-bold text-lg">{{ influencer.initial }}</span>
           </div>
@@ -126,67 +97,66 @@ const influencers = ref([
     name: '태요미네',
     location: '서울시 성동구',
     initial: '태',
-    bgColor: 'from-pink-400 to-purple-500',
+    bgColor: 'from-pink-400 to-purple-500'
   },
   {
     id: 2,
     name: '여단오',
     location: '서울시 마포구',
     initial: '여',
-    bgColor: 'from-blue-400 to-cyan-500',
+    bgColor: 'from-blue-400 to-cyan-500'
   },
   {
     id: 3,
     name: '침착맨',
     location: '서울시 마포구',
     initial: '침',
-    bgColor: 'from-green-400 to-emerald-500',
+    bgColor: 'from-green-400 to-emerald-500'
   },
   {
     id: 4,
     name: '토모토모',
     location: '부산광역시 해운대구',
     initial: '토',
-    bgColor: 'from-orange-400 to-red-500',
+    bgColor: 'from-orange-400 to-red-500'
   },
   {
     id: 5,
     name: '찰스엔터',
     location: '서울시 강남구',
     initial: '찰',
-    bgColor: 'from-purple-400 to-indigo-500',
+    bgColor: 'from-purple-400 to-indigo-500'
   },
   {
     id: 6,
     name: '뭐랭하맨',
     location: '서울시 강남구',
     initial: '뭐',
-    bgColor: 'from-yellow-400 to-orange-500',
+    bgColor: 'from-yellow-400 to-orange-500'
   },
   {
     id: 7,
     name: '빠더너스 BDNS',
     location: '서울시 강남구',
     initial: '빠',
-    bgColor: 'from-teal-400 to-blue-500',
+    bgColor: 'from-teal-400 to-blue-500'
   },
   {
     id: 8,
     name: '쯔양',
     location: '서울시 강남구',
     initial: '쯔',
-    bgColor: 'from-rose-400 to-pink-500',
-  },
+    bgColor: 'from-rose-400 to-pink-500'
+  }
 ])
 
 const filteredInfluencers = computed(() => {
   if (!searchQuery.value) {
     return influencers.value
   }
-  return influencers.value.filter(
-    (influencer) =>
-      influencer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      influencer.location.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  return influencers.value.filter(influencer => 
+    influencer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    influencer.location.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
 
@@ -195,7 +165,7 @@ const goBack = () => {
 }
 
 const goToDetail = (id) => {
-  router.push(`/reservation/${id}`)
+  router.push(`/fan-meeting/${id}`)
 }
 
 const goToSeatSelection = (id) => {
