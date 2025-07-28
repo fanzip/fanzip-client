@@ -6,6 +6,9 @@ import FanCardPage from '@/pages/FanCardPage.vue'
 import FanMeetingPage from '@/pages/FanMeetingPage.vue'
 import HomePage from '@/pages/HomePage.vue'
 import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
+import SeatSelectPage from '@/pages/SeatSelectPage.vue'
+import FanMeetingPaymentPage from '@/pages/FanMeetingPaymentPage.vue'
+import PaymentSuccessPage from '@/pages/PaymentSuccessPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,14 +25,29 @@ const router = createRouter({
       component: DesignGuidePage, // 👈 여기 추가
     },
     {
-      path: '/reservation/:id',
+      path: '/fan-meeting/:id',
       name: 'FanMeetingDetail',
       component: FanMeetingDetailPage
+    },
+    {
+      path: '/seat-select/:id',
+      name: 'SeatSelect',
+      component: SeatSelectPage
+    },
+    {
+      path: '/payment/:id',
+      name: 'Payment',
+      component: FanMeetingPaymentPage
+    },
+    {
+      path: '/payment-success',
+      name: 'PaymentSuccess',
+      component: PaymentSuccessPage
     },
     // 아래는 테스트용이라 추후 삭제 예정
     {
       path: '/reservation/detail',
-      name: 'FanMeetingDetail',
+      name: 'FanMeetingDetailOld',
       component: FanMeetingDetailPage
     }
     
