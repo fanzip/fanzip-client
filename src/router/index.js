@@ -21,18 +21,22 @@ const router = createRouter({
       name: 'Guide',
       component: DesignGuidePage, // 👈 여기 추가
     },
-    {
-      path: '/reservation/:id',
-      name: 'FanMeetingDetail',
-      component: FanMeetingDetailPage
-    },
+    // {
+    //   path: '/reservation/:id',
+    //   name: 'FanMeetingDetail',
+    //   component: FanMeetingDetailPage
+    // },
     // 아래는 테스트용이라 추후 삭제 예정
     {
       path: '/reservation/detail',
       name: 'FanMeetingDetail',
       component: FanMeetingDetailPage
+    },
+    {
+      path: '/fancard/detail/:id',
+      name: 'FanCardDetailPage',
+      component: () => import('@/pages/FanCardDetailPage.vue'),
     }
-    
     
     // {
     //   path: '/',
