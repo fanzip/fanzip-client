@@ -23,32 +23,30 @@ const navItems = [
 ]
 
 const isActive = (path) => {
-  if (path === '/') {
-    return route.path === '/'
-  }
-  return route.path.startsWith(path)
+  return path === '/' ? route.path === '/' : route.path.startsWith(path)
 }
 </script>
+
 <template>
   <nav
-    class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[76px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] flex items-center justify-center z-50"
+    class="fixed bottom-0 left-0 w-full h-20 bg-white border-t border-[#efefef] rounded-t-2xl flex items-center justify-center z-50"
   >
-    <div class="flex justify-between w-full px-[20px]">
+    <div class="flex justify-between items-center w-full max-w-sm mx-auto px-5">
       <RouterLink
         v-for="item in navItems"
         :key="item.path"
         :to="item.path"
-        class="flex flex-col items-center gap-[8px] w-[56px]"
+        class="flex flex-col items-center gap-2 w-14"
         :aria-label="item.name"
       >
         <img
           :src="isActive(item.path) ? item.iconActive : item.icon"
-          class="w-[24px] h-[24px]"
+          class="w-6 h-6"
           :alt="item.name"
         />
         <span
           :class="[
-            'block text-[12px] leading-none text-center whitespace-nowrap transition-colors duration-200',
+            'block text-xs leading-none text-center whitespace-nowrap transition-colors duration-200',
             isActive(item.path) ? 'text-black' : 'text-[#A7A7A7]',
           ]"
         >
