@@ -1,43 +1,44 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 export default {
-  content: ['./index.html', './src/**/*.{vue,js,ts}'],
+  content: ['./index.html', './src/**/*.{vue,js}'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Pretendard', 'sans-serif'],
-      },
-      theme: {
-        screens: {
-          sm: '393px',
-          md: '430px',
-        },
-      },
       colors: {
-        nav: {
-          active: '#A8A8A8',
-          deactivated: '#A7A7A7',
-          stroke: '#EFEFEF',
-        },
-        subtle: {
-          bg: '#F6F6F6',
-          text: '#808080',
-          border: '#D8D8D8',
-        },
-        text: {
-          base: '#000000',
-          emphasis: '#F50000',
-          inverse: '#FFFFFF',
+        brand: {
+          primary: '#FFD633',
+          accent: '#FFBC00',
         },
         base: {
           bg: '#FFFFFF',
           border: '#EAEAEA',
         },
-        brand: {
-          primary: '#FFD633',
-          accent: '#FFBC00',
+        subtle: {
+          bg: '#F6F6F6',
+          border: '#D8D8D8',
+          text: '#808080',
+        },
+        nav: {
+          stroke: '#EFEFEF',
+          active: '#3A3A3A',
+          deactivated: '#A7A7A7',
+        },
+        text: {
+          base: '#000000',
+          inverse: '#FFFFFF',
+          emphasis: '#F50000',
         },
       },
+      spacing: {
+        'btn-lg-w': '22.06rem',   // 353px
+        'btn-md-w': '10.56rem',   // 169px
+        'btn-sm-w': '8.75rem',    // 140px
+        'btn-h': '3rem',          // 48px
+      },
+      fontFamily: {
+        sans: ['Pretendard', 'sans-serif'],
+      },
+      
     },
-    plugins: [],
   },
+  plugins: [],
 }
