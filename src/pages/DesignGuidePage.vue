@@ -1,47 +1,32 @@
 <template>
   <div
-    class="min-h-screen bg-subtle-bg px-4 space-y-6 font-sans mx-auto w-full max-w-[393px] md:max-w-[430px]"
+    class="min-h-screen bg-subtle-bg px-4 space-y-6 font-sans mx-auto w-full max-w-xs md:max-w-sm"
   >
     <h1 class="text-[1.5rem] font-bold mb-4">🎨 Design System Guide</h1>
-    <p class="text-subtle-text text-[0.875rem] mb-6 leading-relaxed">
+    <p class="text-subtle-text text-sm mb-6 leading-relaxed">
       ✅ 이 프로젝트의 UI 요소는 <strong>Tailwind 커스텀 클래스</strong>로 미리 정의되어 있어,
       <code>.btn-primary</code>, <code>.badge-vip</code> 와 같이
       <strong>클래스를 붙여 쓰면 동일한 디자인</strong>을 바로 적용할 수 있습니다.
     </p>
 
     <section>
-      <h2 class="text-[1.25rem] font-semibold mb-3">🎨 Color Palette</h2>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+      <h2 class="text-xl font-semibold mb-3">🎨 Color Palette</h2>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-3">
         <div
           v-for="(color, index) in colorPalette"
           :key="index"
           :class="`p-3 rounded text-center ${color.bg} ${color.text} ${color.border || ''}`"
         >
-          <p class="font-bold text-[0.875rem]">{{ color.name }}</p>
-          <p>{{ color.hex }}</p>
-          <p class="text-[0.75rem] mt-1">{{ color.description }}</p>
+          <p class="font-bold text-sm">{{ color.name }}</p>
+          <p class="text-xs">{{ color.hex }}</p>
+          <p class="text-xs mt-1">{{ color.description }}</p>
         </div>
       </div>
     </section>
 
     <section class="mt-8">
-      <h2 class="text-[1.25rem] font-semibold mb-3">🖱️ Buttons</h2>
-      <p class="text-subtle-text text-[0.75rem] mb-3">
-        버튼은 공통 클래스(<code>.btn</code>)로 정의되며 일관된 높이(48px), 둥근 모서리(12px)를
-        갖습니다.
-      </p>
-      <div class="space-y-3">
-        <button class="btn btn-primary w-full">Primary Button</button>
-        <button class="btn btn-cart w-full">Cart Button</button>
-        <button class="btn btn-buy w-full">Buy Now Button</button>
-        <button class="btn btn-cancel w-full">Cancel Button</button>
-        <button class="btn btn-confirm w-full">Confirm Button</button>
-      </div>
-    </section>
-
-    <section class="mt-8">
-      <h2 class="text-[1.25rem] font-semibold mb-3">🏷️ Badges</h2>
-      <p class="text-subtle-text text-[0.75rem] mb-3">
+      <h2 class="text-xl font-semibold mb-3">🏷️ Badges</h2>
+      <p class="text-subtle-text text-xs mb-3">
         뱃지는 상태/등급을 표시하며, 공통 사이즈(80x24px), 볼드 텍스트를 사용합니다.
       </p>
       <div class="flex flex-wrap gap-2">
@@ -53,7 +38,7 @@
     </section>
 
     <section class="mt-8">
-      <h2 class="text-[1.25rem] font-semibold mb-3">☂️ Headers</h2>
+      <h2 class="text-xl font-semibold mb-3">☂️ Headers</h2>
       <div class="space-y-2">
         <AppHeader type="logo" />
         <AppHeader type="back" />
@@ -61,55 +46,56 @@
         <AppHeader type="back-icons" />
       </div>
     </section>
-  </div>
-  <section class="p-4 space-y-8 pb-[112px]">
-    <h2 class="text-xl font-bold">🎨 BaseButton 예시 모음</h2>
 
-    <div class="space-y-4">
-      <h3 class="font-semibold">📌 Large Buttons (353x48)</h3>
-      <BaseButton variant="primary" size="lg">기본 버튼</BaseButton>
-      <BaseButton variant="primary" size="lg">
-        <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-[20px] h-[20px]" />
-        장바구니 담기
-      </BaseButton>
+    <section class="space-y-8 pb-28">
+      <h2 class="text-xl font-bold">🎨 BaseButton 예시 모음</h2>
 
-      <BaseButton variant="primary" size="lg">
-        <span class="font-extrabold">12,000원</span>
-        <span class="font-semibold">결제하기</span>
-      </BaseButton>
-    </div>
-
-    <div class="space-y-4">
-      <h3 class="font-semibold">📌 Medium Buttons (169x48)</h3>
-      <div class="flex gap-4">
-        <BaseButton variant="cart" size="md">
-          <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-[20px] h-[20px]" />
+      <div class="space-y-4">
+        <h3 class="font-semibold">📌 Large Buttons (353x48)</h3>
+        <BaseButton variant="primary" size="lg">기본 버튼</BaseButton>
+        <BaseButton variant="primary" size="lg">
+          <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-5 h-5" />
           장바구니 담기
         </BaseButton>
 
-        <BaseButton variant="buy" size="md">바로 구매하기</BaseButton>
+        <BaseButton variant="primary" size="lg">
+          <span class="font-extrabold">12,000원</span>
+          <span class="font-semibold">결제하기</span>
+        </BaseButton>
       </div>
-    </div>
 
-    <div class="space-y-4">
-      <h3 class="font-semibold">📌 Small Buttons (140x48)</h3>
-      <div class="flex gap-4">
-        <BaseButton variant="cancel" size="sm">취소</BaseButton>
-        <BaseButton variant="confirm" size="sm">수정 완료</BaseButton>
+      <div class="space-y-4">
+        <h3 class="font-semibold">📌 Medium Buttons (169x48)</h3>
+        <div class="flex gap-4">
+          <BaseButton variant="cart" size="md">
+            <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-5 h-5" />
+            장바구니 담기
+          </BaseButton>
+
+          <BaseButton variant="buy" size="md">바로 구매하기</BaseButton>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <section class="pb-[112px]">
-    <h2 class="text-[1.25rem] font-semibold mb-3">🔍 Search Bar</h2>
-    <p class="text-subtle-text text-[0.75rem] mb-3">
-      검색창은 입력 상태에 따라 동적으로 너비와 아이콘이 바뀌며, placeholder는 "검색어를
-      입력해주세요."입니다.
-    </p>
-    <div class="bg-white rounded-lg p-4 border border-subtle-border">
-      <SearchBar />
-    </div>
-  </section>
+      <div class="space-y-4">
+        <h3 class="font-semibold">📌 Small Buttons (140x48)</h3>
+        <div class="flex gap-4">
+          <BaseButton variant="cancel" size="sm">취소</BaseButton>
+          <BaseButton variant="confirm" size="sm">수정 완료</BaseButton>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-28">
+      <h2 class="text-xl font-semibold mb-3">🔍 Search Bar</h2>
+      <p class="text-subtle-text text-xs mb-3">
+        검색창은 입력 상태에 따라 동적으로 너비와 아이콘이 바뀌며, placeholder는 "검색어를
+        입력해주세요."입니다.
+      </p>
+      <div class="bg-base-bg rounded-lg p-4 border border-subtle-border">
+        <SearchBar />
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -170,8 +156,36 @@ const colorPalette = [
     description: '✔ 서브 텍스트 (비활성화 상태)',
   },
   {
+    name: 'text-base',
+    hex: '#000000',
+    bg: 'bg-base-bg',
+    text: 'text-text-base',
+    description: '✔ 기본 본문 텍스트',
+  },
+  {
+    name: 'text-inverse',
+    hex: '#FFFFFF',
+    bg: 'bg-text-base',
+    text: 'text-text-inverse',
+    description: '✔ 반전 텍스트 (다크 배경용)',
+  },
+  {
+    name: 'text-emphasis',
+    hex: '#F50000',
+    bg: 'bg-text-emphasis',
+    text: 'text-text-inverse',
+    description: '✔ 강조 텍스트',
+  },
+  {
+    name: 'nav-stroke',
+    hex: '#EFEFEF',
+    bg: 'bg-nav-stroke',
+    text: 'text-text-base',
+    description: '✔ 네비게이션 구분선',
+  },
+  {
     name: 'nav-active',
-    hex: '#A8A8A8',
+    hex: '#3A3A3A',
     bg: 'bg-nav-active',
     text: 'text-text-inverse',
     description: '✔ 활성화 네비게이션',
@@ -182,35 +196,6 @@ const colorPalette = [
     bg: 'bg-nav-deactivated',
     text: 'text-text-inverse',
     description: '✔ 비활성화 네비게이션',
-  },
-  {
-    name: 'nav-stroke',
-    hex: '#EFEFEF',
-    bg: 'bg-nav-stroke',
-    text: 'text-text-base',
-    description: '✔ 네비게이션 구분선',
-  },
-  {
-    name: 'text-base',
-    hex: '#000000',
-    bg: 'bg-base-bg',
-    text: 'text-text-base',
-    border: 'border border-base-border',
-    description: '✔ 기본 본문 텍스트',
-  },
-  {
-    name: 'text-emphasis',
-    hex: '#F50000',
-    bg: 'bg-text-emphasis',
-    text: 'text-text-inverse',
-    description: '✔ 강조 텍스트',
-  },
-  {
-    name: 'text-inverse',
-    hex: '#FFFFFF',
-    bg: 'bg-text-base',
-    text: 'text-text-inverse',
-    description: '✔ 반전 텍스트 (다크 배경용)',
   },
 ]
 </script>
