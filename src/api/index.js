@@ -10,10 +10,8 @@ instance.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
     const token = authStore.token
-
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
-      console.log(config.headers.Authorization)
     }
     return config
   },
@@ -28,6 +26,7 @@ instance.interceptors.response.use(
     if (response.status === 404) {
       return Promise.reject('404: 페이지 없음 ' + response.request)
     }
+    console.log(response)
     return response
   },
   async (error) => {
