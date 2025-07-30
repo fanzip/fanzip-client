@@ -12,9 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <header
-    class="w-full max-w-xs md:max-w-sm h-12 flex items-center bg-base mx-auto"
-  >
+  <header class="w-full max-w-xs md:max-w-sm h-12 flex items-center ms-5">
     <div v-if="type !== 'logo'" class="flex items-center gap-2">
       <img src="@/assets/header/BackIcon.svg" alt="Back" class="cursor-pointer" />
     </div>
