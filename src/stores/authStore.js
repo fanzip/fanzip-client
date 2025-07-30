@@ -1,21 +1,37 @@
 // 로그인 상태 관리
 import { ref, reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { kakaoLogin } from '@/api/authApi'
 import { useRouter } from 'vue-router'
-import { register } from '@/api/userApi'
+import userApi from '@/api/userApi'
 
-import api from '@/api'
+import authApi from '@/api/authApi'
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
 
   const token = ref(localStorage.getItem('access-token') || null)
 
-  const userInfo = reactive({
+  const kakaoInfo = reactive({
     socialType: null,
     socialId: null,
     email: null,
+  })
+
+  const userInfo = reactive({
+    userId: null,
+    email: null,
+    name: null,
+    phone: null,
+    socialType: null,
+    socialId: null,
+    address1: null,
+    address2: null,
+    zipcode: null,
+    recipientName: null,
+    recipientPhone: null,
+    createdAt: null,
+    updatedAt: null,
+    deletedAt: null,
   })
 
   const setToken = (jwt) => {
@@ -28,15 +44,32 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('access-token')
   }
 
-  const setUserInfo = ({ socialType, socialId, email }) => {
-    userInfo.socialType = socialType
-    userInfo.socialId = socialId
-    userInfo.email = email
+  const setKakaoInfo = ({ socialType, socialId, email }) => {
+    kakaoInfo.socialType = socialType
+    kakaoInfo.socialId = socialId
+    kakaoInfo.email = email
+  }
+
+  const setUserInfo = (data) => {
+    ;(userInfo.userId = data.userId),
+      (userInfo.email = data.email),
+      (userInfo.name = data.name),
+      (userInfo.phone = data.phone),
+      (userInfo.socialType = data.socialType),
+      (userInfo.socialId = data.socialId),
+      (userInfo.address1 = data.address1),
+      (userInfo.address2 = data.address2),
+      (userInfo.zipcode = data.zipcode),
+      (userInfo.recipientName = data.recipientName),
+      (userInfo.recipientPhone = data.recipientPhone),
+      (userInfo.createdAt = data.createdAt),
+      (userInfo.updatedAt = data.updatedAt),
+      (userInfo.deletedAt = data.deletedAt)
   }
 
   const handleKakaoLogin = async (code) => {
     try {
-      const res = await kakaoLogin(code)
+      const res = await authApi.kakaoLogin(code)
 
       if (res.status === 200) {
         const jwt = res.headers['authorization']?.split(' ')[1]
@@ -45,7 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
           router.push('/')
         }
       } else if (res.status === 202) {
-        setUserInfo(res.data)
+        setKakaoInfo(res.data)
         router.push({ name: 'AdditionalInfo' })
       }
     } catch (err) {
@@ -56,11 +89,11 @@ export const useAuthStore = defineStore('auth', () => {
   const registerUser = async ({ name, phone }) => {
     try {
       const payload = {
-        ...userInfo,
+        ...kakaoInfo,
         name,
         phone,
       }
-      const res = await register(payload)
+      const res = await userApi.register(payload)
       const jwt = res.headers['authorization']?.split(' ')[1]
       if (jwt) {
         setToken(jwt)
@@ -73,11 +106,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    localStorage.removeItem('access-token')
-    token.value = null
-    await api.post('/auth/logout')
-
+    await authApi.requestLogout()
+    clearToken()
     router.push('/login')
   }
-  return { token, handleKakaoLogin, registerUser, logout }
+  return { token, handleKakaoLogin, registerUser, logout, setToken, userInfo, setUserInfo }
 })
