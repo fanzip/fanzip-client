@@ -1,9 +1,9 @@
 <script setup>
-import { getKakaoLoginUrl } from '@/api/authApi'
+import authApi from '@/api/authApi'
 
 const redirectToKakao = async () => {
   try {
-    const url = await getKakaoLoginUrl()
+    const url = await authApi.getKakaoLoginUrl()
     window.location.href = url
   } catch (e) {
     console.error('카카오 로그인 URL 요청 실패:', e)
