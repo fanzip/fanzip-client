@@ -12,15 +12,23 @@ defineProps({
 </script>
 
 <template>
-  <header class="w-full max-w-xs md:max-w-sm h-12 flex items-center ms-5">
-    <div v-if="type !== 'logo'" class="flex items-center gap-2">
+  <header class="w-full h-12 flex items-center px-5 bg-white">
+    <!-- Close 전용 -->
+    <div v-if="type == 'close'" class="flex items-center">
+      <img src="@/assets/header/Close.svg" alt="Close" class="cursor-pointer" />
+    </div>
+
+    <!-- Back 전용 -->
+    <div v-else-if="type === 'back' || type.startsWith('back-')" class="flex items-center gap-2">
       <img src="@/assets/header/BackIcon.svg" alt="Back" class="cursor-pointer" />
     </div>
 
-    <div v-else class="flex items-center">
+    <!-- Logo 전용 -->
+    <div v-else-if="type === 'logo'" class="flex items-center">
       <img src="@/assets/header/LogoName.svg" alt="Logo" class="h-6" />
     </div>
 
+    <!-- 중앙 타이틀 -->
     <span
       v-if="type === 'back-title' || type === 'back-title-icons'"
       class="absolute left-1/2 -translate-x-1/2 text-base font-semibold text-text-base"
@@ -28,6 +36,7 @@ defineProps({
       {{ title }}
     </span>
 
+    <!-- 우측 아이콘 -->
     <div
       v-if="type === 'back-icons' || type === 'back-title-icons'"
       class="flex items-center gap-3 ml-auto"
