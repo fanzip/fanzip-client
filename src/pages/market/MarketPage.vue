@@ -146,7 +146,7 @@ onMounted(() => {
 
     <div v-if="isLoading" class="text-center py-4">Loading...</div>
     <div v-else-if="!hasMore && !keyword" class="text-center py-4 text-subtle-text">
-      더이상 상품이 없습니다
+      상품이 없습니다
     </div>
     <ScrollToTop />
   </div>
