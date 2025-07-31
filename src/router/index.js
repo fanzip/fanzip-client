@@ -8,6 +8,8 @@ import fanMeetingRoutes from './fanMeeting'
 import membershipRoutes from './membership'
 import marketRoutes from './market'
 import mypageRoutes from './mypage'
+import cartRoutes from './cart'
+
 import fanCardRoutes from './fanCard'
 const routes = [
   // 기본 라우트
@@ -21,6 +23,7 @@ const routes = [
   ...fanCardRoutes,
   ...marketRoutes,
   ...mypageRoutes,
+  ...cartRoutes,
 ]
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
