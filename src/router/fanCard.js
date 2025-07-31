@@ -1,0 +1,17 @@
+import FanCardPage from '@/pages/fancard/FanCardPage.vue'
+import MobileTicketPage from '@/pages/fancard/MobileTicketPage.vue'
+
+export default [
+  { path: '/fancard', name: 'fancard', component: FanCardPage },
+  {
+    path: '/fancard/detail/:id',
+    name: 'FanCardDetailPage',
+    component: () => import('@/pages/fancard/FanCardDetailPage.vue'),
+  },
+  {
+    path: '/ticket',
+    name: 'MobileTicketPage',
+    component: MobileTicketPage,
+    meta: { hideNavbar: true },
+  },
+]

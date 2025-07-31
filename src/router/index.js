@@ -8,6 +8,7 @@ import fanMeetingRoutes from './fanMeeting'
 import membershipRoutes from './membership'
 import marketRoutes from './market'
 import mypageRoutes from './mypage'
+import fanCardRoutes from './fanCard'
 const routes = [
   // 기본 라우트
   { path: '/', name: 'home', component: HomePage },
@@ -17,6 +18,7 @@ const routes = [
   ...authRoutes,
   ...fanMeetingRoutes,
   ...membershipRoutes,
+  ...fanCardRoutes,
   ...marketRoutes,
   ...mypageRoutes,
 ]
