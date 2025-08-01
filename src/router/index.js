@@ -1,34 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DesignGuidePage from '@/pages/DesignGuidePage.vue'
+import { reservationRoutes } from './reservation.js'
+
 import HomePage from '@/pages/HomePage.vue'
-
-import authRoutes from './auth'
-import fanMeetingRoutes from './fanMeeting'
-import membershipRoutes from './membership'
-import marketRoutes from './market'
-import mypageRoutes from './mypage'
-import cartRoutes from './cart'
-
-import fanCardRoutes from './fanCard'
-const routes = [
-  // 기본 라우트
-  { path: '/', name: 'home', component: HomePage },
-  { path: '/guide', name: 'Guide', component: DesignGuidePage },
-
-  // 도메인 라우트
-  ...authRoutes,
-  ...fanMeetingRoutes,
-  ...membershipRoutes,
-  ...fanCardRoutes,
-  ...marketRoutes,
-  ...mypageRoutes,
-  ...cartRoutes,
-]
+import FanCardPage from '@/pages/FanCardPage.vue'
+import MarketPage from '@/pages/MarketPage.vue'
+import MyPage from '@/pages/MyPage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    // 항상 맨 위로 스크롤
+    return { top: 0 }
+  },
   routes: [
     { path: '/', name: 'home', component: HomePage },
-    { path: '/reservation', name: 'reservation', component: FanMeetingPage },
     { path: '/fancard', name: 'fancard', component: FanCardPage },
     { path: '/market', name: 'market', component: MarketPage },
     { path: '/mypage', name: 'mypage', component: MyPage },
@@ -38,32 +23,9 @@ const router = createRouter({
       name: 'Guide',
       component: DesignGuidePage, // 👈 여기 추가
     },
-    {
-      path: '/fan-meeting/:id',
-      name: 'FanMeetingDetail',
-      component: FanMeetingDetailPage,
-    },
 
-    {
-      path: '/reservation/detail',
-      name: 'FanMeetingDetailTest',
-      component: FanMeetingDetailPage,
-    },
-    {
-      path: '/reservation/:id/seat',
-      name: 'SeatSelect',
-      component: SeatSelectPage,
-    },
-    {
-      path: '/reservation/:id/payment',
-      name: 'FanMeetingPayment',
-      component: FanMeetingPaymentPage,
-    },
-    {
-      path: '/payment/success',
-      name: 'PaymentSuccess',
-      component: PaymentSuccessPage,
-    },
+    // 예약 관련 라우트들
+    ...reservationRoutes,
 
     // {
     //   path: '/',
