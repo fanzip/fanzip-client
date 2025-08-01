@@ -1,13 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DesignGuidePage from '@/pages/DesignGuidePage.vue'
-import MarketPage from '@/pages/MarketPage.vue'
-import MyPage from '@/pages/MyPage.vue'
-import FanCardPage from '@/pages/FanCardPage.vue'
-import FanMeetingPage from '@/pages/FanMeetingPage.vue'
+// import MarketPage from '@/pages/MarketPage.vue'
+// import MyPage from '@/pages/MyPage.vue'
+// import FanCardPage from '@/pages/FanCardPage.vue'
+// import FanMeetingPage from '@/pages/FanMeetingPage.vue'
 import HomePage from '@/pages/HomePage.vue'
 import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 import MembershipSelect from '@/pages/MembershipSelect.vue'
-import HomePage from '@/pages/HomePage.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -21,6 +20,8 @@ const routes = [
   // 기본 라우트
   { path: '/', name: 'home', component: HomePage },
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
+  { path: '/membership/select', name: 'MembershipSelect', component: MembershipSelect },
+  { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
 
   // 도메인 라우트
   ...authRoutes,
@@ -34,57 +35,6 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: HomeView,
-  // },
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (About.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import('../views/AboutView.vue'),
-  // },
-
-    {
-      path: '/guide',
-      name: 'Guide',
-      component: DesignGuidePage, // 👈 여기 추가
-    },
-    {
-      path: '/reservation/:id',
-      name: 'FanMeetingDetail',
-      component: FanMeetingDetailPage,
-    },
-    // 아래는 테스트용이라 추후 삭제 예정
-    {
-      path: '/reservation/detail',
-      name: 'FanMeetingDetail',
-      component: FanMeetingDetailPage,
-    },
-    {
-      path: '/membership/select',
-      name: 'MembershipSelect',
-      component: MembershipSelect,
-    },
-
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView,
-    // },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue'),
-    // },
-  ],
 })
 
 export default router

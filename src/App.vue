@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import AppNav from './components/layout/AppNav.vue'
 
 const route = useRoute()
-import { RouterView } from 'vue-router'
 </script>
 
 <template>

@@ -80,10 +80,7 @@ const getBadgeClass = (grade) => {
         :alt="card.name"
         class="w-full h-full object-cover pointer-events-none"
       />
-      <span
-        class="absolute top-3 right-3 badge"
-        :class="getBadgeClass(card.grade)"
-      >
+      <span class="absolute top-3 right-3 badge" :class="getBadgeClass(card.grade)">
         {{ card.grade }}
       </span>
     </div>
