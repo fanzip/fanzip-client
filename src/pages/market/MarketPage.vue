@@ -6,6 +6,7 @@ import ProductsList from '@/components/market/ProductsList.vue'
 import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 import ScrollToTop from '@/components/market/ScrollToTop.vue'
+import AppNav from '@/components/layout/AppNav.vue'
 
 const keyword = ref('')
 const products = ref([])
@@ -56,68 +57,6 @@ onMounted(() => {
   )
   if (sentinel.value) observer.observe(sentinel.value)
 })
-// const products = ref([
-//   {
-//     productId: 1,
-//     name: '[침착맨] 침바오 음성 인형 응애~',
-//     price: 20000,
-//     discountedPrice: 16000,
-//     discountedRate: 0.25,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20240731_160/1722385484288CVPGq_PNG/10278980372854391_1289295091.png?type=m510',
-//     stock: 100,
-//   },
-//   {
-//     productId: 2,
-//     name: '[침착맨] 빵애빵애빵애빵애빵애빵애빵애에요 음성 인형',
-//     price: 20000,
-//     discountedPrice: 10000,
-//     discountedRate: 0.5,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20241227_115/1735266453049wJB46_PNG/50274947065748712_1358927972.png?type=m510',
-//     stock: 200,
-//   },
-//   {
-//     productId: 3,
-//     name: '[침착맨] 레몬맨 스트레스 볼 스트레스 팡팡',
-//     price: 10000,
-//     discountedPrice: 7000,
-//     discountedRate: 0.3,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20240731_300/1722385486773gcY6V_PNG/1972590600709110_1542956351.png?type=m510',
-//     stock: 300,
-//   },
-//   {
-//     productId: 4,
-//     name: '[여단오] 신비 복숭아 신비해요 아주 맛있어요',
-//     price: 10000,
-//     discountedPrice: 8000,
-//     discountedRate: 0.2,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20250724_28/1753346225331zcU9K_PNG/21865549438298396_377767455.png?type=m510',
-//     stock: 400,
-//   },
-//   {
-//     productId: 5,
-//     name: '[침착맨] 침바오 음성 인형 응애~',
-//     price: 20000,
-//     discountedPrice: 16000,
-//     discountedRate: 0.25,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20240731_160/1722385484288CVPGq_PNG/10278980372854391_1289295091.png?type=m510',
-//     stock: 100,
-//   },
-//   {
-//     productId: 6,
-//     name: '[침착맨] 빵애빵애빵애빵애빵애빵애빵애에요 음성 인형',
-//     price: 20000,
-//     discountedPrice: 10000,
-//     discountedRate: 0.5,
-//     thumbnailImage:
-//       'https://shop-phinf.pstatic.net/20241227_115/1735266453049wJB46_PNG/50274947065748712_1358927972.png?type=m510',
-//     stock: 200,
-//   },
-// ])
 </script>
 
 <template>
@@ -150,4 +89,5 @@ onMounted(() => {
     </div>
     <ScrollToTop />
   </div>
+  <AppNav />
 </template>
