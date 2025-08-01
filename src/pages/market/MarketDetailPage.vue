@@ -1,54 +1,101 @@
-<script setup lang="ts">
+<script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
+import api from '@/api'
 
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const productId = route.params.productId
 
 const product = ref({
-  name: '[침착맨] 침바오 음성 인형 응애~응애~응애~응애~응애~응애~응애~응애~응애~응애~응애~',
-  price: 20000,
-  discountedPrice: 16000,
-  discountedRate: 0.25,
-  thumbnailImage:
-    'https://shop-phinf.pstatic.net/20240731_160/1722385484288CVPGq_PNG/10278980372854391_1289295091.png?type=m510',
-  stock: 100,
-  influencerId: 1,
+  productId: 0,
+  influencerId: 0,
+  name: '',
+  stock: 0,
+  price: 0,
+  discountedPrice: 0,
+  discountRate: 0,
   shippingPrice: 0,
-  description: '침바오 설명',
-  gradeId: 2,
-  openTime: '2025-07-06 09:00:00',
+  description: '',
+  thumbnailImage: '',
+  detailImages: '',
+  descriptionImages: '',
+  detailImagesList: [],
+  descriptionImagesList: [],
+  gradeId: 0,
+  openTime: '',
   options: null,
   available: true,
-  detailImages:
-    '["https://shop-phinf.pstatic.net/20240731_160/1722385484288CVPGq_PNG/10278980372854391_1289295091.png?type=m510","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpOFZn8FUCBqJ19frRvcVadaXxBB7FOJ4-xw&s"]',
-  descriptionImages:
-    '["https://shop-phinf.pstatic.net/20241218_79/1734515629712mHYu2_JPEG/%EC%B9%A8%EC%B0%A9%EB%A7%A8_%EC%B9%A8%EB%B0%94%EC%98%A4_%EC%9D%8C%EC%84%B1%EC%9D%B8%ED%98%95_%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%ED%8F%BC-01_(1).jpg?type=w860","https://shop-phinf.pstatic.net/20241218_45/1734515689050j2NQ9_JPEG/%EC%B9%A8%EC%B0%A9%EB%A7%A8_%EC%B9%A8%EB%B0%94%EC%98%A4_%EC%9D%8C%EC%84%B1%EC%9D%B8%ED%98%95_%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%ED%8F%BC-02_(1).jpg?type=w860"]',
-  detailImagesList: [
-    'https://shop-phinf.pstatic.net/20240731_160/1722385484288CVPGq_PNG/10278980372854391_1289295091.png?type=m510',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpOFZn8FUCBqJ19frRvcVadaXxBB7FOJ4-xw&s',
-  ],
-  descriptionImagesList: [
-    'https://shop-phinf.pstatic.net/20241218_79/1734515629712mHYu2_JPEG/%EC%B9%A8%EC%B0%A9%EB%A7%A8_%EC%B9%A8%EB%B0%94%EC%98%A4_%EC%9D%8C%EC%84%B1%EC%9D%B8%ED%98%95_%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%ED%8F%BC-01_(1).jpg?type=w860',
-    'https://shop-phinf.pstatic.net/20241218_45/1734515689050j2NQ9_JPEG/%EC%B9%A8%EC%B0%A9%EB%A7%A8_%EC%B9%A8%EB%B0%94%EC%98%A4_%EC%9D%8C%EC%84%B1%EC%9D%B8%ED%98%95_%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%ED%8F%BC-02_(1).jpg?type=w860',
-  ],
 })
 
+const cartAdded = ref(false)
 const currentSlide = ref(0)
 
-onMounted(() => {
-  console.log('productId: ', productId)
-  setInterval(() => {
-    currentSlide.value = (currentSlide.value + 1) % product.value.detailImagesList.length
-  }, 2000)
+const userApi = {
+  getUserInfo: async () => {
+    const res = await api.get('/api/user') // 헤더에 jwt 보내는 요청
+    return res
+  },
+}
+
+// 상품 상세 사진 자동 넘김
+onMounted(async () => {
+  try {
+    const { data } = await api.get(`/api/market/products/${productId}`)
+    product.value = data
+
+    if (product.value.detailImagesList.length) {
+      setInterval(() => {
+        currentSlide.value = (currentSlide.value + 1) % product.value.detailImagesList.length
+      }, 2000)
+    }
+  } catch (e) {
+    console.error('상품 상세 조회 실패', e)
+  }
 })
+
+function formatOpenTime(iso) {
+  const d = new Date(iso)
+  const MM = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mi = String(d.getMinutes()).padStart(2, '0')
+  return `${d.getFullYear()}년 ${MM}월 ${dd}일 ${hh}시 ${mi}분`
+}
+
+async function addToCart() {
+  try {
+    await api.post(`/api/cart`, {
+      productId: Number(productId),
+      quantity: 1,
+    })
+    cartAdded.value = true
+  } catch (err) {
+    console.error('장바구니 담기 실패', err)
+  }
+}
+
+function goToCart() {
+  router.push({ name: 'CartPage' })
+}
+
+function goToPurchase() {
+  router.push({ name: 'PurchasePage', params: { productId } })
+}
 </script>
 
 <template>
   <!-- 헤더 -->
   <AppHeader type="back-icons" />
+
+  <!-- 품절 & 오픈전 오버레이-->
+  <!-- <div class="relative"> -->
+  <div
+    v-if="product.stock === 0 || !product.available"
+    class="fixed top-12 left-0 right-0 bottom-0 bg-black bg-opacity-30 z-10 pointer-events-none"
+  ></div>
 
   <!-- 슬라이드 이미지 -->
   <div class="w-full aspect-square overflow-hidden relative">
@@ -67,7 +114,7 @@ onMounted(() => {
     <!-- 할인율 + 할인전가격-->
     <div class="flex space-x-2">
       <div class="text-xl font-bold text-subtle-text">
-        {{ Math.round(product.discountedRate * 100) }}%
+        {{ Math.round(product.discountRate * 100) }}%
       </div>
       <div class="font-medium line-through text-xl text-subtle-border">{{ product.price }}원</div>
     </div>
@@ -104,4 +151,5 @@ onMounted(() => {
       />
     </div>
   </div>
+  <!-- </div> -->
 </template>
