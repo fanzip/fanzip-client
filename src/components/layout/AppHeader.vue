@@ -1,6 +1,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
+import { useRouter } from 'vue-router'
+
 defineProps({
   type: {
     type: String,
@@ -14,12 +16,8 @@ defineProps({
 
 const router = useRouter()
 
-function goBack() {
+const goBack = () => {
   router.go(-1)
-}
-
-function goToCart() {
-  router.push('/cart')
 }
 </script>
 
@@ -35,30 +33,31 @@ function goToCart() {
       <img src="@/assets/header/BackIcon.svg" alt="Back" class="cursor-pointer" @click="goBack" />
     </div>
 
-    <!-- Logo 전용 -->
-    <div v-else-if="type === 'logo'" class="flex items-center">
-      <img src="@/assets/header/LogoName.svg" alt="Logo" class="h-6" />
-    </div>
+      <!-- Logo 전용 -->
+      <div v-else-if="type === 'logo'" class="flex items-center">
+        <img src="@/assets/header/LogoName.svg" alt="Logo" class="h-6" />
+      </div>
 
-    <!-- 중앙 타이틀 -->
-    <span
-      v-if="type === 'back-title' || type === 'back-title-icons'"
-      class="absolute left-1/2 -translate-x-1/2 text-base font-semibold text-text-base"
-    >
-      {{ title }}
-    </span>
+      <!-- 중앙 타이틀 -->
+      <span
+        v-if="type === 'back-title' || type === 'back-title-icons'"
+        class="absolute left-1/2 -translate-x-1/2 text-base font-semibold text-text-base"
+      >
+        {{ title }}
+      </span>
 
-    <!-- 우측 아이콘 -->
-    <div
-      v-if="type === 'back-icons' || type === 'back-title-icons'"
-      class="flex items-center gap-2 ml-auto"
-    >
-      <img
-        src="@/assets/header/CartIcon.svg"
-        alt="Cart"
-        class="cursor-pointer hover:opacity-80"
-        @click="goToCart"
-      />
-    </div>
-  </header>
+      <!-- 우측 아이콘 -->
+      <div
+        v-if="type === 'back-icons' || type === 'back-title-icons'"
+        class="flex items-center gap-2 ml-auto"
+      >
+        <img
+          src="@/assets/header/CartIcon.svg"
+          alt="Cart"
+          class="cursor-pointer hover:opacity-80"
+          @click="goToCart"
+        />
+      </div>
+    </header>
+  </div>
 </template>
