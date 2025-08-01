@@ -16,8 +16,8 @@ const paymentMethods = [
 </script>
 
 <template>
-  <div class="bg-white rounded-lg">
-    <h2 class="font-bold text-[16px] mb-4">결제 방법</h2>
+  <div class="bg-base-bg rounded-lg">
+    <h2 class="font-bold text-base mb-4">결제 방법</h2>
 
     <div
       v-for="method in paymentMethods"
@@ -30,7 +30,7 @@ const paymentMethods = [
         <div class="relative w-4 h-4 rounded-full border border-[#DEDEDE] flex-shrink-0">
           <div
             v-if="modelValue === method.id"
-            class="absolute top-1/2 left-1/2 w-[10px] h-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFBC00]"
+            class="absolute top-1/2 left-1/2 w-[10px] h-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent"
           ></div>
         </div>
 
