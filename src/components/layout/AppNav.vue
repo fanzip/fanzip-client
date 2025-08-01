@@ -29,7 +29,7 @@ const isActive = (path) => {
 
 <template>
   <nav
-    class="fixed bottom-0 left-0 w-full h-20 bg-white border-t border-[#efefef] rounded-t-2xl flex items-center justify-center z-50"
+    class="fixed bottom-0 left-0 w-full h-20 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
   >
     <div class="flex justify-between items-center w-full max-w-sm mx-auto px-5">
       <RouterLink
@@ -47,7 +47,7 @@ const isActive = (path) => {
         <span
           :class="[
             'block text-xs leading-none text-center whitespace-nowrap transition-colors duration-200',
-            isActive(item.path) ? 'text-black' : 'text-[#A7A7A7]',
+            isActive(item.path) ? 'text-text-base' : 'text-nav-stroke',
           ]"
         >
           {{ item.name }}
