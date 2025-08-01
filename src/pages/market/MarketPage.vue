@@ -27,10 +27,14 @@ const fetchProducts = async () => {
     if (data.length < params.limit) {
       hasMore.value = false
     }
+
     products.value.push(...data)
+
     if (data.length) {
       lastProductId.value = data[data.length - 1].productId
     }
+  } catch (e) {
+    console.error('상품 조회 실패', e)
   } finally {
     isLoading.value = false
   }
@@ -44,7 +48,7 @@ watch(keyword, () => {
   fetchProducts()
 })
 
-// 무한 스크롤 observer
+// 무한 스크롤 설정
 const sentinel = ref(null)
 let observer
 onMounted(() => {
