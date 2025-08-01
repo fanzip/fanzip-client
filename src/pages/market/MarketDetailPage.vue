@@ -191,7 +191,7 @@ function goToPurchase() {
         class="fixed bottom-0 left-0 w-full h-28 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
       >
         <div
-          class="w-[353px] h-16 bg-subtle-border rounded-xl text-base flex flex-col items-center justify-center text-center leading-snug font-semibold"
+          class="w-full h-16 ml-5 mr-5 bg-subtle-border rounded-xl text-base flex flex-col items-center justify-center text-center leading-none font-semibold"
         >
           <span>
             <span class="font-extrabold">{{ getGradeName(product.gradeId) }}</span> 등급의 오픈
