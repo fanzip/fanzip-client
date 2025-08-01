@@ -9,7 +9,15 @@ const props = defineProps({
 })
 
 const buttonClass = computed(() => {
-  const base = ['btn', 'flex', 'items-center', 'justify-center', 'gap-2', 'rounded-[12px]', 'font-semibold']
+  const base = [
+    'btn',
+    'flex',
+    'items-center',
+    'justify-center',
+    'gap-2',
+    'rounded-xl',
+    'font-semibold',
+  ]
 
   if (props.size === 'lg') base.push('w-[353px]', 'h-[48px]', 'text-[16px]')
   if (props.size === 'md') base.push('w-[169px]', 'h-[48px]', 'text-[16px]')
