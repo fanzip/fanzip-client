@@ -22,12 +22,6 @@ const marketApi = {
     const res = await api.post('/api/cart/items', { productId, quantity })
     return res.data
   },
-
-  // 장바구니 조회
-  getCartItems: async () => {
-    const res = await api.get(`api/cart/items`)
-    return res.data
-  },
 }
 
 export default marketApi
