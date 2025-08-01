@@ -7,6 +7,7 @@ import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 import ScrollToTop from '@/components/market/ScrollToTop.vue'
 import AppNav from '@/components/layout/AppNav.vue'
+import marketApi from '@/api/marketApi'
 
 const keyword = ref('')
 const products = ref([])
@@ -19,15 +20,12 @@ const fetchProducts = async () => {
   if (isLoading.value || !hasMore.value) return
   isLoading.value = true
   try {
-    const params = { limit: 20 }
-    if (keyword.value) params.q = keyword.value
-    if (lastProductId.value) params.lastProductId = lastProductId.value
-
-    const { data } = await axios.get('/api/market/products', { params })
-    if (data.length < params.limit) {
-      hasMore.value = false
-    }
-
+    const data = await marketApi.getProducts({
+      limit: 20,
+      keyword: keyword.value,
+      lastProductId: lastProductId.value,
+    })
+    if (data.length < 20) hasMore.value = false
     products.value.push(...data)
 
     if (data.length) {
@@ -48,7 +46,7 @@ watch(keyword, () => {
   fetchProducts()
 })
 
-// 무한 스크롤 설정
+// 무한 스크롤
 const sentinel = ref(null)
 let observer
 onMounted(() => {
