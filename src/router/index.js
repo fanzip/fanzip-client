@@ -6,7 +6,6 @@ import DesignGuidePage from '@/pages/DesignGuidePage.vue'
 // import FanMeetingPage from '@/pages/FanMeetingPage.vue'
 import HomePage from '@/pages/HomePage.vue'
 import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
-import MembershipSelect from '@/pages/MembershipSelect.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -20,7 +19,6 @@ const routes = [
   // 기본 라우트
   { path: '/', name: 'home', component: HomePage },
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
-  { path: '/membership/select', name: 'MembershipSelect', component: MembershipSelect },
   { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
 
   // 도메인 라우트
