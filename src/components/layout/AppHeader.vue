@@ -24,7 +24,7 @@ function goToCart() {
 </script>
 
 <template>
-  <header class="w-full h-12 flex items-center px-5 bg-white">
+  <header class="fixed top-0 left-0 right-0 z-50 w-full h-12 flex items-center px-5 bg-base-bg">
     <!-- Close 전용 -->
     <div v-if="type == 'close'" class="flex items-center">
       <img src="@/assets/header/Close.svg" alt="Close" class="cursor-pointer" />
