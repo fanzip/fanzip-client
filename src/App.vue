@@ -4,13 +4,20 @@ import { useRoute } from 'vue-router'
 // import AppNav from './components/layout/AppNav.vue'
 
 const route = useRoute()
-
-// 네비게이션 바를 숨길 페이지들
-const hideNavPages = ['/fan-meeting/', '/seat-select/', '/payment/', '/payment-success']
+const router = useRouter()
 
 const shouldShowNav = computed(() => {
-  return !hideNavPages.some((page) => route.path.includes(page))
+  const hideNavRoutes = ['guide', 'FanMeetingDetail', 'SeatSelect', 'Payment', 'FanMeetingPayment']
+  return !hideNavRoutes.includes(route.name)
 })
+
+// 페이지 전환 시 스크롤 맨 위로 초기화
+watch(
+  () => route.path,
+  () => {
+    window.scrollTo(0, 0)
+  },
+)
 </script>
 
 <template>
