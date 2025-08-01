@@ -1,9 +1,11 @@
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import api from '@/api'
+import marketApi from '@/api/marketApi'
 
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import BaseButton from '@/components/common/BaseButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -33,19 +35,19 @@ const product = ref({
 const cartAdded = ref(false)
 const currentSlide = ref(0)
 
-const userApi = {
-  getUserInfo: async () => {
-    const res = await api.get('/api/user') // 헤더에 jwt 보내는 요청
-    return res
-  },
-}
+// const userApi = {
+//   getUserInfo: async () => {
+//     const res = await api.get('/api/user') // 헤더에 jwt 보내는 요청
+//     return res
+//   },
+// }
 
-// 상품 상세 사진 자동 넘김
 onMounted(async () => {
   try {
-    const { data } = await api.get(`/api/market/products/${productId}`)
+    const data = await marketApi.getProductDetail(productId)
     product.value = data
 
+    // 상품 사진 자동 넘김
     if (product.value.detailImagesList.length) {
       setInterval(() => {
         currentSlide.value = (currentSlide.value + 1) % product.value.detailImagesList.length
@@ -56,6 +58,7 @@ onMounted(async () => {
   }
 })
 
+// 시간 데이터 형식
 function formatOpenTime(iso) {
   const d = new Date(iso)
   const MM = String(d.getMonth() + 1).padStart(2, '0')
@@ -66,6 +69,7 @@ function formatOpenTime(iso) {
   return `${d.getFullYear()}년 ${MM}월 ${dd}일 ${hh}:${mi}:${ss}`
 }
 
+// 등급 얻기
 function getGradeName(g) {
   switch (g) {
     case 1:
@@ -81,20 +85,22 @@ function getGradeName(g) {
   }
 }
 
+// 장바구니 담기
 async function addToCart() {
   try {
-    await api.post(`/api/cart`, {
-      productId: Number(productId),
-      quantity: 1,
-    })
+    await marketApi.addToCart({ productId: productId, quantity: 1 })
     cartAdded.value = true
-  } catch (err) {
-    console.error('장바구니 담기 실패', err)
+
+    setTimeout(() => {
+      cartAdded.value = false
+    }, 3000)
+  } catch (e) {
+    console.error('장바구니 담기 실패', e)
   }
 }
 
 function goToCart() {
-  router.push({ name: 'CartPage' })
+  router.push({ name: 'cart' })
 }
 
 function goToPurchase() {
@@ -166,7 +172,7 @@ function goToPurchase() {
       />
     </div>
 
-    <!-- 품절인 경우 -->
+    <!-- 1. 품절인 경우 -->
     <div v-if="product.stock === 0">
       <nav
         class="fixed bottom-0 left-0 w-full h-20 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
@@ -179,7 +185,7 @@ function goToPurchase() {
       </nav>
     </div>
 
-    <!-- 오픈 시간이 안된 경우 -->
+    <!-- 2. 오픈 시간이 안된 경우 -->
     <div v-else-if="!product.available">
       <nav
         class="fixed bottom-0 left-0 w-full h-28 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
@@ -192,9 +198,40 @@ function goToPurchase() {
             시간은
           </span>
           <span>
-            <span class="font-extrabold">{{ formatOpenTime(product.openTime) }}</span
-            >입니다.
+            <span class="font-extrabold">{{ formatOpenTime(product.openTime) }}</span> 입니다.
           </span>
+        </div>
+      </nav>
+    </div>
+
+    <!-- 3. 정상 -->
+    <div v-else>
+      <nav
+        class="fixed bottom-0 left-0 w-full h-20 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
+      >
+        <!-- 3-1. 장바구니 담기 전  -->
+        <div v-if="!cartAdded" class="flex gap-4 items-center">
+          <BaseButton variant="cart" size="md" @click="addToCart">
+            <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-5 h-5" />
+            장바구니 담기
+          </BaseButton>
+          <BaseButton variant="buy" size="md">바로 구매하기</BaseButton>
+        </div>
+
+        <!-- 3-2. 장바구니 담은 후 -->
+        <div v-else class="flex justify-between items-center px-6 w-full">
+          <div class="flex items-center gap-1">
+            <img src="@/assets/market/shoppingBagGrey.svg" alt="장바구니2" class="w-5 h-5" />
+            <span class="text-base font-bold"> 장바구니에 상품을 담았습니다 </span>
+          </div>
+
+          <button
+            @click="goToCart"
+            class="flex items-center gap-0 text-subtle-text text-base font-medium"
+          >
+            <span>바로가기</span>
+            <img src="@/assets/market/chevron-down.svg" alt=">" />
+          </button>
         </div>
       </nav>
     </div>
