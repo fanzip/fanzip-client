@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
-import AppNav from './components/layout/AppNav.vue'
+// import AppNav from './components/layout/AppNav.vue'
 
 const route = useRoute()
 </script>
@@ -9,7 +9,7 @@ const route = useRoute()
 <template>
   <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
-    <app-nav v-if="!route.meta.hideNavbar"></app-nav>
+    <!-- <app-nav v-if="!route.meta.hideNavbar"></app-nav> -->
   </div>
 </template>
 
