@@ -1,15 +1,22 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
-// import AppNav from './components/layout/AppNav.vue'
+import { watch } from 'vue'
 
 const route = useRoute()
+
+// 페이지 전환 시 스크롤 맨 위로 초기화
+watch(
+  () => route.path,
+  () => {
+    window.scrollTo(0, 0)
+  },
+)
 </script>
 
 <template>
   <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
-    <!-- <app-nav v-if="!route.meta.hideNavbar"></app-nav> -->
   </div>
 </template>
 
