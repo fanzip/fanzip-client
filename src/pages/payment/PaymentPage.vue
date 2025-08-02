@@ -95,12 +95,8 @@ export default {
           })
         })
 
-
-
         if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
         const data = await response.json()
-
-        console.log(data);
         
         paymentId = data.paymentId
         backendPaymentData = data
