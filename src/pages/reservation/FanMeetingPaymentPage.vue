@@ -35,11 +35,11 @@
             <div class="space-y-2 mb-4">
               <div class="flex justify-between">
                 <span class="text-black text-base">일반석({{ selectedSeat }})</span>
-                <span class="text-black text-base">{{ ticketPrice }}원</span>
+                <span class="text-black text-base">{{ ticketPrice.toLocaleString() }}원</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-black text-base">예매 수수료</span>
-                <span class="text-black text-base">{{ serviceFee }}원</span>
+                <span class="text-black text-base">{{ serviceFee.toLocaleString() }}원</span>
               </div>
             </div>
 
@@ -47,7 +47,7 @@
 
             <div class="flex justify-between">
               <span class="text-black font-bold text-base">총 결제금액</span>
-              <span class="text-red-500 font-bold text-base">{{ totalPrice }}원</span>
+              <span class="text-red-500 font-bold text-base">{{ totalPrice.toLocaleString() }}원</span>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@
         :variant="canProceed ? 'primary' : 'cancel'"
         size="lg"
       >
-        {{ totalPrice }}원 결제하기
+        {{ totalPrice.toLocaleString() }}원 결제하기
       </BottomButton>
 
       <!-- Loading Modal -->
@@ -110,12 +110,15 @@ const router = useRouter()
 const route = useRoute()
 
 const selectedSeat = ref('')
-const ticketPrice = ref('33,000')
-const serviceFee = ref('3,000')
-const totalPrice = ref('36,000')
+const ticketPrice = ref(33000)
+const serviceFee = ref(3000)
 const selectedPaymentMethod = ref('kb')
 const agreedToTerms = ref(false)
 const isProcessing = ref(false)
+
+const totalPrice = computed(() => {
+  return ticketPrice.value + serviceFee.value
+})
 
 // 현재 팬미팅 정보
 const currentFanMeeting = computed(() => {
@@ -144,7 +147,7 @@ const processPayment = async () => {
       query: {
         fanMeetingId: route.params.id,
         seat: selectedSeat.value,
-        amount: totalPrice.value.replace(',', ''),
+        amount: totalPrice.value,
       },
     })
   } catch {
@@ -158,8 +161,7 @@ onMounted(() => {
   // 쿼리 파라미터에서 좌석 정보 가져오기
   selectedSeat.value = route.query.seat || 'F9'
   if (route.query.price) {
-    const price = parseInt(route.query.price)
-    totalPrice.value = price.toLocaleString()
+    ticketPrice.value = parseInt(route.query.price)
   }
 })
 </script>

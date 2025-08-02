@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, toValue } from 'vue'
 import { useRouter } from 'vue-router'
 import { influencers } from '@/data/fanMeetingData.js'
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -82,7 +82,7 @@ const filteredInfluencers = computed(() => {
   if (!influencerList.value || !Array.isArray(influencerList.value)) {
     return []
   }
-  const searchKeyword = searchBarRef.value?.keyword || ''
+  const searchKeyword = toValue(searchBarRef.value?.keyword) || ''
   if (!searchKeyword) {
     return influencerList.value
   }

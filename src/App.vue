@@ -1,15 +1,9 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
-import { computed, watch } from 'vue'
-import AppNav from './components/layout/AppNav.vue'
+import { watch } from 'vue'
 
 const route = useRoute()
-
-const shouldShowNav = computed(() => {
-  const hideNavRoutes = ['guide', 'FanMeetingDetail', 'SeatSelect', 'Payment', 'FanMeetingPayment']
-  return !hideNavRoutes.includes(route.name)
-})
 
 // 페이지 전환 시 스크롤 맨 위로 초기화
 watch(
@@ -23,7 +17,6 @@ watch(
 <template>
   <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
     <router-view />
-    <AppNav v-if="shouldShowNav" />
   </div>
 </template>
 

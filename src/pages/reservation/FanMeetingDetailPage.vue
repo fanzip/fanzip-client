@@ -161,6 +161,3 @@ const goToSeatSelection = () => {
 }
 </script>
 
-<style scoped>
-/* 추가 스타일링이 필요한 경우 여기에 작성 */
-</style>
