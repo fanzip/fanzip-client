@@ -1,6 +1,4 @@
 <template>
-  <AppHeader type="back" />
-
   <!-- 로딩 중 -->
   <div v-if="isLoadinㅅg" class="flex flex-col items-center justify-center h-screen text-lg font-semibold">
     결제 승인 처리 중...

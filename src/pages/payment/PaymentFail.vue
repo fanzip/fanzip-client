@@ -1,6 +1,5 @@
 <template>
   <div class="w-full min-h-screen base-bg text-center flex flex-col items-center">
-    <AppHeader type="back "/>
 
   <div class="mt-64 w-20 h-20">
       <img :src="ErrorSymbol" alt="에러" />
