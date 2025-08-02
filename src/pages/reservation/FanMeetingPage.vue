@@ -4,7 +4,7 @@
     <AppHeader type="logo" title="" />
 
     <!-- Search Bar -->
-    <div class="mb-7">
+    <div class="pt-[68px] mb-7">
       <SearchBar ref="searchBarRef" />
     </div>
 
