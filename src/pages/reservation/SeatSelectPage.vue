@@ -34,7 +34,7 @@
         <div class="bg-white rounded-lg p-4">
           <!-- Stage -->
           <div
-            class="rounded-xl py-2 mt-4 mb-4 w-[313px] h-8 mx-auto flex items-center justify-center"
+            class="rounded-xl py-2 mt-4 mb-4 w-full max-w-[313px] h-8 mx-auto flex items-center justify-center"
             style="background-color: #60584c"
           >
             <p class="text-center text-white text-base font-normal">STAGE</p>

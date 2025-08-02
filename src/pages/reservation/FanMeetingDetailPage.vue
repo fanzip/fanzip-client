@@ -4,7 +4,7 @@
     <AppHeader type="back-title" title="" />
 
     <!-- Main Content Container -->
-    <div class="w-full max-w-xs md:max-w-sm mx-auto">
+    <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
       <!-- Influencer Profile -->
       <div class="px-9 pt-[68px]">
         <div class="flex items-center">
@@ -43,7 +43,7 @@
         </div>
         <div
           v-else
-          class="w-full max-w-[393px] h-[523px] bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg overflow-hidden flex items-center justify-center mx-auto"
+          class="w-full h-[523px] bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg overflow-hidden flex items-center justify-center mx-auto"
         >
           <div class="text-center text-white">
             <h2 class="text-2xl font-bold mb-2">{{ fanMeetingData.title }}</h2>

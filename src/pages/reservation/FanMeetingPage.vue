@@ -14,7 +14,7 @@
         <div
           v-for="(influencer, index) in filteredInfluencers"
           :key="influencer.id"
-          :class="['flex items-center cursor-pointer w-[313px] h-16', index > 0 ? 'mt-8' : '']"
+          :class="['flex items-center cursor-pointer w-full h-16', index > 0 ? 'mt-8' : '']"
           @click="goToDetail(influencer.id)"
         >
           <div v-if="influencer.id === 2" class="w-16 h-16 rounded-full overflow-hidden mr-6">
