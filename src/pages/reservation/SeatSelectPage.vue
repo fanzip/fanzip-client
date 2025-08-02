@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen" style="background-color: #f6f6f6">
+  <div class="w-full min-h-screen bg-subtle-bg">
     <!-- Header -->
     <AppHeader type="back-title" title="" />
 
@@ -10,7 +10,7 @@
         <!-- Fan Meeting Info -->
         <div class="bg-white rounded-lg p-4">
           <h3 class="text-lg font-bold text-black mb-4.5">{{ currentFanMeeting.title }}</h3>
-          <p class="text-sm mb-2" style="color: #808080">{{ currentFanMeeting.date }}</p>
+          <p class="text-sm mb-2 text-subtle-text">{{ currentFanMeeting.date }}</p>
           <div class="flex items-center">
             <svg
               width="16"
@@ -115,7 +115,7 @@
             </div>
             <div class="flex justify-between items-center">
               <span class="text-base text-gray-600 ml-4">가격</span>
-              <span class="text-xl font-bold mr-5" style="color: #ffbc00">36,000원</span>
+              <span class="text-xl font-bold mr-5 text-brand-accent">36,000원</span>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen bg-white">
+  <div class="w-full min-h-screen bg-base-bg">
     <!-- Header -->
     <AppHeader type="logo" title="" />
 
@@ -57,7 +57,7 @@
 
       <!-- 검색 결과가 없을 때 -->
       <div v-else class="flex items-center justify-center h-64">
-        <p class="text-gray-400 text-base">검색 결과가 없습니다.</p>
+        <p class="text-subtle-text text-base">검색 결과가 없습니다.</p>
       </div>
     </div>
   </div>

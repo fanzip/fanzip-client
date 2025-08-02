@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen" style="background-color: #f6f6f6">
+  <div class="w-full min-h-screen bg-subtle-bg">
     <!-- Header -->
     <AppHeader type="back-title" title="결제하기" />
 
@@ -12,7 +12,7 @@
           <div class="text-left">
             <h1 class="text-xl font-bold text-black mb-3">주문 정보</h1>
             <h2 class="text-base text-black mb-1">{{ currentFanMeeting.title }}</h2>
-            <p class="text-base mb-2" style="color: #808080">{{ currentFanMeeting.date }}</p>
+            <p class="text-base mb-2 text-subtle-text">{{ currentFanMeeting.date }}</p>
             <div class="flex items-center mb-4">
               <svg
                 width="16"
@@ -43,7 +43,7 @@
               </div>
             </div>
 
-            <hr class="mx-2 mb-4" style="border-color: #d8d8d8" />
+            <hr class="mx-2 mb-4 border-subtle-border" />
 
             <div class="flex justify-between">
               <span class="text-black font-bold text-base">총 결제금액</span>
@@ -61,8 +61,8 @@
             <input
               type="checkbox"
               v-model="agreedToTerms"
-              class="mt-1 mr-3 w-5 h-5 border-gray-300 rounded focus:ring-2 focus:ring-yellow-500"
-              style="accent-color: #ffd633; transform: scale(1.2)"
+              class="mt-1 mr-3 w-5 h-5 border-gray-300 rounded focus:ring-2 focus:ring-yellow-500 accent-brand-primary"
+              style="transform: scale(1.2)"
             />
             <span class="text-sm text-gray-700">
               <span class="font-medium">결제 진행 동의</span><br />

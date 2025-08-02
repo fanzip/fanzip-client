@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full min-h-screen bg-white">
+  <div class="w-full min-h-screen bg-base-bg">
     <!-- Header -->
     <AppHeader type="back-title" title="" />
 
     <!-- Main Content Container -->
-    <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
+    <div class="w-full max-w-xs md:max-w-sm mx-auto">
       <!-- Influencer Profile -->
       <div class="px-9 pt-[68px]">
         <div class="flex items-center">
