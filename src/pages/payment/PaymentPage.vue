@@ -1,36 +1,32 @@
 <template>
-  <div class="max-w-xl mx-auto px-6 py-8">
-    <h2 class="text-center text-2xl font-bold text-gray-800 mb-6">결제하기</h2>
+  <div class="mt-12 ml-5 mr-5">
+    <h2 class="text-center text-xl font-semibold text-base">결제하기</h2>
 
     <!-- 결제 UI -->
-    <div id="payment-method" ref="paymentMethodRef" class="my-5"></div>
+    <div id="payment-method" ref="paymentMethodRef" class="mt-16"></div>
 
     <!-- 이용약관 UI -->
-    <div id="agreement" ref="agreementRef" class="my-5"></div>
+    <div id="agreement" ref="agreementRef" class="mt-12"></div>
 
     <!-- 결제하기 버튼 -->
-    <div class="w-full flex justify-center mt-8">
-      <BaseButton 
-        variant="primary" 
-        size="lg" 
-        :disabled="isLoading" 
-        @click="handlePayment"
-        class="w-full max-w-[22rem]"
-      >
+     <div class="absolute bottom-14">
+        <BaseButton 
+          variant="primary" 
+          :disabled="isLoading" 
+            @click="handlePayment"
+        >
         <template v-if="!isLoading">
-          <div class="flex items-center justify-center gap-2">
-            <span class="font-extrabold">
+            <span class="font-bold">
               {{ isCouponApplied ? (baseAmount - discountAmount).toLocaleString() : baseAmount.toLocaleString() }}원
             </span>
-            <span class="font-semibold">결제하기</span>
-          </div>
+            <span class="font-bold">결제하기</span>
         </template>
         <template v-else>
           처리 중...
         </template>
       </BaseButton>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -52,12 +48,13 @@ export default {
     const discountAmount = 2000
     let paymentId = null
     let backendPaymentData = null
+    const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
+    const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY 
 
     const initializeTossPayments = async () => {
       try {
-        const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"
         const tossPayments = window.TossPayments(clientKey)
-        widgets = tossPayments.widgets({ customerKey: "nDV5Du_VPgovoFzt9tJIw" })
+        widgets = tossPayments.widgets({ customerKey })
 
         await widgets.setAmount({ currency: "KRW", value: baseAmount })
         await nextTick()
@@ -83,7 +80,7 @@ export default {
 
     const createPaymentInBackend = async (amount) => {
       try {
-        const response = await fetch('http://localhost:8080/api/payments/request', {
+        const response = await fetch('/api/payments/request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -98,8 +95,13 @@ export default {
           })
         })
 
+
+
         if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
         const data = await response.json()
+
+        console.log(data);
+        
         paymentId = data.paymentId
         backendPaymentData = data
         return generateOrderIdFromPaymentData(data)
@@ -129,8 +131,8 @@ export default {
         const orderName = generateOrderName(backendPaymentData)
 
         await widgets.requestPayment({
-          orderId,
-          orderName,
+          orderId: 'iv-C4woWgq8iis4PSz9vz',
+          orderName: '토스 티셔츠 외 2건',    
           successUrl: `${window.location.origin}/payments/success?paymentId=${paymentId}`,
           failUrl: `${window.location.origin}/payments/fail?paymentId=${paymentId}`,
           customerEmail: "customer123@gmail.com",
@@ -141,7 +143,7 @@ export default {
         console.error('결제 요청 실패:', error)
         if (paymentId) {
           try {
-            await fetch(`http://localhost:8080/api/payments/${paymentId}/fail`, { method: 'PATCH' })
+            await fetch(`/api/payments/${paymentId}/fail`, { method: 'PATCH' })
           } catch (e) {
             console.error('결제 실패 상태 업데이트 실패:', e)
           }
