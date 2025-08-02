@@ -15,7 +15,7 @@
     <p class="mt-14 text-xl text-base font-normal">결제가 완료되었습니다!</p>
 
     <!-- 버튼 -->
-    <div class="mt-80 absolute bottom-14">
+    <div class="fixed bottom-14 left-0 right-0 flex justify-center">
       <BaseButton variant="primary" size="lg" @click="goToHome">
         돌아가기
       </BaseButton>

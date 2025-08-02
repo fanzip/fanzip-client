@@ -6,10 +6,10 @@
     <div id="payment-method" ref="paymentMethodRef" class="mt-16"></div>
 
     <!-- 이용약관 UI -->
-    <div id="agreement" ref="agreementRef" class="mt-12"></div>
+    <div id="agreement" ref="agreementRef" class="mt-44"></div>
 
     <!-- 결제하기 버튼 -->
-     <div class="absolute bottom-14">
+     <div class="fixed bottom-14 left-0 right-0 flex justify-center">
         <BaseButton 
           variant="primary" 
           :disabled="isLoading" 
