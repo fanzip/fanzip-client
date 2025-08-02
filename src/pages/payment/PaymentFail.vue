@@ -10,7 +10,7 @@
       예기치 못한 에러가 발생했습니다
     </p>
 
-     <div class="mt-80 absolute bottom-14" >
+     <div class="fixed bottom-14 left-0 right-0 flex justify-center">
       <BaseButton variant="primary" size="lg" @click="goToHome">
         돌아가기
       </BaseButton>
