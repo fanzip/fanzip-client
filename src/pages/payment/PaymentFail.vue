@@ -1,31 +1,22 @@
 <template>
-  <div class="w-full min-h-screen bg-white text-center flex flex-col items-center">
+  <div class="w-full min-h-screen base-bg text-center flex flex-col items-center">
     <AppHeader type="back "/>
 
-    <!-- 아이콘 영역 -->
-    <div class="mt-64 w-20 h-20">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-full h-full">
-        <circle cx="12" cy="12" r="12" fill="#FFD633" />
-        <path d="M12 7v5" stroke="white" stroke-width="2" stroke-linecap="round" />
-        <circle cx="12" cy="15.5" r="1" fill="white" />
-      </svg>
-    </div>
+  <div class="mt-64 w-20 h-20">
+      <img :src="ErrorSymbol" alt="에러" />
+  </div>
 
     <!-- 실패 메시지 -->
-    <p class="mt-[3.75rem] text-xl text-black font-normal">
-      결제 처리 중 문제가 발생했습니다.
+    <p class="mt-14 text-xl text-base font-normal">
+      예기치 못한 에러가 발생했습니다
     </p>
 
-    <!-- 버튼 영역 -->
-    <div class="mt-[20.5625rem] px-5 w-full max-w-[22rem] flex gap-3 justify-center flex-wrap">
-      <BaseButton variant="primary" size="md" @click="retryPayment" class="flex-1 min-w-[9rem]">
-        다시 결제
+     <div class="mt-80 absolute bottom-14" >
+      <BaseButton variant="primary" size="lg" @click="goToHome">
+        돌아가기
       </BaseButton>
-      <BaseButton variant="cancel" size="md" @click="goToHome" class="flex-1 min-w-[9rem]">
-        홈으로
-      </BaseButton>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -33,6 +24,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import BaseButton from '@/components/common/BaseButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import ErrorSymbol from '@/assets/icons/ErrorSymbol.svg'
 
 export default {
   name: 'PaymentFail',
@@ -76,6 +68,7 @@ export default {
       retryPayment,
       goToHome,
       goBack,
+      ErrorSymbol,
     }
   }
 }
