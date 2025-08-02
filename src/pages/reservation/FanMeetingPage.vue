@@ -61,14 +61,16 @@
       </div>
     </div>
   </div>
+  <AppNav />
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { influencers } from '@/data/fanMeetingData.js'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
+import AppNav from '@/components/layout/AppNav.vue'
 
 const router = useRouter()
 const searchBarRef = ref(null)

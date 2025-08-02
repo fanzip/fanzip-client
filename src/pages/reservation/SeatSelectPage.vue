@@ -6,7 +6,7 @@
     <!-- White Container -->
     <div class="w-full max-w-[393px] mx-auto min-h-screen">
       <!-- Content with spacing -->
-      <div class="px-5 md:px-0 pt-5 pb-7 space-y-5">
+      <div class="px-5 md:px-0 pt-[68px] pb-7 space-y-5">
         <!-- Fan Meeting Info -->
         <div class="bg-white rounded-lg p-4">
           <h3 class="text-lg font-bold text-black mb-4.5">{{ currentFanMeeting.title }}</h3>

@@ -1,8 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-import { useRouter } from 'vue-router'
-
 defineProps({
   type: {
     type: String,
@@ -59,5 +57,4 @@ const goBack = () => {
         />
       </div>
     </header>
-  </div>
 </template>

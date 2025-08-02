@@ -6,7 +6,7 @@
     <!-- Main Content Container -->
     <div class="w-full max-w-[393px] md:max-w-[430px] mx-auto">
       <!-- Influencer Profile -->
-      <div class="px-9 pt-7">
+      <div class="px-9 pt-[68px]">
         <div class="flex items-center">
           <div v-if="fanMeetingId == 2" class="w-16 h-16 rounded-full overflow-hidden mr-6">
             <img
@@ -86,7 +86,6 @@ const fanMeetingDataMap = {
     venue: '성동구 문화회관',
     initial: '태',
     bgColor: 'from-pink-400 to-purple-500',
-    bgColor: 'from-pink-400 to-purple-500',
   },
   2: {
     name: '여단오',
@@ -95,7 +94,6 @@ const fanMeetingDataMap = {
     date: '2025.02.14 (금) 19:00',
     venue: '올림픽공원 올림픽홀',
     initial: '여',
-    bgColor: 'from-blue-400 to-cyan-500',
     bgColor: 'from-blue-400 to-cyan-500',
   },
   3: {
@@ -106,7 +104,6 @@ const fanMeetingDataMap = {
     venue: '마포아트센터',
     initial: '침',
     bgColor: 'from-green-400 to-emerald-500',
-    bgColor: 'from-green-400 to-emerald-500',
   },
   4: {
     name: '토모토모',
@@ -115,7 +112,6 @@ const fanMeetingDataMap = {
     date: '2025.04.05 (토) 19:00',
     venue: '부산문화회관',
     initial: '토',
-    bgColor: 'from-orange-400 to-red-500',
     bgColor: 'from-orange-400 to-red-500',
   },
   5: {
@@ -126,7 +122,6 @@ const fanMeetingDataMap = {
     venue: '강남아트센터',
     initial: '찰',
     bgColor: 'from-purple-400 to-indigo-500',
-    bgColor: 'from-purple-400 to-indigo-500',
   },
   6: {
     name: '뭐랭하맨',
@@ -135,7 +130,6 @@ const fanMeetingDataMap = {
     date: '2025.04.19 (토) 19:30',
     venue: '강남CGV',
     initial: '뭐',
-    bgColor: 'from-yellow-400 to-orange-500',
     bgColor: 'from-yellow-400 to-orange-500',
   },
   7: {
@@ -146,7 +140,6 @@ const fanMeetingDataMap = {
     venue: '강남스타일홀',
     initial: '빠',
     bgColor: 'from-teal-400 to-blue-500',
-    bgColor: 'from-teal-400 to-blue-500',
   },
   8: {
     name: '쯔양',
@@ -155,8 +148,6 @@ const fanMeetingDataMap = {
     date: '2025.05.03 (토) 19:00',
     venue: '강남맛집홀',
     initial: '쯔',
-    bgColor: 'from-rose-400 to-pink-500',
-  },
     bgColor: 'from-rose-400 to-pink-500',
   },
 }

@@ -3,9 +3,9 @@ import DesignGuidePage from '@/pages/DesignGuidePage.vue'
 import { reservationRoutes } from './reservation.js'
 
 import HomePage from '@/pages/HomePage.vue'
-import FanCardPage from '@/pages/FanCardPage.vue'
-import MarketPage from '@/pages/MarketPage.vue'
-import MyPage from '@/pages/MyPage.vue'
+import FanCardPage from '@/pages/fancard/FanCardPage.vue'
+import MarketPage from '@/pages/market/MarketPage.vue'
+import MyPage from '@/pages/mypage/MyPage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -26,33 +26,6 @@ const router = createRouter({
 
     // 예약 관련 라우트들
     ...reservationRoutes,
-
-    {
-      path: '/fan-meeting/:id',
-      name: 'FanMeetingDetail',
-      component: FanMeetingDetailPage,
-    },
-    {
-      path: '/seat-select/:id',
-      name: 'SeatSelect',
-      component: SeatSelectPage,
-    },
-    {
-      path: '/payment/:id',
-      name: 'Payment',
-      component: FanMeetingPaymentPage,
-    },
-    {
-      path: '/payment-success',
-      name: 'PaymentSuccess',
-      component: PaymentSuccessPage,
-    },
-    // 아래는 테스트용이라 추후 삭제 예정
-    {
-      path: '/reservation/detail',
-      name: 'FanMeetingDetailOld',
-      component: FanMeetingDetailPage,
-    },
 
     // {
     //   path: '/',

@@ -6,7 +6,7 @@
     <!-- White Container -->
     <div class="w-full max-w-[393px] mx-auto min-h-screen">
       <!-- Content with spacing -->
-      <div class="px-5 md:px-0 pt-5 pb-7 space-y-5">
+      <div class="px-5 md:px-0 pt-[68px] pb-7 space-y-5">
         <!-- Order Summary -->
         <div class="bg-white rounded-lg p-4">
           <div class="text-left">
@@ -122,31 +122,11 @@ const currentFanMeeting = computed(() => {
   return fanMeetingData[route.params.id] || fanMeetingData[1]
 })
 
-const cardInfo = ref({
-  number: '',
-  expiry: '',
-  cvc: '',
-  name: '',
-  name: '',
-})
 
 const canProceed = computed(() => {
   return agreedToTerms.value && selectedPaymentMethod.value
 })
 
-const formatCardNumber = () => {
-  let value = cardInfo.value.number.replace(/\D/g, '')
-  value = value.replace(/(\d{4})(?=\d)/g, '$1-')
-  cardInfo.value.number = value
-}
-
-const formatExpiry = () => {
-  let value = cardInfo.value.expiry.replace(/\D/g, '')
-  if (value.length >= 2) {
-    value = value.substring(0, 2) + '/' + value.substring(2, 4)
-  }
-  cardInfo.value.expiry = value
-}
 
 const processPayment = async () => {
   if (!canProceed.value) return
@@ -154,11 +134,8 @@ const processPayment = async () => {
 
   isProcessing.value = true
 
-
   try {
     // 결제 처리 시뮬레이션
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // 결제 완료 후 성공 페이지로 이동
@@ -169,10 +146,8 @@ const processPayment = async () => {
         seat: selectedSeat.value,
         amount: totalPrice.value.replace(',', ''),
       },
-        amount: totalPrice.value.replace(',', ''),
-      },
     })
-  } catch (error) {
+  } catch {
     alert('결제 처리 중 오류가 발생했습니다.')
   } finally {
     isProcessing.value = false

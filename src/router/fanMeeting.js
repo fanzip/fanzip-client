@@ -1,10 +1,7 @@
-import FanMeetingPage from '@/pages/FanMeetingPage.vue'
-import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
-import SeatSelectPage from '@/pages/SeatSelectPage.vue'
-import FanMeetingPaymentPage from '@/pages/FanMeetingPaymentPage.vue'
-import PaymentSuccessPage from '@/pages/PaymentSuccessPage.vue'
-import SeatSelectPage from '@/pages/SeatSelectPage.vue'
-import FanMeetingPaymentPage from '@/pages/FanMeetingPaymentPage.vue'
+import FanMeetingPage from '@/pages/reservation/FanMeetingPage.vue'
+import FanMeetingDetailPage from '@/pages/reservation/FanMeetingDetailPage.vue'
+import SeatSelectPage from '@/pages/reservation/SeatSelectPage.vue'
+import FanMeetingPaymentPage from '@/pages/reservation/FanMeetingPaymentPage.vue'
 import PaymentSuccessPage from '@/pages/PaymentSuccessPage.vue'
 
 export default [
