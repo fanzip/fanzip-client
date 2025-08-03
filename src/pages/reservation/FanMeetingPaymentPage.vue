@@ -143,7 +143,7 @@ const processPayment = async () => {
 
     // 결제 완료 후 성공 페이지로 이동
     router.push({
-      path: '/payment/success',
+      path: '/payments/success',
       query: {
         fanMeetingId: route.params.id,
         seat: selectedSeat.value,
