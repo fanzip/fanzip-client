@@ -16,6 +16,7 @@ import image3 from '../assets/influencer/침착맨.svg'
 import image4 from '../assets/influencer/침착맨2.svg'
 import image5 from '../assets/influencer/토모토모.svg'
 import image6 from '../assets/influencer/토모토모2.svg'
+import AppNav from '@/components/layout/AppNav.vue'
 
 const router = useRouter()
 const influencerStore = useInfluencerStore()
@@ -116,7 +117,7 @@ const influencers = [
     <SearchBar ref="searchBarRef" class="mb-1" />
     <div class="bg-subtle-bg p-2">
       <!-- 카드 리스트 -->
-      <div class="grid grid-cols-2 gap-4 mt-2 w-fit mx-auto">
+      <div class="grid grid-cols-2 gap-4 mt-2 w-fit mx-auto pb-20">
         <InfluencerCard
           v-for="influencer in influencers"
           :key="influencer.id"
@@ -128,5 +129,6 @@ const influencers = [
         />
       </div>
     </div>
+    <AppNav/>
   </div>
 </template>
