@@ -6,7 +6,7 @@
     <div id="payment-method" ref="paymentMethodRef" class="mt-16"></div>
 
     <!-- 이용약관 UI -->
-    <div id="agreement" ref="agreementRef" class="mt-44"></div>
+    <div id="agreement" ref="agreementRef" class="mt-36"></div>
 
     <!-- 결제하기 버튼 -->
      <div class="fixed bottom-14 left-0 right-0 flex justify-center">
@@ -86,7 +86,7 @@ export default {
           body: JSON.stringify({
             userId: 116353586,
             orderId: null,
-            reservationId: 2432675,
+            reservationId: 12358,
             membershipId: null,
             transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             paymentType: "RESERVATION",
