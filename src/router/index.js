@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '@/pages/HomePage.vue'
 import DesignGuidePage from '@/pages/DesignGuidePage.vue'
 import FanCardPage from '@/pages/fancard/FanCardPage.vue'
 import MarketPage from '@/pages/market/MarketPage.vue'
 import MyPage from '@/pages/mypage/MyPage.vue'
 import FanMeetingDetailPage from '@/pages/reservation/FanMeetingDetailPage.vue'
+// import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -16,9 +16,10 @@ import fanCardRoutes from './fanCard'
 import paymentRoutes from './payment'
 import { reservationRoutes } from './reservation.js'
 
+import InfluencerListPage from '@/pages/InfluencerListPage.vue'
 const routes = [
   // 기본 라우트
-  { path: '/', name: 'home', component: HomePage },
+  { path: '/', name: 'home', component: InfluencerListPage },
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
   { path: '/fancard', name: 'fancard', component: FanCardPage },
   { path: '/market', name: 'market', component: MarketPage },
@@ -41,6 +42,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior() {
+    // 페이지 이동 시 항상 맨 위로 이동
     return { top: 0 }
   },
 })
