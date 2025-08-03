@@ -22,6 +22,7 @@ const description = influencerStore.description
   <div class="bg-subtle-bg min-h-screen">
     <AppHeader type="back" />
     <MembershipProfile
+      class="mt-10"
       :name="influencerName"
       :image-url="profileImage"
       :cover-image="coverImage"
