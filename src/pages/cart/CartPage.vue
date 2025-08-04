@@ -7,10 +7,10 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import checkedBox from '@/assets/market/checked-box.svg'
 import uncheckedBox from '@/assets/market/unchecked-box.svg'
 import CartItem from '@/components/market/CartItem.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 
 const router = useRouter()
 
-// const address = ref('서울특별시 광진구 능동로 195-16, 602호')
 const cartData = ref({ items: [], grandTotal: 0, address: '' })
 
 // 로드 함수
@@ -63,14 +63,14 @@ async function deleteSelected() {
 
 // 주문하기 이동
 function goToOrder() {
-  router.push({ name: 'OrderPage' })
+  router.push({ name: 'market-order' })
 }
 </script>
 <template>
   <!-- 헤더 -->
   <AppHeader type="back-title-icons" title="장바구니" />
 
-  <div class="bg-base-bg pt-12 px-5">
+  <div class="bg-base-bg pt-12 px-5 fixed w-full">
     <!-- 배송지 -->
     <div v-if="cartData.address" class="flex items-start h-12 pt-3 text-base">
       <img src="@/assets/market/map-pin-black.svg" alt="map-pin" class="w-5 h-5" />
@@ -101,19 +101,24 @@ function goToOrder() {
   </div>
 
   <!-- 카트 항목 -->
-  <div class="bg-subtle-bg min-h-screen pb-20 pt-2">
+  <div class="bg-subtle-bg min-h-screen pb-20 pt-40">
     <div>
-      <!-- 3) 인플루언서별 그룹 & 아이템 -->
+      <!-- 인플루언서별 장바구니 아이템 내역 -->
       <div v-for="(items, seller) in groupedItems" :key="seller" class="mb-6">
         <!-- 그룹 헤더 -->
-        <div class="flex items-center bg-base-bg ml-5 mt-3 mr-5 p-3 rounded-t-lg">
-          <img
-            :src="items.every((i) => i.isSelected) ? checkedBox : uncheckedBox"
-            class="w-5 h-5 cursor-pointer mr-2"
-            @click="toggleGroup(seller, !items.every((i) => i.isSelected))"
-            alt="checkbox"
-          />
-          <span class="font-bold text-xl">{{ seller }}</span>
+        <div class="flex flex-col bg-base-bg ml-5 mt-3 mr-5 p-3 rounded-t-lg">
+          <div class="flex items-center">
+            <img
+              :src="items.every((i) => i.isSelected) ? checkedBox : uncheckedBox"
+              class="w-5 h-5 cursor-pointer mr-2"
+              @click="toggleGroup(seller, !items.every((i) => i.isSelected))"
+              alt="checkbox"
+            />
+            <span class="font-bold">{{ seller }}</span>
+          </div>
+
+          <!-- 구분선 -->
+          <hr class="w-full border-t border-nav-deactivated mt-2" />
         </div>
 
         <!-- CartItem 컴포넌트 -->
@@ -132,11 +137,9 @@ function goToOrder() {
   <nav
     class="fixed bottom-0 left-0 w-full h-20 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
   >
-    <div
-      class="w-[353px] h-12 bg-brand-primary rounded-xl font-semibold text-base flex items-center justify-center"
-    >
-      <span class="font-extrabold">{{ cartData.grandTotal.toLocaleString() }}</span
-      ><span> 원 주문하기</span>
-    </div>
+    <BaseButton variant="primary" size="lg" @click="goToOrder">
+      <span class="font-extrabold">{{ cartData.grandTotal.toLocaleString() }}원</span>
+      <span class="font-semibold">결제하기</span>
+    </BaseButton>
   </nav>
 </template>

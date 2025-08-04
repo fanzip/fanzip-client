@@ -1,6 +1,5 @@
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
-// import api from '@/api'
 import marketApi from '@/api/marketApi'
 
 import { ref, onMounted } from 'vue'
@@ -34,13 +33,6 @@ const product = ref({
 
 const cartAdded = ref(false)
 const currentSlide = ref(0)
-
-// const userApi = {
-//   getUserInfo: async () => {
-//     const res = await api.get('/api/user') // 헤더에 jwt 보내는 요청
-//     return res
-//   },
-// }
 
 onMounted(async () => {
   try {
@@ -106,7 +98,7 @@ function goToCart() {
 
 // **** 구매 프로세스로 이동 (추후에 수정)
 function goToPurchase() {
-  router.push({ name: 'PurchasePage', params: { productId } })
+  router.push({ name: 'market-order', params: { productId } })
 }
 </script>
 
