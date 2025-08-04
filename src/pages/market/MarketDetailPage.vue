@@ -1,6 +1,6 @@
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
-import api from '@/api'
+// import api from '@/api'
 import marketApi from '@/api/marketApi'
 
 import { ref, onMounted } from 'vue'
