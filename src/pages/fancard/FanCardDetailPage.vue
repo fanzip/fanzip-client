@@ -56,7 +56,7 @@ const fanCard = ref({
     <!-- 1. 상단 이미지 + 배지 -->
     <div class="relative w-full h-[180px] rounded-lg overflow-hidden shadow-md">
       <img :src="fanCard.imageUrl" alt="fan card" class="w-full h-full object-cover" />
-      <img :src="fanCard.gradeImg" alt="grade" class="absolute top-2 right-3 w-12 h-6" />
+      <img :src="fanCard.gradeImg" alt="grade" class="absolute top-2 right-3 w-[80px] h-[24px]" />
     </div>
 
     <!-- 2. 예약 안내 배너 -->
