@@ -4,6 +4,7 @@ import ListItem from '@/components/mypage/ListItem.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { computed, onMounted } from 'vue'
 import userApi from '@/api/userApi'
+import AppNav from '@/components/layout/AppNav.vue'
 
 const authStore = useAuthStore()
 const logout = authStore.logout
@@ -22,9 +23,9 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <AppHeader type="logo" />
-  <div class="w-full min-h-screen flex flex-col">
-    <div class="mt-5">
+  <div class="w-full flex flex-col">
+    <AppHeader type="logo" />
+    <div class="mt-12">
       <p class="text-xl font-bold ms-5">{{ userName }}님, 안녕하세요!</p>
       <div class="flex justify-between ms-5 w-32">
         <p class="text-xl">최고등급</p>
@@ -76,7 +77,7 @@ onMounted(async () => {
       <ListItem src="/src/assets/mypage/SadFace.svg" menu="회원탈퇴" gap="3"></ListItem>
     </div>
 
-    <div class="bg-subtle-bg py-3 pl-5">
+    <div class="bg-subtle-bg pt-3 px-5 pb-20">
       <div class="text-xs flex gap-5">
         <p>이용약관</p>
         <p>개인정보 처리방침</p>
@@ -87,4 +88,5 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+  <AppNav />
 </template>

@@ -21,11 +21,9 @@ const onClose = () => {
 </script>
 
 <template>
-  <AppHeader type="close"></AppHeader>
   <div class="w-full min-h-screen flex flex-col bg-subtle-bg p-5">
-    <div class="bg-white rounded-lg shadow-md max-w-md w-full">
-      <!-- 닫기 버튼 -->
-
+    <AppHeader type="close"></AppHeader>
+    <div class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
       <div class="p-5 flex flex-col">
         <img src="/src/assets/fancard/TomoTomo.svg" alt="" />
         <!-- <img :src="ticket.imgUrl" alt="ticket image" class="rounded-xl mb-2" /> -->
