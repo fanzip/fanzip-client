@@ -4,7 +4,6 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import ProductsList from '@/components/market/ProductsList.vue'
 
 import { ref, watch, onMounted } from 'vue'
-import axios from 'axios'
 import ScrollToTop from '@/components/market/ScrollToTop.vue'
 import AppNav from '@/components/layout/AppNav.vue'
 import marketApi from '@/api/marketApi'
