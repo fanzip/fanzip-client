@@ -8,6 +8,10 @@ const authApi = {
   },
   kakaoLogin: async (code) => {
     const res = await axios.get(`/api/auth/oauth/kakao-login?code=${code}`)
+    const accessToken = res.data.accessToken
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken)
+    }
     return res
   },
   requestLogout: async () => {
