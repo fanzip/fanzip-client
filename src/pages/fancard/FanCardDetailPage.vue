@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router' 
 import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
@@ -10,7 +11,19 @@ import iconCreditCard2 from '@/assets/fancard/icon-credit-card2.svg'
 import iconGift from '@/assets/fancard/icon-gift.svg'
 import iconFanzip from '@/assets/fancard/icon-fanzip.svg'
 
+const router = useRouter() 
+const route = useRoute() 
+const fanMeetingId = route.query.id 
+
+const goToTicket = (fanMeetingId) => {
+  router.push({
+    path: '/ticket',
+    query: { fanMeetingId } 
+  })
+}
+
 const fanCard = ref({
+  fanMeetingId: 123,
   nickname: '토모토모',
   grade: 'Silver',
   gradeImg: silverBadge,
@@ -49,7 +62,12 @@ const fanCard = ref({
     <!-- 2. 예약 안내 배너 -->
     <div class="w-full max-w-sm mx-auto mt-3 bg-base-bg rounded-lg shadow-md text-center py-3 text-sm font-semibold">
       예약한 팬미팅 내역이 있어요.<br />
-      <span class="text-base-text text-sm font-semibold">바로 확인하기</span>
+      <span
+        class="text-base-text text-sm font-semibold underline cursor-pointer"
+        @click="goToTicket(fanCard.fanMeetingId)"
+      >
+        바로 확인하기
+      </span>
     </div>
 
     <!-- 3. 기본 정보 박스 -->
