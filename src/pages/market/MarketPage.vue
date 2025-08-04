@@ -1,5 +1,5 @@
 <script setup>
-import SearchBar from '@/components/common/SearchBar.vue'
+import SearchBar from '@/components/market/MarketSearchBar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import ProductsList from '@/components/market/ProductsList.vue'
 
@@ -65,7 +65,7 @@ onMounted(() => {
   <AppHeader type="logo" />
 
   <!-- 검색 -->
-  <SearchBar v-model:keyword="keyword" />
+  <SearchBar class="pt-[68px]" v-model:keyword="keyword" />
 
   <div class="mb-20">
     <!-- 검색 결과 없는 경우 -->
