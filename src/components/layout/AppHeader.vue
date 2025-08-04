@@ -17,6 +17,10 @@ const router = useRouter()
 const goBack = () => {
   router.go(-1)
 }
+
+const goToCart = () => {
+  router.push('/cart')
+}
 </script>
 
 <template>
