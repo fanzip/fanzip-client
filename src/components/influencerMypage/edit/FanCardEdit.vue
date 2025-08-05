@@ -34,7 +34,7 @@ defineExpose({
       />
       <button
         v-else
-        class="flex items-center justify-center text-sm text-subtle-text bg-base-bg border border subtle-border px-4 py-2 rounded shadow"
+        class="flex items-center justify-center text-sm text-subtle-text bg-base-bg border subtle-border px-4 py-2 rounded shadow"
         @click="triggerUpload"
       >
         팬카드 이미지 등록
