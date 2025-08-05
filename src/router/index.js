@@ -4,6 +4,8 @@ import FanCardPage from '@/pages/fancard/FanCardPage.vue'
 import MarketPage from '@/pages/market/MarketPage.vue'
 import MyPage from '@/pages/mypage/MyPage.vue'
 import FanMeetingDetailPage from '@/pages/reservation/FanMeetingDetailPage.vue'
+import InfluencerListPage from '@/pages/InfluencerListPage.vue'
+import influencerMypage from './influencerMypage'
 // import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 
 import authRoutes from './auth'
@@ -14,9 +16,9 @@ import mypageRoutes from './mypage'
 import cartRoutes from './cart'
 import fanCardRoutes from './fanCard'
 import paymentRoutes from './payment'
+
 import { reservationRoutes } from './reservation.js'
 
-import InfluencerListPage from '@/pages/InfluencerListPage.vue'
 const routes = [
   // 기본 라우트
   { path: '/', name: 'home', component: InfluencerListPage },
@@ -36,6 +38,7 @@ const routes = [
   ...cartRoutes,
   ...paymentRoutes,
   ...reservationRoutes,
+  ...influencerMypage,
 ]
 
 const router = createRouter({
