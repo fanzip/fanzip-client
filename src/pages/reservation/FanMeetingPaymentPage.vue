@@ -8,28 +8,15 @@
       <!-- Content with spacing -->
       <div class="px-5 md:px-0 pt-[68px] pb-24 space-y-5">
         <!-- Order Summary -->
-        <div class="bg-white rounded-lg p-4">
+        <div class="bg-white rounded-lg p-5">
           <div class="text-left">
             <h1 class="text-xl font-bold text-black mb-3">주문 정보</h1>
             <h2 class="text-base text-black mb-1">{{ currentFanMeeting.title }}</h2>
             <p class="text-base mb-2 text-subtle-text">{{ currentFanMeeting.date }}</p>
             <div class="flex items-center mb-4">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                class="mr-1"
-              >
-                <path
-                  d="M21 10C21 17 12 23 12 23S3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"
-                  stroke="#808080"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="10" r="3" stroke="#808080" stroke-width="2" />
-              </svg>
-              <span class="text-black text-base">{{ currentFanMeeting.venue }}</span>
+              <img src="@/assets/market/map-pin-black.svg" alt="map-pin" class="w-5 h-5" />
+
+              <span class="text-black text-base pl-1">{{ currentFanMeeting.venue }}</span>
             </div>
 
             <div class="space-y-2 mb-4">
@@ -43,33 +30,26 @@
               </div>
             </div>
 
-            <hr class="mx-2 mb-4 border-subtle-border" />
+            <hr class="border-subtle-border" />
 
-            <div class="flex justify-between">
+            <div class="flex justify-between pt-5">
               <span class="text-black font-bold text-base">총 결제금액</span>
-              <span class="text-red-500 font-bold text-base">{{ totalPrice.toLocaleString() }}원</span>
+              <span class="text-text-emphasis font-bold text-base"
+                >{{ totalPrice.toLocaleString() }}원</span
+              >
             </div>
           </div>
         </div>
 
         <!-- Payment Method -->
-        <PaymentMethodSelector v-model="selectedPaymentMethod" />
+        <div class="bg-white rounded-xl p-5">
+          <BasePaymentOption v-model="selectedPaymentMethod" />
+        </div>
 
         <!-- Agreement -->
-        <div class="bg-white rounded-lg p-4 mt-5 mb-10">
-          <label class="flex items-start">
-            <input
-              type="checkbox"
-              v-model="agreedToTerms"
-              class="mt-1 mr-3 w-5 h-5 border-gray-300 rounded focus:ring-2 focus:ring-yellow-500 accent-brand-primary"
-              style="transform: scale(1.2)"
-            />
-            <span class="text-sm text-gray-700">
-              <span class="font-medium">결제 진행 동의</span><br />
-              주문 내용을 확인하였으며, 결제에 동의합니다.
-            </span>
-          </label>
-        </div>
+        <p class="text-xs text-subtle-text text-center">
+          주문내용을 확인하였으며, 정보 제공 등에 동의합니다.
+        </p>
       </div>
 
       <!-- Bottom Button -->
@@ -79,7 +59,8 @@
         :variant="canProceed ? 'primary' : 'cancel'"
         size="lg"
       >
-        {{ totalPrice.toLocaleString() }}원 결제하기
+        <span class="font-extrabold">{{ totalPrice.toLocaleString() }}원</span>
+        <span class="font-semibold">결제하기</span>
       </BottomButton>
 
       <!-- Loading Modal -->
@@ -103,7 +84,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomButton from '@/components/common/ButtonNav.vue'
-import PaymentMethodSelector from '@/components/common/PaymentMethodSelector.vue'
+import BasePaymentOption from '@/components/common/BasePaymentOption.vue'
 import { fanMeetingData } from '@/data/fanMeetingData.js'
 
 const router = useRouter()
@@ -112,8 +93,7 @@ const route = useRoute()
 const selectedSeat = ref('')
 const ticketPrice = ref(33000)
 const serviceFee = ref(3000)
-const selectedPaymentMethod = ref('kb')
-const agreedToTerms = ref(false)
+const selectedPaymentMethod = ref(null)
 const isProcessing = ref(false)
 
 const totalPrice = computed(() => {
@@ -125,15 +105,12 @@ const currentFanMeeting = computed(() => {
   return fanMeetingData[route.params.id] || fanMeetingData[1]
 })
 
-
 const canProceed = computed(() => {
-  return agreedToTerms.value && selectedPaymentMethod.value
+  return selectedPaymentMethod.value
 })
-
 
 const processPayment = async () => {
   if (!canProceed.value) return
-
 
   isProcessing.value = true
 
