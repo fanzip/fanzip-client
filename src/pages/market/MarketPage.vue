@@ -62,7 +62,7 @@ onMounted(() => {
 
 <template>
   <!-- 헤더 -->
-  <AppHeader type="logo" />
+  <AppHeader type="logo-icons" />
 
   <!-- 검색 -->
   <SearchBar class="pt-[68px]" v-model:keyword="keyword" />
