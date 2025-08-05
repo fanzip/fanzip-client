@@ -13,8 +13,8 @@ import { useRouter } from 'vue-router'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
-import FanMeetingSearch from '@/components/fanmeeting/FanMeetingSearch.vue'
-import FanMeetingList from '@/components/fanmeeting/FanMeetingList.vue'
+import FanMeetingSearch from '@/components/fanmeeting/main/FanMeetingSearch.vue'
+import FanMeetingList from '@/components/fanmeeting/main/FanMeetingList.vue'
 import { getFanMeetings } from '@/api/fanMeetingApi'
 
 const router = useRouter()
