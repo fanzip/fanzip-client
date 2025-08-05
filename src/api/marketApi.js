@@ -25,7 +25,7 @@ const marketApi = {
 
   // 장바구니 조회
   getCartItems: async () => {
-    const res = await api.get('api/cart/items')
+    const res = await api.get('/api/cart/items')
     return res.data
   },
 
