@@ -1,6 +1,6 @@
 <template>
-  <div class="mt-12 ml-5 mr-5">
-    <h2 class="text-center text-xl font-semibold text-base">결제하기</h2>
+  <div class="min-h-screen bg-subtle-bg px-5 pt-12">
+    <h2 class="text-center text-xl font-semibold text-text-base">결제하기</h2>
 
     <!-- 결제 UI -->
     <div id="payment-method" ref="paymentMethodRef" class="mt-16"></div>
@@ -9,24 +9,22 @@
     <div id="agreement" ref="agreementRef" class="mt-36"></div>
 
     <!-- 결제하기 버튼 -->
-     <div class="fixed bottom-14 left-0 right-0 flex justify-center">
-        <BaseButton 
-          variant="primary" 
-          :disabled="isLoading" 
-            @click="handlePayment"
-        >
+    <div class="fixed bottom-14 left-5 right-5 flex justify-center">
+      <BaseButton variant="primary" :disabled="isLoading" @click="handlePayment">
         <template v-if="!isLoading">
-            <span class="font-bold">
-              {{ isCouponApplied ? (baseAmount - discountAmount).toLocaleString() : baseAmount.toLocaleString() }}원
-            </span>
-            <span class="font-bold">결제하기</span>
+          <span class="font-bold">
+            {{
+              isCouponApplied
+                ? (baseAmount - discountAmount).toLocaleString()
+                : baseAmount.toLocaleString()
+            }}원
+          </span>
+          <span class="font-bold">결제하기</span>
         </template>
-        <template v-else>
-          처리 중...
-        </template>
+        <template v-else> 처리 중... </template>
       </BaseButton>
-      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -49,19 +47,19 @@ export default {
     let paymentId = null
     let backendPaymentData = null
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
-    const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY 
+    const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY
 
     const initializeTossPayments = async () => {
       try {
         const tossPayments = window.TossPayments(clientKey)
         widgets = tossPayments.widgets({ customerKey })
 
-        await widgets.setAmount({ currency: "KRW", value: baseAmount })
+        await widgets.setAmount({ currency: 'KRW', value: baseAmount })
         await nextTick()
 
         await Promise.all([
-          widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
-          widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" })
+          widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
+          widgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' }),
         ])
       } catch (error) {
         console.error('토스페이먼트 초기화 실패:', error)
@@ -71,10 +69,14 @@ export default {
     const generateOrderIdFromPaymentData = (data) => {
       const { paymentType, membershipId, reservationId, orderId, paymentId } = data
       switch (paymentType) {
-        case 'MEMBERSHIP': return `membership_${membershipId}_${paymentId}`
-        case 'RESERVATION': return `reservation_${reservationId}_${paymentId}`
-        case 'ORDER': return `order_${orderId}_${paymentId}`
-        default: return `payment_${paymentId}`
+        case 'MEMBERSHIP':
+          return `membership_${membershipId}_${paymentId}`
+        case 'RESERVATION':
+          return `reservation_${reservationId}_${paymentId}`
+        case 'ORDER':
+          return `order_${orderId}_${paymentId}`
+        default:
+          return `payment_${paymentId}`
       }
     }
 
@@ -89,19 +91,18 @@ export default {
             reservationId: 12358,
             membershipId: null,
             transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            paymentType: "RESERVATION",
-            paymentMethod: "TOSSPAY",
-            amount
-          })
+            paymentType: 'RESERVATION',
+            paymentMethod: 'TOSSPAY',
+            amount,
+          }),
         })
 
         if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
         const data = await response.json()
-        
+
         paymentId = data.paymentId
         backendPaymentData = data
         return generateOrderIdFromPaymentData(data)
-
       } catch (err) {
         console.error('❌ 백엔드 결제 요청 실패:', err)
         throw err
@@ -110,10 +111,14 @@ export default {
 
     const generateOrderName = ({ paymentType, membershipId, reservationId, orderId }) => {
       switch (paymentType) {
-        case 'MEMBERSHIP': return `멤버십 ${membershipId}번 결제`
-        case 'RESERVATION': return `예약 ${reservationId}번 결제`
-        case 'ORDER': return `주문 ${orderId}번 결제`
-        default: return "결제"
+        case 'MEMBERSHIP':
+          return `멤버십 ${membershipId}번 결제`
+        case 'RESERVATION':
+          return `예약 ${reservationId}번 결제`
+        case 'ORDER':
+          return `주문 ${orderId}번 결제`
+        default:
+          return '결제'
       }
     }
 
@@ -128,12 +133,12 @@ export default {
 
         await widgets.requestPayment({
           orderId: 'iv-C4woWgq8iis4PSz9vz',
-          orderName: '토스 티셔츠 외 2건',    
+          orderName: '토스 티셔츠 외 2건',
           successUrl: `${window.location.origin}/payments/success?paymentId=${paymentId}`,
           failUrl: `${window.location.origin}/payments/fail?paymentId=${paymentId}`,
-          customerEmail: "customer123@gmail.com",
-          customerName: "김토스",
-          customerMobilePhone: "01012341234",
+          customerEmail: 'customer123@gmail.com',
+          customerName: '김토스',
+          customerMobilePhone: '01012341234',
         })
       } catch (error) {
         console.error('결제 요청 실패:', error)
@@ -165,8 +170,8 @@ export default {
       isLoading,
       handlePayment,
       baseAmount,
-      discountAmount
+      discountAmount,
     }
-  }
+  },
 }
 </script>
