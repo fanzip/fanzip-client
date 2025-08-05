@@ -9,7 +9,7 @@ export default [
     component: () => import('@/pages/fancard/FanCardDetailPage.vue'),
   },
   {
-    path: '/ticket',
+    path: '/fancard/mobile-ticket',
     name: 'MobileTicketPage',
     component: MobileTicketPage,
     meta: { hideNavbar: true },

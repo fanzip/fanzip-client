@@ -6,7 +6,7 @@
     <!-- White Container -->
     <div class="w-full max-w-[393px] mx-auto min-h-screen">
       <!-- Content with spacing -->
-      <div class="px-5 md:px-0 pt-[68px] pb-7 space-y-5">
+      <div class="px-5 md:px-0 pt-[68px] pb-24 space-y-5">
         <!-- Order Summary -->
         <div class="bg-white rounded-lg p-4">
           <div class="text-left">
@@ -56,7 +56,7 @@
         <PaymentMethodSelector v-model="selectedPaymentMethod" />
 
         <!-- Agreement -->
-        <div class="bg-white rounded-lg p-4 mt-5">
+        <div class="bg-white rounded-lg p-4 mt-5 mb-10">
           <label class="flex items-start">
             <input
               type="checkbox"
@@ -148,6 +148,8 @@ const processPayment = async () => {
         fanMeetingId: route.params.id,
         seat: selectedSeat.value,
         amount: totalPrice.value,
+        reservationId: 12358, // TODO: 실제 예약 생성 후 받은 reservationId 사용
+        fromFanMeeting: 'true',
       },
     })
   } catch {
