@@ -1,4 +1,4 @@
-import axios from '@/api/axios'
+import axios from 'axios'
 
 export const getFanMeetings = async () => {
   const res = await axios.get('/fan-meetings')
