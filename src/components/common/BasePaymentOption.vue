@@ -17,25 +17,25 @@ const paymentMethods = [
 
 <template>
   <div class="bg-base-bg rounded-lg">
-    <h2 class="font-bold text-base mb-4">결제 방법</h2>
+    <h2 class="font-bold text-xl mb-4">결제 방법</h2>
 
     <div
       v-for="method in paymentMethods"
       :key="method.id"
-      class="flex items-center justify-between px-4 py-3 border rounded-lg mb-2 cursor-pointer"
-      :class="modelValue === method.id ? 'border-yellow-400' : 'border-gray-300'"
+      class="flex items-center justify-between px-4 py-2 border rounded-lg mb-2 cursor-pointer"
+      :class="modelValue === method.id ? 'border-brand-primary border-2' : 'border-subtle-border'"
       @click="$emit('update:modelValue', method.id)"
     >
       <div class="flex items-center gap-3">
-        <div class="relative w-4 h-4 rounded-full border border-[#DEDEDE] flex-shrink-0">
+        <div class="relative w-4 h-4 rounded-full border border-subtle-border flex-shrink-0">
           <div
             v-if="modelValue === method.id"
-            class="absolute top-1/2 left-1/2 w-[10px] h-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent"
+            class="absolute top-1/2 left-1/2 w-2.5 h-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent"
           ></div>
         </div>
 
         <img :src="method.icon" alt="logo" class="w-6 h-6" />
-        <span class="font-medium">{{ method.name }}</span>
+        <span class="font-normal">{{ method.name }}</span>
       </div>
     </div>
   </div>
