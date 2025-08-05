@@ -13,7 +13,7 @@ const redirectToKakao = async () => {
 
 <template>
   <div class="flex flex-col items-center mt-[230px]">
-    <img src="@/assets/common/Logo.svg" />
+    <img src="@/assets/common/login-logo.svg" />
 
     <button
       @click="redirectToKakao"
