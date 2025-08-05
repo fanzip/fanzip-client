@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import marketApi from '@/api/marketApi'
 
@@ -11,7 +11,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '' })
+const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
 
 // 로드 함수
 const loadCart = async () => {

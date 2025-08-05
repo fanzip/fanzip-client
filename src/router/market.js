@@ -9,14 +9,14 @@ export default [
     component: MarketPage,
   },
   {
+    path: '/market/order',
+    name: 'market-order',
+    component: MarketOrderPage,
+  },
+  {
     path: '/market/:productId',
     name: 'market-detail',
     component: MarketDetailPage,
     props: true, // productId를 props로 전달
-  },
-  {
-    path: '/market/order',
-    name: 'market-order',
-    component: MarketOrderPage,
   },
 ]
