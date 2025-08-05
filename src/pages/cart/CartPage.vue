@@ -19,15 +19,15 @@ const loadCart = async () => {
 }
 onMounted(loadCart)
 
-// 전체 선택 (토글)
-const allSelected = ref(false)
-watch(allSelected, (val) => {
-  toggleSelectAll(val)
+// 전체 선택
+const allSelected = computed({
+  get() {
+    return cartData.value.items.length > 0 && cartData.value.items.every((i) => i.isSelected)
+  },
+  async set(val) {
+    cartData.value = await marketApi.selectAll(val)
+  },
 })
-async function toggleSelectAll(val) {
-  allSelected.value = val
-  cartData.value = await marketApi.selectAll(val)
-}
 
 // 판매자별그룹핑
 const groupedItems = computed(() => {
@@ -68,7 +68,7 @@ function goToOrder() {
 </script>
 <template>
   <!-- 헤더 -->
-  <AppHeader type="back-title-icons" title="장바구니" />
+  <AppHeader type="back-title" title="장바구니" />
 
   <div class="bg-base-bg pt-12 px-5 fixed w-full">
     <!-- 배송지 -->
