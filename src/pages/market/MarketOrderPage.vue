@@ -111,16 +111,16 @@ const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
 // 바로 구매용 임시 product
 const buyItem = ref(null)
 
-// 1) 로드
+// 로드
 onMounted(async () => {
   cartData.value = await marketApi.getCartItems()
 })
 
 async function loadAll() {
-  // 1) 장바구니 정보
+  // 장바구니 정보
   cartData.value = await marketApi.getCartItems()
 
-  // 2) 바로 구매 모드라면 상세 조회
+  // 바로 구매 모드- 상세 조회
   if (route.query.type === 'buy') {
     const pid = Number(route.query.productId)
     const qty = Number(route.query.quantity) || 1
@@ -143,7 +143,6 @@ onMounted(loadAll)
 
 const orderItems = computed(() => {
   if (route.query.type === 'buy') {
-    // 비동기 로드가 끝나 buyItem.value 에 세팅됐다면,
     return buyItem.value ? [buyItem.value] : []
   }
   // 일반 장바구니 주문
@@ -154,32 +153,30 @@ const orderItems = computed(() => {
       totalPrice: i.discountedPrice * i.quantity,
     }))
 })
-// 3) 가격 계산
-// 3-1) 정가
+
+// 가격 계산
+// 정가
 const originalTotal = computed(() =>
   orderItems.value.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0),
 )
 
-// 3-2) 배송비
+// 배송비
 const shippingTotal = computed(() => orderItems.value.reduce((sum, i) => sum + i.shippingPrice, 0))
 
-// 3-3) 할인가
+// 할인가
 const discountTotal = computed(
-  () =>
-    originalTotal.value +
-    shippingTotal.value -
-    orderItems.value.reduce((sum, i) => sum + i.totalPrice, 0),
+  () => originalTotal.value - orderItems.value.reduce((sum, i) => sum + i.totalPrice, 0),
 )
 
-// 3-4) 할인가 + 배송비
+// 할인가 + 배송비
 const orderTotal = computed(
   () => orderItems.value.reduce((sum, i) => sum + i.totalPrice, 0) + shippingTotal.value,
 )
 
-// 4) 결제 방법 선택
+// 결제 방법 선택
 const selectedPayment = ref(null)
 
-// 5) 결제로 이동
+// 결제로 이동
 function goToPaymentPage() {
   console.log('주문 요청:', orderItems.value, selectedPayment.value)
   if (!selectedPayment.value) return
