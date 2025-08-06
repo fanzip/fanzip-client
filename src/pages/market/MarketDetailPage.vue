@@ -97,8 +97,15 @@ function goToCart() {
 }
 
 // **** 구매 프로세스로 이동 (추후에 수정)
-function goToPurchase() {
-  router.push({ name: 'market-order', params: { productId } })
+function goToOrder() {
+  router.push({
+    name: 'market-order',
+    query: {
+      type: 'buy',
+      productId: productId,
+      quantity: 1,
+    },
+  })
 }
 </script>
 
@@ -209,7 +216,7 @@ function goToPurchase() {
             <img src="@/assets/button/shopping-bag.svg" alt="장바구니" class="w-5 h-5" />
             장바구니 담기
           </BaseButton>
-          <BaseButton variant="buy" size="md" @click="goToPurchase">바로 구매하기</BaseButton>
+          <BaseButton variant="buy" size="md" @click="goToOrder">바로 구매하기</BaseButton>
         </div>
 
         <!-- 3-2. 장바구니 담은 후 -->

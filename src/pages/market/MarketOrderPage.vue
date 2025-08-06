@@ -105,29 +105,48 @@ import BaseButton from '@/components/common/BaseButton.vue'
 
 const route = useRoute()
 const router = useRouter()
+
 const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
 
-// 1) 로드
-const loadCart = async () => {
-  cartData.value = await marketApi.getCartItems()
-}
-onMounted(loadCart)
+// 바로 구매용 임시 product
+const buyItem = ref(null)
 
-// 2) 바로 구매 / 카트에서 구매
-const orderItems = computed(() => {
+// 1) 로드
+onMounted(async () => {
+  cartData.value = await marketApi.getCartItems()
+})
+
+async function loadAll() {
+  // 1) 장바구니 정보
+  cartData.value = await marketApi.getCartItems()
+
+  // 2) 바로 구매 모드라면 상세 조회
   if (route.query.type === 'buy') {
     const pid = Number(route.query.productId)
     const qty = Number(route.query.quantity) || 1
-    const prod = cartData.value.items.find((i) => i.productId === pid)
-    if (!prod) return []
-    return [
-      {
-        ...prod,
-        quantity: qty,
-        totalPrice: prod.discountedPrice * qty,
-      },
-    ]
+
+    const prod = await marketApi.getProductDetail(pid)
+    buyItem.value = {
+      productId: prod.productId,
+      productName: prod.name,
+      thumbnailImage: prod.thumbnailImage,
+      unitPrice: prod.price,
+      discountedPrice: prod.discountedPrice,
+      shippingPrice: prod.shippingPrice,
+      quantity: qty,
+      totalPrice: prod.discountedPrice * qty,
+    }
   }
+}
+
+onMounted(loadAll)
+
+const orderItems = computed(() => {
+  if (route.query.type === 'buy') {
+    // 비동기 로드가 끝나 buyItem.value 에 세팅됐다면,
+    return buyItem.value ? [buyItem.value] : []
+  }
+  // 일반 장바구니 주문
   return cartData.value.items
     .filter((i) => i.isSelected)
     .map((i) => ({
@@ -135,7 +154,6 @@ const orderItems = computed(() => {
       totalPrice: i.discountedPrice * i.quantity,
     }))
 })
-
 // 3) 가격 계산
 // 3-1) 정가
 const originalTotal = computed(() =>
@@ -164,6 +182,7 @@ const selectedPayment = ref(null)
 // 5) 결제로 이동
 function goToPaymentPage() {
   console.log('주문 요청:', orderItems.value, selectedPayment.value)
+  if (!selectedPayment.value) return
   router.push({ name: 'PaymentPage' })
 }
 </script>
