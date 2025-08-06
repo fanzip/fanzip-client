@@ -17,6 +17,7 @@
           <p class="text-xl font-semibold">{{ cartData.name }}</p>
           <p class="text-base font-medium text-subtle-text">{{ cartData.phone }}</p>
           <p class="text-base">{{ cartData.address }}</p>
+          <p class="text-base">({{ cartData.zipcode }})</p>
         </div>
 
         <!-- 구분선 -->
@@ -106,7 +107,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 const route = useRoute()
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
+const cartData = ref({ items: [], grandTotal: 0, address: '', name: '', zipcode: '' })
 
 // 바로 구매용 임시 product
 const buyItem = ref(null)
