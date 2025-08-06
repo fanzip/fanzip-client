@@ -22,6 +22,7 @@
           <p class="text-xl font-semibold">{{ cartData.name }}</p>
           <p class="text-base font-medium text-subtle-text">{{ cartData.phone }}</p>
           <p class="text-base">{{ cartData.address }}</p>
+          <p class="text-base">({{ cartData.zipcode }})</p>
         </div>
 
         <!-- 구분선 -->
@@ -74,7 +75,7 @@
     </div>
   </div>
 
-  <!-- 6) 결제 네비게이션 바 -->
+  <!-- 네비게이션 바 -->
   <AppNav />
 </template>
 
@@ -88,7 +89,7 @@ import marketApi from '@/api/marketApi'
 const route = useRoute()
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
+const cartData = ref({ items: [], grandTotal: 0, address: '', name: '', zipcode: '' })
 
 // 바로 구매용 임시 product
 const buyItem = ref(null)
@@ -154,14 +155,4 @@ const discountTotal = computed(
 const orderTotal = computed(
   () => orderItems.value.reduce((sum, i) => sum + i.totalPrice, 0) + shippingTotal.value,
 )
-
-// 결제 방법 선택
-const selectedPayment = ref(null)
-
-// 결제로 이동
-function goToPaymentPage() {
-  console.log('주문 요청:', orderItems.value, selectedPayment.value)
-  if (!selectedPayment.value) return
-  router.push({ name: 'PaymentPage' })
-}
 </script>
