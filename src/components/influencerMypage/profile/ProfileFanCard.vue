@@ -1,14 +1,17 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useInfluencerStore } from '@/stores/influencerStore'
 import Icon from '@/assets/membership/Vector.svg'
 import defaultFanCardImage from '@/assets/influencer/찰스엔터팬카드.svg'
 
 const router = useRouter()
+const route = useRoute()
 const influencerStore = useInfluencerStore()
 
+
 const goToEditFanCard = () => {
-  router.push('/influencer/profile/edit-fancard')
+  const influencerId = route.params.influencerId
+  router.push(`/influencers/${influencerId}/profile/edit-fancard`)
 }
 </script>
 
@@ -26,7 +29,7 @@ const goToEditFanCard = () => {
         :src="influencerStore.fanCardImage || defaultFanCardImage"
         class="w-full h-full object-cover"
         alt="팬카드 이미지"
-      />
+      />    
     </div>
   </div>
 </template>
