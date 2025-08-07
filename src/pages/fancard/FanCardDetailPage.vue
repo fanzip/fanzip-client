@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router' 
 import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import { fancardApi } from '@/api/fancardApi'
 
 import tomoTomoImg from '@/assets/fancard/TomoTomo.svg'
-import silverBadge from '@/assets/fancard/Silver.svg'
 import iconCreditCard from '@/assets/fancard/icon-credit-card.svg'
 import iconCreditCard2 from '@/assets/fancard/icon-credit-card2.svg'
 import iconGift from '@/assets/fancard/icon-gift.svg'
@@ -13,7 +13,7 @@ import iconFanzip from '@/assets/fancard/icon-fanzip.svg'
 
 const router = useRouter() 
 const route = useRoute() 
-const fanMeetingId = route.query.id 
+const cardId = route.params.id 
 
 const goToTicket = (fanMeetingId) => {
   router.push({
@@ -22,41 +22,109 @@ const goToTicket = (fanMeetingId) => {
   })
 }
 
-const fanCard = ref({
-  fanMeetingId: 123,
-  nickname: '토모토모',
-  grade: 'Silver',
-  gradeImg: silverBadge,
-  joinDate: '2025.07.16',
-  joinDday: 31,
-  monthlyFee: 9900,
-  totalPaid: 140000,
-  benefits: [
-    '팬미팅 오픈 <span class="font-bold">2일 전</span> 선예매',
-    '굿즈 오픈 <span class="font-bold">2일 전</span> 구매',
-    '한정판 굿즈 구매 기회',
-    '월 <span class="font-bold">₩2000</span> 추가시 <span class="text-brand-accent font-bold">GOLD</span> 업그레이드'
-  ],
-  history: [
-    { title: '구독 시작', amount: 13900, date: '2025.07.01', bold: true },
-    { title: '[촉촉 마스크팩] 구매', amount: 30000, date: '2025.07.02', bold: true },
-    { title: '[맛좋은 꿀떡] 구매', amount: 30000, date: '2025.07.02', bold: true },
-    { title: '[토모토모가 말해주는 국제 커플 팁 예매]', amount: 80000, date: '2025.07.02', bold: true },
-    { title: '구독 해지', amount: null, date: '2025.07.15', bold: true },
-  ],
-  imageUrl: tomoTomoImg
+const fanCard = ref(null)
+const isLoading = ref(false)
+const error = ref(null)
+
+const fetchFancardDetail = async () => {
+  try {
+    isLoading.value = true
+    error.value = null
+    
+    const response = await fancardApi.getFancardDetail(cardId)
+    const data = response.data
+    
+    fanCard.value = {
+      cardId: data.cardId,
+      cardNumber: data.cardNumber,
+      nickname: data.influencer?.name || '인플루언서',
+      grade: data.membership?.grade?.gradeName || 'Silver',
+      joinDate: formatDate(data.membership?.subscriptionStart),
+      joinDday: calculateDaysDiff(data.membership?.subscriptionStart),
+      monthlyFee: data.membership?.monthlyAmount || 0,
+      totalPaid: data.membership?.totalPaidAmount || 0,
+      benefits: formatBenefits(data.benefits || []),
+      history: [],
+      imageUrl: data.cardDesignUrl || tomoTomoImg
+    }
+  } catch (err) {
+    console.error('팬카드 상세 조회 실패:', err)
+    error.value = '팬카드 정보를 불러오는데 실패했습니다.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\./g, '.').slice(0, -1)
+}
+
+const calculateDaysDiff = (startDate) => {
+  if (!startDate) return 0
+  const start = new Date(startDate)
+  const now = new Date()
+  const diffTime = Math.abs(now - start)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays
+}
+
+const formatBenefits = (benefits) => {
+  return benefits.map(benefit => benefit.description || benefit)
+}
+
+const getBadgeClass = (grade) => {
+  switch (grade) {
+    case 'VIP':
+      return 'badge badge-vip'
+    case 'Gold':
+      return 'badge badge-gold'
+    case 'Silver':
+      return 'badge badge-silver'
+    case 'White':
+      return 'badge badge-white'
+    default:
+      return 'badge badge-silver'
+  }
+}
+
+onMounted(() => {
+  fetchFancardDetail()
 })
 </script>
 
 <template>
   <AppHeader type="back" />
 
-  <div class="bg-subtle-bg min-h-screen pt-24 pb-28 flex flex-col">
+  <!-- 로딩 상태 -->
+  <div v-if="isLoading" class="flex items-center justify-center min-h-screen bg-subtle-bg">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+  </div>
+
+  <!-- 에러 상태 -->
+  <div v-else-if="error" class="flex flex-col items-center justify-center min-h-screen bg-subtle-bg px-5">
+    <p class="text-text-emphasis text-center mb-4">{{ error }}</p>
+    <button 
+      @click="fetchFancardDetail"
+      class="px-4 py-2 bg-brand-primary text-black rounded-lg hover:bg-brand-accent"
+    >
+      다시 시도
+    </button>
+  </div>
+
+  <!-- 팬카드 정보 -->
+  <div v-else-if="fanCard" class="bg-subtle-bg min-h-screen pt-24 pb-28 flex flex-col">
 
     <!-- 1. 상단 이미지 + 배지 -->
     <div class="relative mx-5 h-[180px] rounded-lg overflow-hidden shadow-md">
-      <img :src="fanCard.imageUrl" alt="fan card" class="w-full h-full object-cover rounded-lg" />
-      <img :src="fanCard.gradeImg" alt="grade" class="absolute top-2 right-2 w-[80px] h-[24px]" />
+      <img :src="fanCard.imageUrl" alt="fan card" class="w-full h-full object-cover rounded-lg fancard-image" />
+      <span :class="getBadgeClass(fanCard.grade)" class="absolute top-2 right-2">
+        {{ fanCard.grade }}
+      </span>
     </div>
 
     <!-- 2. 예약 안내 배너 (20px 아래) -->
@@ -76,7 +144,7 @@ const fanCard = ref({
       <div class="bg-base-bg rounded-lg shadow-md p-4 space-y-3">
         <div class="flex items-center gap-2">
           <span class="font-bold text-base-text text-base">{{ fanCard.nickname }}</span>
-          <img :src="fanCard.gradeImg" alt="grade" class="w-[80px] h-[24px]" />
+          <span :class="getBadgeClass(fanCard.grade)">{{ fanCard.grade }}</span>
         </div>
         <p class="text-sm subtle-text flex items-center gap-2">
           <span>가입일</span>
@@ -136,3 +204,9 @@ const fanCard = ref({
     <app-nav class="fixed bottom-0 left-0 w-full" />
   </div>
 </template>
+
+<style scoped>
+.fancard-image {
+  /* 이미지 기본 표시 */
+}
+</style>
