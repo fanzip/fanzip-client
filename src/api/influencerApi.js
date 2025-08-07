@@ -1,11 +1,12 @@
-import axios from './axios'
+import api from './index'
 
-const API_BASE_URL = '/influencers'
+const API_BASE_URL = '/api/influencers'
 
 // 인플루언서 프로필 조회
 export const getInfluencerProfile = async (influencerId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/${influencerId}/profile`)
+    const response = await api.get(`${API_BASE_URL}/${influencerId}/profile`)
+    console.log('API 응답 전체:', response.data)
     return response.data
   } catch (error) {
     console.error('인플루언서 프로필 조회 실패:', error)
@@ -16,7 +17,7 @@ export const getInfluencerProfile = async (influencerId) => {
 // 인플루언서 프로필 수정
 export const updateInfluencerProfile = async (influencerId, profileData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/${influencerId}/profile`, profileData)
+    const response = await api.put(`${API_BASE_URL}/${influencerId}/profile`, profileData)
     return response.data
   } catch (error) {
     console.error('인플루언서 프로필 수정 실패:', error)
@@ -27,7 +28,14 @@ export const updateInfluencerProfile = async (influencerId, profileData) => {
 // 인플루언서 프로필 이미지 업로드
 export const updateInfluencerProfileImage = async (influencerId, imageData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/${influencerId}/profile/image`, imageData)
+    const formData = new FormData()
+    formData.append('file', imageData)
+    
+    const response = await api.post(`${API_BASE_URL}/${influencerId}/profile/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {
     console.error('인플루언서 프로필 이미지 업로드 실패:', error)
@@ -38,7 +46,14 @@ export const updateInfluencerProfileImage = async (influencerId, imageData) => {
 // 인플루언서 팬카드 이미지 업로드
 export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/${influencerId}/fancard/image`, imageData)
+    const formData = new FormData()
+    formData.append('file', imageData)
+    
+    const response = await api.post(`${API_BASE_URL}/${influencerId}/fancard/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {
     console.error('인플루언서 팬카드 이미지 업로드 실패:', error)
