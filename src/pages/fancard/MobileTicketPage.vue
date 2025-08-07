@@ -1,19 +1,53 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
 import { fancardApi } from '@/api/fancardApi'
+import { useAuthStore } from '@/stores/authStore'
 
-// TODO: 팬미팅 정보 api 연동
-const ticket = {
-  imgUrl: '/images/fanmeeting.jpg', // 팬미팅 이미지
-  title: "2025 여단오 팬미팅 '내가 제일 예뻐'",
-  location: '올림픽공원 체조경기장',
-  date: '8/15',
-  dayOfWeek: '목',
-  time: '19:00',
-  seat: 'F9',
-  qrUrl: '/images/qr.png', // QR 이미지
+// 팬미팅 정보를 query에서 가져옴
+const route = useRoute()
+const authStore = useAuthStore()
+
+const ticket = ref({
+  imgUrl: '/images/fanmeeting.jpg',
+  title: "팬미팅 정보를 불러오는 중...",
+  location: '',
+  date: '',
+  dayOfWeek: '',
+  time: '',
+  seat: '',
+  qrUrl: '/images/qr.png',
+})
+
+// 현재 로그인한 사용자 ID 가져오기
+const getCurrentUserId = () => {
+  return authStore.user?.id || 1 // fallback to 1 for testing
+}
+
+// 예약 정보로부터 티켓 정보 업데이트
+const updateTicketFromReservation = (reservation) => {
+  if (!reservation) return
+  
+  const meetingDate = new Date(reservation.meetingDate)
+  const dateStr = `${meetingDate.getMonth() + 1}/${meetingDate.getDate()}`
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토']
+  const dayOfWeek = dayNames[meetingDate.getDay()]
+  const timeStr = meetingDate.toLocaleTimeString('ko-KR', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: false 
+  })
+  
+  ticket.value = {
+    ...ticket.value,
+    title: reservation.meetingTitle || ticket.value.title,
+    location: reservation.venueName || ticket.value.location,
+    date: dateStr,
+    dayOfWeek: dayOfWeek,
+    time: timeStr,
+    seat: reservation.seatNumber || ticket.value.seat
+  }
 }
 
 // QR 코드 관련 상태
@@ -82,9 +116,9 @@ const generateQrCode = async () => {
     console.log('현재 위치:', currentLocation.value) // 디버깅용
 
     const qrRequest = {
-      reservationId: 1, // TODO: 실제 예약 ID로 변경
-      userId: 1, // TODO: 로그인한 사용자 ID로 변경
-      fanMeetingId: 1, // TODO: 실제 팬미팅 ID로 변경
+      reservationId: route.query.reservationId || 1,
+      userId: getCurrentUserId(), // 로그인한 사용자 ID
+      fanMeetingId: route.query.fanMeetingId || 1,
       latitude: currentLocation.value.latitude,
       longitude: currentLocation.value.longitude,
       deviceInfo: navigator.userAgent,
@@ -102,6 +136,11 @@ const generateQrCode = async () => {
     }
 
     qrData.value = response.data
+    
+    // QR 응답에 예약 정보가 있으면 티켓 정보 업데이트
+    if (response.data.reservation) {
+      updateTicketFromReservation(response.data.reservation)
+    }
 
     // 30초 타이머 시작
     startQrTimer()
@@ -141,11 +180,7 @@ const checkLocationPermission = async () => {
   }
 }
 
-const onClose = () => {
-  // 닫기 처리 (예: emit or router.back())
-  //   router.back()
-  console.log('닫기')
-}
+// onClose 함수는 AppHeader의 close 타입에서 자동으로 처리됨
 
 onMounted(() => {
   checkLocationPermission()
