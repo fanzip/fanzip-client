@@ -7,32 +7,32 @@ import EditFanCardPage from '@/pages/influencerMypage/EditFanCardPage.vue'
 
 export default [
   {
-    path: '/influencer-mypage',
-    name: 'influencer-mypage',
+    path: '/influencers-mypage',
+    name: 'influencers-mypage',
     component: InfluencerMyPage,
   },
   {
-    path: '/influencer/profile',
+    path: '/influencers/:influencerId/profile',
     name: 'InfluencerProfile',
     component: ProfilePage,
   },
   {
-    path: '/influencer/profile/edit-name',
+    path: '/influencers/:influencerId/profile/edit-name',
     name: 'EditName',
     component: EditNamePage,
   },
   {
-    path: '/influencer/profile/edit-category',
+    path: '/influencers/:influencerId/profile/edit-category',
     name: 'EditCategory',
     component: EditCategoryPage,
   },
   {
-    path: '/influencer/profile/edit-intro',
+    path: '/influencers/:influencerId/profile/edit-intro',
     name: 'EditIntro',
     component: EditIntroPage,
   },
   {
-    path: '/influencer/profile/edit-fancard',
+    path: '/influencers/:influencerId/profile/edit-fancard',
     name: 'EditFanCard',
     component: EditFanCardPage,
   },
