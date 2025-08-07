@@ -1,21 +1,47 @@
 <script setup>
 import Icon from '@/assets/membership/Vector.svg'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useInfluencerStore } from '@/stores/influencerStore'
 
+const categoryMapping = {
+  'BEAUTY': '뷰티',
+  'GAME': '게임',
+  'DAILY': '일상',
+  'FASHION': '패션',
+  'COOKING': '요리',
+  'HEALTH': '다이어트/건강',
+  'PET': '반려동물',
+  'KIDS': '키즈',
+  'EDUCATION': '교육/지식',
+  'TRAVEL': '여행',
+  'MUSIC': '음악',
+  'FITNESS': '운동',
+  'SPORTS': '스포츠',
+  'LANGUAGE': '언어',
+  'ETC': '기타',
+}
+
+const getCategoryDisplayName = (category) => {
+  return categoryMapping[category] || category || ''
+}
+
 const router = useRouter()
+const route = useRoute()
 const influencerStore = useInfluencerStore()
 
 const goToEditName = () => {
-  router.push('/influencer/profile/edit-name')
+  const influencerId = route.params.influencerId
+  router.push(`/influencers/${influencerId}/profile/edit-name`)
 }
 
 const goToEditCategory = () => {
-  router.push('/influencer/profile/edit-category')
+  const influencerId = route.params.influencerId
+  router.push(`/influencers/${influencerId}/profile/edit-category`)
 }
 
 const goToEditIntro = () => {
-  router.push('/influencer/profile/edit-intro')
+  const influencerId = route.params.influencerId
+  router.push(`/influencers/${influencerId}/profile/edit-intro`)
 }
 </script>
 
@@ -39,7 +65,7 @@ const goToEditIntro = () => {
     <div class="flex items-center justify-between">
       <span class="text-sm text-base">카테고리</span>
       <div class="flex items-center gap-1">
-        <span class="text-sm text-base">{{ influencerStore.category }}</span>
+        <span class="text-sm text-base">{{ getCategoryDisplayName(influencerStore.category) }}</span>
         <img
           :src="Icon"
           alt=">"
