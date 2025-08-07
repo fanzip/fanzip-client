@@ -10,8 +10,8 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const ticket = ref({
-  imgUrl: null, // MySQL에서 받아올 팬카드 이미지
-  title: "팬미팅 정보를 불러오는 중...",
+  imgUrl: '/images/fanmeeting.jpg',
+  title: '팬미팅 정보를 불러오는 중...',
   location: '',
   date: '',
   dayOfWeek: '',
@@ -19,14 +19,6 @@ const ticket = ref({
   seat: '',
   qrUrl: '/images/qr.png',
 })
-
-const imageError = ref(false)
-
-const handleImageError = (event) => {
-  console.warn('티켓 이미지 로드 실패')
-  imageError.value = true
-  event.target.style.display = 'none'
-}
 
 // 현재 로그인한 사용자 ID 가져오기
 const getCurrentUserId = () => {
@@ -36,17 +28,17 @@ const getCurrentUserId = () => {
 // 예약 정보로부터 티켓 정보 업데이트
 const updateTicketFromReservation = (reservation) => {
   if (!reservation) return
-  
+
   const meetingDate = new Date(reservation.meetingDate)
   const dateStr = `${meetingDate.getMonth() + 1}/${meetingDate.getDate()}`
   const dayNames = ['일', '월', '화', '수', '목', '금', '토']
   const dayOfWeek = dayNames[meetingDate.getDay()]
-  const timeStr = meetingDate.toLocaleTimeString('ko-KR', { 
-    hour: '2-digit', 
+  const timeStr = meetingDate.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
     minute: '2-digit',
-    hour12: false 
+    hour12: false,
   })
-  
+
   ticket.value = {
     ...ticket.value,
     title: reservation.meetingTitle || ticket.value.title,
@@ -54,7 +46,7 @@ const updateTicketFromReservation = (reservation) => {
     date: dateStr,
     dayOfWeek: dayOfWeek,
     time: timeStr,
-    seat: reservation.seatNumber || ticket.value.seat
+    seat: reservation.seatNumber || ticket.value.seat,
   }
 }
 
@@ -144,14 +136,10 @@ const generateQrCode = async () => {
     }
 
     qrData.value = response.data
-    
+
     // QR 응답에 예약 정보가 있으면 티켓 정보 업데이트
     if (response.data.reservation) {
       updateTicketFromReservation(response.data.reservation)
-      // 팬카드 이미지도 업데이트 (MySQL에서 받아온 데이터)
-      if (response.data.fanCardImage) {
-        ticket.value.imgUrl = response.data.fanCardImage
-      }
     }
 
     // 30초 타이머 시작
@@ -210,16 +198,16 @@ onUnmounted(() => {
     <AppHeader type="close"></AppHeader>
     <div class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
       <div class="p-5 flex flex-col">
-        <img 
-          v-if="!imageError && ticket.imgUrl" 
-          :src="ticket.imgUrl" 
-          alt="ticket image" 
-          class="rounded-xl mb-2" 
+        <img
+          v-if="!imageError && ticket.imgUrl"
+          :src="ticket.imgUrl"
+          alt="ticket image"
+          class="rounded-xl mb-2"
           @error="handleImageError"
         />
         <!-- 이미지 로드 실패 시 표시할 fallback -->
-        <div 
-          v-else 
+        <div
+          v-else
           class="w-full h-32 bg-gray-200 flex items-center justify-center text-gray-500 text-sm rounded-xl mb-2"
         >
           이미지를 불러올 수 없습니다
