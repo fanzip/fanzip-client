@@ -10,14 +10,19 @@ export const useInfluencerStore = defineStore('influencer', () => {
   const coverImage = ref('')
   const category = ref('일상')
   const fanCardImage = ref(FanCard)
+  
 
-  function setInfluencer(payload) {
+  function setInfluencer(payload) {    
+    console.log([payload])
     name.value = payload.name
     description.value = payload.description
     profileImage.value = payload.profileImage
     coverImage.value = payload.coverImage
-    fanCardImage.value = payload.fanCardImage || ''
-    if (payload.category) category.value = payload.category
+    // fanCardImage가 null이거나 빈 값이면 기존 값 유지
+    if (payload.fanCardImage) {
+      fanCardImage.value = payload.fanCardImage
+    }
+    category.value = payload.category || ''
   }
 
   function resetInfluencer() {
