@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineExpose } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -21,13 +21,14 @@ const router = useRouter()
 const searchRef = ref(null)
 const meetings = ref([])
 
-const onKeywordChange = (val) => {
-  keyword.value = val
-}
+// 검색 키워드 변경 핸들러 (현재 미사용)
 
 
 const filteredMeetings = computed(() => {
   const keyword = searchRef.value?.searchBarRef?.keyword || ''
+  if (!Array.isArray(meetings.value)) {
+    return []
+  }
   return meetings.value.filter((m) =>
     m.title.toLowerCase().includes(keyword.toLowerCase())
   )
@@ -38,9 +39,11 @@ const goToDetail = (id) => {
 
 onMounted(async () => {
   try {
-    meetings.value = await getFanMeetings()
+    const result = await getFanMeetings()
+    meetings.value = Array.isArray(result) ? result : []
   } catch (e) {
     console.error('팬미팅 조회 실패:', e)
+    meetings.value = []
   }
 })
 </script>
