@@ -10,7 +10,7 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const ticket = ref({
-  imgUrl: '/images/fanmeeting.jpg',
+  imgUrl: null, // MySQL에서 받아올 팬카드 이미지
   title: '팬미팅 정보를 불러오는 중...',
   location: '',
   date: '',
@@ -19,6 +19,14 @@ const ticket = ref({
   seat: '',
   qrUrl: '/images/qr.png',
 })
+
+const imageError = ref(false)
+
+const handleImageError = (event) => {
+  console.warn('티켓 이미지 로드 실패')
+  imageError.value = true
+  event.target.style.display = 'none'
+}
 
 // 현재 로그인한 사용자 ID 가져오기
 const getCurrentUserId = () => {
@@ -140,6 +148,10 @@ const generateQrCode = async () => {
     // QR 응답에 예약 정보가 있으면 티켓 정보 업데이트
     if (response.data.reservation) {
       updateTicketFromReservation(response.data.reservation)
+      // 팬카드 이미지도 업데이트 (MySQL에서 받아온 데이터)
+      if (response.data.fanCardImage) {
+        ticket.value.imgUrl = response.data.fanCardImage
+      }
     }
 
     // 30초 타이머 시작
