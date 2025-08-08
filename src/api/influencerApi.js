@@ -30,7 +30,7 @@ export const updateInfluencerProfileImage = async (influencerId, imageData) => {
   try {
     const formData = new FormData()
     formData.append('file', imageData)
-    
+
     const response = await api.post(`${API_BASE_URL}/${influencerId}/profile/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -48,7 +48,7 @@ export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
   try {
     const formData = new FormData()
     formData.append('file', imageData)
-    
+
     const response = await api.post(`${API_BASE_URL}/${influencerId}/fancard/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -60,3 +60,24 @@ export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
     throw error
   }
 }
+
+const influencerApi = {
+  // 인플루언서 목록 전체 조회
+  fetchAll: async () => {
+    const res = await api.get('/api/influencers')
+    return res.data
+  },
+
+  // 인플루언서 목록 상세 조회
+  fetchDetail: async (influencerId) => {
+    try {
+      const res = await api.get(`/api/influencers/${influencerId}`)
+      console.log('📦 fetchDetail API 응답 전체:', res)
+      return res.data
+    } catch (e) {
+      console.error('❌ fetchDetail API 실패:', e.response?.data || e.message)
+      return undefined
+  }}
+}
+
+export default influencerApi

@@ -1,30 +1,19 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { useInfluencerStore } from '@/stores/influencerStore'
 
 const props = defineProps({
   id: Number,
   name: String,
   profileImage: String,
-  coverImage: String,
   description: String,
 })
 
 const router = useRouter()
 
-const influencerStore = useInfluencerStore()
 const goToMembershipSelect = () => {
-  // Pinia에 저장
-  influencerStore.setInfluencer({
-    id: props.id,
-    name: props.name,
-    profileImage: props.profileImage,
-    coverImage: props.coverImage,
-    description: props.description,
-  })
 
   // 다음 페이지로 이동
-  router.push('/membership/select')
+  router.push(`/membership/select/${props.id}`)
 }
 </script>
 
