@@ -20,10 +20,10 @@ defineProps({
       <!-- 이름 -->
       <p class="text-lg font-bold mb-1">{{ name }}</p>
 
-      <!-- 소개 텍스트 -->
-      <p class="text-sm text-gray-700 leading-snug whitespace-pre-line">
-        {{ description }}
-      </p>
+        <!-- 소개 텍스트 -->
+        <p class="text-sm text-gray-700 leading-snug whitespace-pre-line">
+          {{ description || '소개글이 없습니다.' }}
+        </p>
     </div>
   </div>
 </template>
