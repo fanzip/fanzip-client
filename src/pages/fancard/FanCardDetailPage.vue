@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { fancardApi } from '@/api/fancardApi'
+import { useAuthStore } from '@/stores/authStore'
 
 import tomoTomoImg from '@/assets/fancard/TomoTomo.svg'
 import iconCreditCard from '@/assets/fancard/icon-credit-card.svg'
@@ -13,7 +14,8 @@ import iconFanzip from '@/assets/fancard/icon-fanzip.svg'
 
 const router = useRouter() 
 const route = useRoute() 
-const cardId = route.params.id 
+const cardId = route.params.id
+const authStore = useAuthStore() 
 
 const goToTicket = (fanMeetingId) => {
   router.push({
@@ -31,6 +33,14 @@ const fetchFancardDetail = async () => {
     isLoading.value = true
     error.value = null
     
+    // 개발 환경에서 토큰이 없는 경우 테스트 토큰 설정 (user_id: 8 for 하경한)
+    if (import.meta.env.DEV && !authStore.token) {
+      console.warn('개발 환경: 테스트 JWT 토큰 설정 (user_id: 8)')
+      const testToken =
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBQ0NFU1NfVE9LRU4iLCJ1c2VySWQiOjgsImlhdCI6MTc1NDUzMjYxMSwiZXhwIjoxNzU0NTM0NDExfQ.nkTxBnNSQtR-gojKR89QV4hCQ9xNAZAWDMYyKuIrMdU'
+      authStore.setToken(testToken)
+    }
+    
     const response = await fancardApi.getFancardDetail(cardId)
     const data = response.data
     
@@ -45,7 +55,7 @@ const fetchFancardDetail = async () => {
       totalPaid: data.membership?.totalPaidAmount || 0,
       benefits: formatBenefits(data.benefits || []),
       history: [],
-      imageUrl: data.cardDesignUrl || tomoTomoImg
+      imageUrl: data.cardDesignUrl // MySQL에서 받은 URL 그대로 사용
     }
   } catch (err) {
     console.error('팬카드 상세 조회 실패:', err)
@@ -75,6 +85,14 @@ const calculateDaysDiff = (startDate) => {
 
 const formatBenefits = (benefits) => {
   return benefits.map(benefit => benefit.description || benefit)
+}
+
+const imageError = ref(false)
+
+const handleImageError = (event) => {
+  console.warn(`팬카드 이미지 로드 실패`)
+  imageError.value = true
+  event.target.style.display = 'none' // 실패한 이미지 숨김
 }
 
 const getBadgeClass = (grade) => {
@@ -121,7 +139,20 @@ onMounted(() => {
 
     <!-- 1. 상단 이미지 + 배지 -->
     <div class="relative mx-5 h-[180px] rounded-lg overflow-hidden shadow-md">
-      <img :src="fanCard.imageUrl" alt="fan card" class="w-full h-full object-cover rounded-lg fancard-image" />
+      <img 
+        v-if="!imageError && fanCard.imageUrl" 
+        :src="fanCard.imageUrl" 
+        alt="fan card" 
+        class="w-full h-full object-cover rounded-lg fancard-image" 
+        @error="handleImageError" 
+      />
+      <!-- 이미지 로드 실패 시 표시할 fallback -->
+      <div 
+        v-else 
+        class="w-full h-[180px] bg-gray-200 flex items-center justify-center text-gray-500 text-sm rounded-lg fancard-detail-fallback"
+      >
+        이미지를 불러올 수 없습니다
+      </div>
       <span :class="getBadgeClass(fanCard.grade)" class="absolute top-2 right-2">
         {{ fanCard.grade }}
       </span>
@@ -208,5 +239,11 @@ onMounted(() => {
 <style scoped>
 .fancard-image {
   /* 이미지 기본 표시 */
+}
+
+.fancard-detail-fallback {
+  /* Detail 페이지 fallback div 크기 고정 */
+  width: 100% !important;
+  height: 180px !important;
 }
 </style>

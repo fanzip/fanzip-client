@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 const instance = axios.create({
   withCredentials: true, //쿠키 전송
-  timeout: 1000, //1초 안에 응답이 오지 않으면 요청을 취소하고 timeout error 발생
+  timeout: 10000, //10초 안에 응답이 오지 않으면 요청을 취소하고 timeout error 발생
 })
 
 instance.interceptors.request.use(
