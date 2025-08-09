@@ -19,7 +19,7 @@ const authStore = useAuthStore()
 
 const goToTicket = (fanMeetingId) => {
   router.push({
-    path: '/ticket',
+    path: '/fancard/mobile-ticket',
     query: { fanMeetingId } 
   })
 }
