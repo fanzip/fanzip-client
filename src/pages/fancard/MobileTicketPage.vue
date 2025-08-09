@@ -1,22 +1,28 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { fancardApi } from '@/api/fancardApi'
 import { useAuthStore } from '@/stores/authStore'
 
 // 팬미팅 정보를 query에서 가져옴
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
+// 닫기 버튼 클릭 시 이전 페이지로 돌아가기
+const handleClose = () => {
+  router.go(-1)
+}
+
 const ticket = ref({
-  imgUrl: null, // MySQL에서 받아올 팬카드 이미지
-  title: '팬미팅 정보를 불러오는 중...',
-  location: '',
-  date: '',
-  dayOfWeek: '',
-  time: '',
-  seat: '',
+  imgUrl: '/src/assets/fancard/YeoDanO.svg', // 시연용 이미지
+  title: '여단오 팬미팅 <여단오와 함께하는 특별한 시간>',
+  location: '서울시 강남구 코엑스 컨벤션센터 A홀',
+  date: '1/15',
+  dayOfWeek: '수',
+  time: '19:00',
+  seat: 'A열 5번',
   qrUrl: '/images/qr.png',
 })
 
@@ -145,14 +151,15 @@ const generateQrCode = async () => {
 
     qrData.value = response.data
 
+    // 시연용으로 티켓 정보는 업데이트하지 않음
     // QR 응답에 예약 정보가 있으면 티켓 정보 업데이트
-    if (response.data.reservation) {
-      updateTicketFromReservation(response.data.reservation)
-      // 팬카드 이미지도 업데이트 (MySQL에서 받아온 데이터)
-      if (response.data.fanCardImage) {
-        ticket.value.imgUrl = response.data.fanCardImage
-      }
-    }
+    // if (response.data.reservation) {
+    //   updateTicketFromReservation(response.data.reservation)
+    //   // 팬카드 이미지도 업데이트 (MySQL에서 받아온 데이터)
+    //   if (response.data.fanCardImage) {
+    //     ticket.value.imgUrl = response.data.fanCardImage
+    //   }
+    // }
 
     // 30초 타이머 시작
     startQrTimer()
@@ -207,7 +214,7 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full min-h-screen flex flex-col bg-subtle-bg p-5">
-    <AppHeader type="close"></AppHeader>
+    <AppHeader type="close" @close="handleClose"></AppHeader>
     <div class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
       <div class="p-5 flex flex-col">
         <img
