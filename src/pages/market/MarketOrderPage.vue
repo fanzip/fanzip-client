@@ -16,7 +16,7 @@
         <div class="space-y-1">
           <p class="text-xl font-semibold">{{ cartData.name }}</p>
           <p class="text-base font-medium text-subtle-text">{{ cartData.phone }}</p>
-          <p class="text-base">{{ cartData.address }}</p>
+          <p class="text-base">{{ cartData.address1 }} {{ cartData.address2 }}</p>
           <p class="text-base">({{ cartData.zipcode }})</p>
         </div>
 
@@ -80,18 +80,21 @@
     </div>
   </div>
 
-  <!-- 6) 결제 네비게이션 바 -->
+  <!-- 6. 결제 네비게이션 바 -->
   <nav
     class="fixed bottom-0 left-0 w-full h-20 bg-base-bg border-t border-nav-stroke rounded-t-2xl flex items-center justify-center z-50"
   >
     <BaseButton
-      :variant="selectedPayment !== null ? 'primary' : 'cancel'"
+      :variant="selectedPayment !== null && !isProcessing ? 'primary' : 'cancel'"
       size="lg"
-      :disabled="selectedPayment === null"
-      @click="selectedPayment !== null && goToPaymentPage()"
+      :disabled="selectedPayment === null || isProcessing"
+      @click="selectedPayment !== null && !isProcessing && createOrder()"
     >
-      <span class="font-extrabold">{{ orderTotal.toLocaleString() }}원</span>
-      <span class="font-semibold">결제하기</span>
+      <span v-if="isProcessing">처리중...</span>
+      <template v-else>
+        <span class="font-extrabold">{{ orderTotal.toLocaleString() }}원</span>
+        <span class="font-semibold">결제하기</span>
+      </template>
     </BaseButton>
   </nav>
 </template>
@@ -107,15 +110,23 @@ import BaseButton from '@/components/common/BaseButton.vue'
 const route = useRoute()
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '', name: '', zipcode: '' })
+const cartData = ref({
+  items: [],
+  grandTotal: 0,
+  address1: '',
+  address2: '',
+  name: '',
+  zipcode: '',
+})
 
 // 바로 구매용 임시 product
 const buyItem = ref(null)
+const isProcessing = ref(false)
 
 // 로드
-onMounted(async () => {
-  cartData.value = await marketApi.getCartItems()
-})
+// onMounted(async () => {
+//   cartData.value = await marketApi.getCartItems()
+// })
 
 async function loadAll() {
   // 장바구니 정보
@@ -136,6 +147,7 @@ async function loadAll() {
       shippingPrice: prod.shippingPrice,
       quantity: qty,
       totalPrice: prod.discountedPrice * qty,
+      influencerId: prod.influencerId,
     }
   }
 }
@@ -161,10 +173,10 @@ const originalTotal = computed(() =>
   orderItems.value.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0),
 )
 
-// 배송비
+// 총 배송비
 const shippingTotal = computed(() => orderItems.value.reduce((sum, i) => sum + i.shippingPrice, 0))
 
-// 할인가
+// 총 할인가
 const discountTotal = computed(
   () => originalTotal.value - orderItems.value.reduce((sum, i) => sum + i.totalPrice, 0),
 )
@@ -177,10 +189,45 @@ const orderTotal = computed(
 // 결제 방법 선택
 const selectedPayment = ref(null)
 
-// 결제로 이동
-function goToPaymentPage() {
-  console.log('주문 요청:', orderItems.value, selectedPayment.value)
-  if (!selectedPayment.value) return
-  router.push({ name: 'PaymentPage' })
+async function createOrder() {
+  if (!selectedPayment.value || isProcessing.value) return
+
+  try {
+    isProcessing.value = true
+
+    // BE로 전달할 데이터
+    const orderData = {
+      finalAmount: orderTotal.value,
+      recipientName: cartData.value.name,
+      recipientPhone: cartData.value.phone,
+      shippingAddress1: cartData.value.address1,
+      shippingAddress2: cartData.value.address2,
+      zipcode: cartData.value.zipcode,
+      paymentMethod: selectedPayment.value,
+      orderType: route.query.type === 'buy' ? 'buy' : 'cart',
+      items: orderItems.value.map((item) => ({
+        productId: item.productId,
+        influencerId: item.influencerId,
+        quantity: item.quantity,
+        unitPrice: item.discountedPrice,
+        shippingPrice: item.shippingPrice,
+        finalPrice: item.discountedPrice * item.quantity,
+        cartItemId: route.query.type === 'cart' ? item.cartItemId : null,
+      })),
+    }
+
+    const response = await marketApi.createOrder(orderData)
+    console.log('주문 생성 완료: ', response)
+
+    router.push({
+      name: 'PaymentPage',
+      query: { orderId: response.orderId },
+    })
+  } catch (e) {
+    console.error('주문 생성 실패: ', e)
+    alert('주문 처리 중 오류가 발생했습니다. 다시 시도해주세요')
+  } finally {
+    isProcessing.value = false
+  }
 }
 </script>

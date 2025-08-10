@@ -21,7 +21,7 @@
         <div class="space-y-1">
           <p class="text-xl font-semibold">{{ cartData.name }}</p>
           <p class="text-base font-medium text-subtle-text">{{ cartData.phone }}</p>
-          <p class="text-base">{{ cartData.address }}</p>
+          <p class="text-base">{{ cartData.address1 }} {{ cartData.address2 }}</p>
           <p class="text-base">({{ cartData.zipcode }})</p>
         </div>
 
@@ -89,7 +89,14 @@ import marketApi from '@/api/marketApi'
 const route = useRoute()
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '', name: '', zipcode: '' })
+const cartData = ref({
+  items: [],
+  grandTotal: 0,
+  address1: '',
+  address2: '',
+  name: '',
+  zipcode: '',
+})
 
 // 바로 구매용 임시 product
 const buyItem = ref(null)

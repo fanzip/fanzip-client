@@ -45,6 +45,12 @@ const marketApi = {
   removeCartItem: async (cartItemId) => {
     await api.delete(`/api/cart/items/${cartItemId}`)
   },
+
+  // 주문 생성
+  createOrder: async (orderData) => {
+    const res = await api.post('/api/market/orders', orderData)
+    return res.data
+  },
 }
 
 export default marketApi
