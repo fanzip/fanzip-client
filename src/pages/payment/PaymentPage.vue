@@ -2,16 +2,16 @@
   <div class="min-h-screen bg-subtle-bg px-5 pt-12 flex items-center justify-center">
     <div class="text-center">
       <div v-if="isLoading" class="space-y-4">
-        <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 brand-accent border-t-transparent mx-auto"></div>
         <p class="text-lg font-semibold">토스 결제를 준비하고 있습니다...</p>
-        <p class="text-sm text-gray-600">잠시만 기다려주세요</p>
+        <p class="text-sm text-subtle">잠시만 기다려주세요</p>
       </div>
       
       <div v-else class="space-y-4">
-        <p class="text-lg font-semibold text-red-600">결제를 시작할 수 없습니다</p>
+        <p class="text-lg font-semibold text-emphasis">결제를 시작할 수 없습니다</p>
         <button 
           @click="handlePayment" 
-          class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          class="px-6 py-2 brand-accent text-base rounded-lg hover:brand-accent"
         >
           다시 시도
         </button>
