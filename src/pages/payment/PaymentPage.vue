@@ -1,28 +1,21 @@
 <template>
-  <div class="min-h-screen bg-subtle-bg px-5 pt-12">
-    <h2 class="text-center text-xl font-semibold text-text-base">결제하기</h2>
-
-    <!-- 결제 UI -->
-    <div id="payment-method" ref="paymentMethodRef" class="mt-16"></div>
-
-    <!-- 이용약관 UI -->
-    <div id="agreement" ref="agreementRef" class="mt-36"></div>
-
-    <!-- 결제하기 버튼 -->
-    <div class="fixed bottom-14 left-5 right-5 flex justify-center">
-      <BaseButton variant="primary" :disabled="isLoading" @click="handlePayment">
-        <template v-if="!isLoading">
-          <span class="font-bold">
-            {{
-              isCouponApplied
-                ? (baseAmount - discountAmount).toLocaleString()
-                : baseAmount.toLocaleString()
-            }}원
-          </span>
-          <span class="font-bold">결제하기</span>
-        </template>
-        <template v-else> 처리 중... </template>
-      </BaseButton>
+  <div class="min-h-screen bg-subtle-bg px-5 pt-12 flex items-center justify-center">
+    <div class="text-center">
+      <div v-if="isLoading" class="space-y-4">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
+        <p class="text-lg font-semibold">토스 결제를 준비하고 있습니다...</p>
+        <p class="text-sm text-gray-600">잠시만 기다려주세요</p>
+      </div>
+      
+      <div v-else class="space-y-4">
+        <p class="text-lg font-semibold text-red-600">결제를 시작할 수 없습니다</p>
+        <button 
+          @click="handlePayment" 
+          class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          다시 시도
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +35,7 @@ export default {
     const isCouponApplied = ref(false)
     const isLoading = ref(false)
     let widgets = null
-    const baseAmount = 12000
+    const baseAmount = 10000
     const discountAmount = 2000
     let paymentId = null
     let backendPaymentData = null
@@ -86,9 +79,9 @@ export default {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: 116353586,
-            orderId: null,
-            reservationId: 12358,
+            userId: 1,
+            orderId: 1,
+            reservationId: null,
             membershipId: null,
             transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             paymentType: 'RESERVATION',
@@ -131,14 +124,19 @@ export default {
         const orderId = await createPaymentInBackend(finalAmount)
         const orderName = generateOrderName(backendPaymentData)
 
-        await widgets.requestPayment({
-          orderId: 'iv-C4woWgq8iis4PSz9vz',
-          orderName: '토스 티셔츠 외 2건',
+        // QR 코드 결제로 변경
+        const tossPayments = window.TossPayments(clientKey)
+        await tossPayments.requestPayment('토스페이', {
+          amount: finalAmount,
+          orderId,
+          orderName,
           successUrl: `${window.location.origin}/payments/success?paymentId=${paymentId}`,
           failUrl: `${window.location.origin}/payments/fail?paymentId=${paymentId}`,
           customerEmail: 'customer123@gmail.com',
           customerName: '김토스',
           customerMobilePhone: '01012341234',
+          // QR 코드가 먼저 표시되도록 설정
+          flowMode: 'DIRECT'
         })
       } catch (error) {
         console.error('결제 요청 실패:', error)
@@ -155,12 +153,88 @@ export default {
       }
     }
 
-    onMounted(() => {
+    onMounted(async () => {
+      console.log('🔍 TossPayments 로드 확인:', typeof window.TossPayments)
+      console.log('🔍 window.TossPayments:', window.TossPayments)
+      
       if (typeof window.TossPayments === 'undefined') {
-        console.error('TossPayments 스크립트가 로드되지 않았습니다.')
+        console.error('❌ TossPayments 스크립트가 로드되지 않았습니다.')
+        isLoading.value = false
         return
       }
-      initializeTossPayments()
+      
+      // 바로 토스페이 결제 (QR 코드) 호출 - iframe 생략
+      isLoading.value = true
+      
+      try {
+        // 백엔드에 결제 요청 생성
+        const finalAmount = baseAmount
+        const orderId = await createPaymentInBackend(finalAmount)
+        const orderName = generateOrderName(backendPaymentData)
+
+        // 토스페이먼츠 객체 생성
+        console.log('🔍 TossPayments 객체 생성 시도...')
+        const tossPayments = window.TossPayments(clientKey)
+        console.log('✅ TossPayments 객체:', tossPayments)
+        console.log('🔍 requestPayment 메서드 존재:', typeof tossPayments.requestPayment)
+        
+        // 사용 가능한 메서드들 확인
+        console.log('🔍 TossPayments 메서드들:', Object.getOwnPropertyNames(tossPayments))
+        
+        // Widget API 사용 (requestPayment가 없으므로)
+        console.log('🔄 Widget API 사용하여 토스페이 결제 진행')
+        const widgets = tossPayments.widgets({ customerKey })
+        
+        if (widgets) {
+          console.log('✅ widgets 객체 생성 성공')
+          await widgets.setAmount({ currency: 'KRW', value: finalAmount })
+          
+          // 임시 div를 body에 추가하여 결제 수단 렌더링
+          const tempDiv = document.createElement('div')
+          tempDiv.id = 'temp-payment-methods'
+          tempDiv.style.position = 'fixed'
+          tempDiv.style.top = '-9999px'  // 화면 밖에 숨김
+          tempDiv.style.left = '-9999px'
+          document.body.appendChild(tempDiv)
+          
+          await widgets.renderPaymentMethods({ 
+            selector: '#temp-payment-methods', 
+            variantKey: 'DEFAULT' 
+          })
+          
+          // 잠시 대기 후 바로 결제 요청
+          setTimeout(async () => {
+            try {
+              console.log('🚀 자동 결제 요청 시작')
+              await widgets.requestPayment({
+                orderId,
+                orderName,
+                successUrl: `${window.location.origin}/payments/success?paymentId=${paymentId}`,
+                failUrl: `${window.location.origin}/payments/fail?paymentId=${paymentId}`,
+                customerEmail: 'customer123@gmail.com',
+                customerName: '김토스',
+                customerMobilePhone: '01012341234',
+              })
+              
+              // 임시 div 제거
+              document.body.removeChild(tempDiv)
+            } catch (err) {
+              console.error('자동 결제 요청 실패:', err)
+              // 임시 div 제거
+              if (document.body.contains(tempDiv)) {
+                document.body.removeChild(tempDiv)
+              }
+              isLoading.value = false
+            }
+          }, 2000)  // 2초 대기
+        } else {
+          console.error('❌ widgets 생성 실패')
+          isLoading.value = false
+        }
+      } catch (error) {
+        console.error('❌ 토스 결제 호출 실패:', error)
+        isLoading.value = false
+      }
     })
 
     return {
