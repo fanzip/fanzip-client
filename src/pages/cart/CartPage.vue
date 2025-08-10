@@ -11,7 +11,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 
 const router = useRouter()
 
-const cartData = ref({ items: [], grandTotal: 0, address: '', name: '' })
+const cartData = ref({ items: [], grandTotal: 0, address1: '', address2: '', name: '' })
 
 // 로드 함수
 const loadCart = async () => {
@@ -72,9 +72,9 @@ function goToOrder() {
 
   <div class="bg-base-bg pt-12 px-5 fixed w-full">
     <!-- 배송지 -->
-    <div v-if="cartData.address" class="flex items-start h-12 pt-3 text-base">
+    <div v-if="cartData.address1" class="flex items-start h-12 pt-3 text-base">
       <img src="@/assets/market/map-pin-black.svg" alt="map-pin" class="w-5 h-5" />
-      <span class="ml-2 font-medium">{{ cartData.address }}</span>
+      <span class="ml-2 font-medium">{{ cartData.address1 }} {{ cartData.address2 }}</span>
     </div>
 
     <!-- 구분선 -->
