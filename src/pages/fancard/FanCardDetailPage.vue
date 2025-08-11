@@ -137,24 +137,6 @@ onMounted(() => {
 
   <!-- 팬카드 정보 -->
   <div v-else-if="fanCard" class="bg-subtle-bg min-h-screen pt-24 pb-28 flex flex-col">
-  <!-- 로딩 상태 -->
-  <div v-if="isLoading" class="flex items-center justify-center min-h-screen bg-subtle-bg">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
-  </div>
-
-  <!-- 에러 상태 -->
-  <div v-else-if="error" class="flex flex-col items-center justify-center min-h-screen bg-subtle-bg px-5">
-    <p class="text-text-emphasis text-center mb-4">{{ error }}</p>
-    <button 
-      @click="fetchFancardDetail"
-      class="px-4 py-2 bg-brand-primary text-black rounded-lg hover:bg-brand-accent"
-    >
-      다시 시도
-    </button>
-  </div>
-
-  <!-- 팬카드 정보 -->
-  <div v-else-if="fanCard" class="bg-subtle-bg min-h-screen pt-24 pb-28 flex flex-col">
 
     <!-- 1. 상단 이미지 + 배지 -->
     <div class="relative mx-5 h-[180px] rounded-lg overflow-hidden shadow-md">
@@ -194,7 +176,6 @@ onMounted(() => {
       <div class="bg-base-bg rounded-lg shadow-md p-4 space-y-3">
         <div class="flex items-center gap-2">
           <span class="font-bold text-base-text text-base">{{ fanCard.nickname }}</span>
-          <span :class="getBadgeClass(fanCard.grade)">{{ fanCard.grade }}</span>
           <span :class="getBadgeClass(fanCard.grade)">{{ fanCard.grade }}</span>
         </div>
         <p class="text-sm subtle-text flex items-center gap-2">
