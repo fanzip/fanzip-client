@@ -1,7 +1,6 @@
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { fancardApi } from '@/api/fancardApi'
@@ -250,10 +249,6 @@ const getBadgeClass = (grade) => {
   }
 }
 
-// QR 검증 페이지로 이동
-const goToQRValidation = () => {
-  router.push({ name: 'QRValidation' })
-}
 
 onMounted(() => {
   fetchFancards()
@@ -266,12 +261,6 @@ onMounted(() => {
       <AppHeader type="logo" />
     </header>
 
-    <!-- 관리자 QR 검증 버튼 -->
-    <div v-if="authStore.isAdmin" class="fixed top-[70px] right-4 z-30">
-      <BaseButton @click="goToQRValidation" size="sm" variant="primary" class="shadow-lg">
-        📱 QR 검증
-      </BaseButton>
-    </div>
 
     <!-- 메인 컨텐츠 영역: 헤더와 네비게이션 사이의 공간 활용 -->
     <main class="flex-1 flex items-center justify-center pt-[100px] pb-[108px]">
