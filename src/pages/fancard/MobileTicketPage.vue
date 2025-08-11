@@ -1,19 +1,67 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
 import { fancardApi } from '@/api/fancardApi'
+import { useAuthStore } from '@/stores/authStore'
 
-// TODO: 팬미팅 정보 api 연동
-const ticket = {
-  imgUrl: '/images/fanmeeting.jpg', // 팬미팅 이미지
-  title: "2025 여단오 팬미팅 '내가 제일 예뻐'",
-  location: '올림픽공원 체조경기장',
-  date: '8/15',
-  dayOfWeek: '목',
+// 팬미팅 정보를 query에서 가져옴
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+
+// 닫기 버튼 클릭 시 이전 페이지로 돌아가기
+const handleClose = () => {
+  router.go(-1)
+}
+
+const ticket = ref({
+  imgUrl: '/src/assets/fancard/YeoDanO.svg', // 시연용 이미지
+  title: '여단오 팬미팅 <여단오와 함께하는 특별한 시간>',
+  location: '서울시 강남구 코엑스 컨벤션센터 A홀',
+  date: '1/15',
+  dayOfWeek: '수',
   time: '19:00',
-  seat: 'F9',
-  qrUrl: '/images/qr.png', // QR 이미지
+  seat: 'A열 5번',
+  qrUrl: '/images/qr.png',
+})
+
+const imageError = ref(false)
+
+const handleImageError = (event) => {
+  console.warn('티켓 이미지 로드 실패')
+  imageError.value = true
+  event.target.style.display = 'none'
+}
+
+// 현재 로그인한 사용자 ID 가져오기
+const getCurrentUserId = () => {
+  return authStore.user?.id || 1 // fallback to 1 for testing
+}
+
+// 예약 정보로부터 티켓 정보 업데이트
+const updateTicketFromReservation = (reservation) => {
+  if (!reservation) return
+
+  const meetingDate = new Date(reservation.meetingDate)
+  const dateStr = `${meetingDate.getMonth() + 1}/${meetingDate.getDate()}`
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토']
+  const dayOfWeek = dayNames[meetingDate.getDay()]
+  const timeStr = meetingDate.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+
+  ticket.value = {
+    ...ticket.value,
+    title: reservation.meetingTitle || ticket.value.title,
+    location: reservation.venueName || ticket.value.location,
+    date: dateStr,
+    dayOfWeek: dayOfWeek,
+    time: timeStr,
+    seat: reservation.seatNumber || ticket.value.seat,
+  }
 }
 
 // QR 코드 관련 상태
@@ -82,9 +130,9 @@ const generateQrCode = async () => {
     console.log('현재 위치:', currentLocation.value) // 디버깅용
 
     const qrRequest = {
-      reservationId: 1, // TODO: 실제 예약 ID로 변경
-      userId: 1, // TODO: 로그인한 사용자 ID로 변경
-      fanMeetingId: 1, // TODO: 실제 팬미팅 ID로 변경
+      reservationId: route.query.reservationId || 1,
+      userId: getCurrentUserId(), // 로그인한 사용자 ID
+      fanMeetingId: route.query.fanMeetingId || 1,
       latitude: currentLocation.value.latitude,
       longitude: currentLocation.value.longitude,
       deviceInfo: navigator.userAgent,
@@ -102,6 +150,16 @@ const generateQrCode = async () => {
     }
 
     qrData.value = response.data
+
+    // 시연용으로 티켓 정보는 업데이트하지 않음
+    // QR 응답에 예약 정보가 있으면 티켓 정보 업데이트
+    // if (response.data.reservation) {
+    //   updateTicketFromReservation(response.data.reservation)
+    //   // 팬카드 이미지도 업데이트 (MySQL에서 받아온 데이터)
+    //   if (response.data.fanCardImage) {
+    //     ticket.value.imgUrl = response.data.fanCardImage
+    //   }
+    // }
 
     // 30초 타이머 시작
     startQrTimer()
@@ -141,11 +199,7 @@ const checkLocationPermission = async () => {
   }
 }
 
-const onClose = () => {
-  // 닫기 처리 (예: emit or router.back())
-  //   router.back()
-  console.log('닫기')
-}
+// onClose 함수는 AppHeader의 close 타입에서 자동으로 처리됨
 
 onMounted(() => {
   checkLocationPermission()
@@ -160,11 +214,23 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full min-h-screen flex flex-col bg-subtle-bg p-5">
-    <AppHeader type="close"></AppHeader>
+    <AppHeader type="close" @close="handleClose"></AppHeader>
     <div class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
       <div class="p-5 flex flex-col">
-        <img src="/src/assets/fancard/TomoTomo.svg" alt="" />
-        <!-- <img :src="ticket.imgUrl" alt="ticket image" class="rounded-xl mb-2" /> -->
+        <img
+          v-if="!imageError && ticket.imgUrl"
+          :src="ticket.imgUrl"
+          alt="ticket image"
+          class="rounded-xl mb-2"
+          @error="handleImageError"
+        />
+        <!-- 이미지 로드 실패 시 표시할 fallback -->
+        <div
+          v-else
+          class="w-full h-32 bg-gray-200 flex items-center justify-center text-gray-500 text-sm rounded-xl mb-2"
+        >
+          이미지를 불러올 수 없습니다
+        </div>
         <div class="mt-5">
           <p class="font-bold text-xl">{{ ticket.title }}</p>
           <div class="text-subtle-text text-base flex items-center gap-1">

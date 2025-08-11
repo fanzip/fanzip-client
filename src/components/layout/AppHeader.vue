@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-defineProps({
+const props = defineProps({
   type: {
     type: String,
     required: true,
@@ -12,6 +12,8 @@ defineProps({
   },
 })
 
+const emit = defineEmits(['close'])
+
 const router = useRouter()
 
 const goBack = () => {
@@ -21,6 +23,10 @@ const goBack = () => {
 const goToCart = () => {
   router.push('/cart')
 }
+
+const handleClose = () => {
+  emit('close')
+}
 </script>
 
 <template>
@@ -29,7 +35,7 @@ const goToCart = () => {
   >
     <!-- Close 전용 -->
     <div v-if="type == 'close'" class="flex items-center">
-      <img src="@/assets/header/Close.svg" alt="Close" class="cursor-pointer" />
+      <img src="@/assets/header/Close.svg" alt="Close" class="cursor-pointer" @click="handleClose" />
     </div>
 
     <!-- Back 전용 -->
