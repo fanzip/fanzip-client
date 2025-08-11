@@ -1,6 +1,7 @@
 <script setup>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { fancardApi } from '@/api/fancardApi'
@@ -35,8 +36,22 @@ const handleCardClick = (realIndex) => {
     activeIndex.value = realIndex
     return
   }
+
   const card = cards.value[realIndex]
-  router.push({ name: 'FanCardDetailPage', params: { id: String(card.cardId || card.id) } })
+  if (!card) {
+    console.error('카드를 찾을 수 없습니다:', realIndex)
+    return
+  }
+
+  const cardId = card.cardId || card.id
+  if (!cardId) {
+    console.error('카드 ID가 없습니다:', card)
+    alert('카드 정보에 오류가 있습니다.')
+    return
+  }
+
+  console.log(`팬카드 ${cardId} 상세페이지로 이동`)
+  router.push({ name: 'FanCardDetailPage', params: { id: String(cardId) } })
 }
 
 let scrollCooldown = false
@@ -140,11 +155,12 @@ const fetchFancards = async () => {
     isLoading.value = true
     error.value = null
 
-    // 개발 환경에서 토큰이 없는 경우 테스트 토큰 설정 (user_id: 8 for 하경한)
+    // 개발 환경에서 토큰이 없는 경우 테스트 토큰 설정 (user_id: 7)
     if (import.meta.env.DEV && !authStore.token) {
-      console.warn('개발 환경: 테스트 JWT 토큰 설정 (user_id: 8)')
+      console.warn('개발 환경: 테스트 JWT 토큰 설정 (user_id: 7 - 3개 팬카드 보유)')
+      // User ID 7용 JWT 토큰 - payload를 user_id 7으로 수정
       const testToken =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBQ0NFU1NfVE9LRU4iLCJ1c2VySWQiOjgsImlhdCI6MTc1NDUzMjYxMSwiZXhwIjoxNzU0NTM0NDExfQ.nkTxBnNSQtR-gojKR89QV4hCQ9xNAZAWDMYyKuIrMdU'
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBQ0NFU1NfVE9LRU4iLCJ1c2VySWQiOjcsImlhdCI6MTc1NDUzMjYxMSwiZXhwIjoxNzU0NTM0NDExfQ.nkTxBnNSQtR-gojKR89QV4hCQ9xNAZAWDMYyKuIrMdU'
       authStore.setToken(testToken)
     }
 
@@ -155,24 +171,45 @@ const fetchFancards = async () => {
     console.log('Full response:', response.data)
     console.log('Fancards array:', fancardData)
 
-    cards.value = fancardData.map((fancard) => {
-      console.log(`Fancard ${fancard.cardId}:`, {
-        name: fancard.influencerName,
-        imageUrl: fancard.cardDesignUrl,
-        grade: fancard.membershipGrade?.gradeName,
+    const processedCards = fancardData
+      .filter((fancard) => fancard.cardId)
+      .map((fancard) => {
+        console.log(`Fancard ${fancard.cardId}:`, {
+          cardNumber: fancard.cardNumber,
+          cardDesignUrl: fancard.cardDesignUrl,
+          influencerName: fancard.influencerName,
+        })
+
+        // membershipGrade가 객체인 경우 gradeName 추출, 문자열인 경우 그대로 사용
+        const grade =
+          typeof fancard.membershipGrade === 'object' && fancard.membershipGrade
+            ? fancard.membershipGrade.gradeName || 'White'
+            : fancard.membershipGrade || 'White'
+
+        return {
+          cardId: fancard.cardId,
+          name: fancard.influencerName || `카드 ${fancard.cardId}`,
+          src: fancard.cardDesignUrl || `https://picsum.photos/320/180?random=${fancard.cardId}`, // fallback 이미지
+          grade: grade,
+          cardNumber: fancard.cardNumber,
+          influencerId: fancard.influencerId,
+          category: fancard.category,
+          hasError: false,
+        }
       })
 
-      return {
-        cardId: fancard.cardId,
-        name: fancard.influencerName,
-        src: fancard.cardDesignUrl, // MySQL에서 받은 URL 그대로 사용
-        grade: fancard.membershipGrade?.gradeName || 'White',
-        cardNumber: fancard.cardNumber,
-        influencerId: fancard.influencerId,
-        category: fancard.category,
-        hasError: false, // 이미지 로드 에러 상태
+    const uniqueCards = processedCards.reduce((acc, current) => {
+      const existing = acc.find((item) => item.cardId === current.cardId)
+      if (!existing) {
+        acc.push(current)
+      } else {
+        console.warn(`중복 팬카드 제거됨: cardId ${current.cardId}`)
       }
-    })
+      return acc
+    }, [])
+
+    cards.value = uniqueCards
+    console.log(`=== 로드된 고유 팬카드: ${uniqueCards.length}개 ===`)
   } catch (err) {
     console.error('팬카드 목록 조회 실패:', err)
 
@@ -213,9 +250,10 @@ const getBadgeClass = (grade) => {
   }
 }
 
-onMounted(() => {
-  fetchFancards()
-})
+// QR 검증 페이지로 이동
+const goToQRValidation = () => {
+  router.push({ name: 'QRValidation' })
+}
 
 onMounted(() => {
   fetchFancards()
@@ -227,6 +265,13 @@ onMounted(() => {
     <header class="flex-shrink-0">
       <AppHeader type="logo" />
     </header>
+
+    <!-- 관리자 QR 검증 버튼 -->
+    <div v-if="authStore.isAdmin" class="fixed top-[70px] right-4 z-30">
+      <BaseButton @click="goToQRValidation" size="sm" variant="primary" class="shadow-lg">
+        📱 QR 검증
+      </BaseButton>
+    </div>
 
     <!-- 메인 컨텐츠 영역: 헤더와 네비게이션 사이의 공간 활용 -->
     <main class="flex-1 flex items-center justify-center pt-[100px] pb-[108px]">
@@ -267,7 +312,7 @@ onMounted(() => {
       >
         <div
           v-for="{ card, realIndex } in visibleCards"
-          :key="card.cardId || card.id || card.name"
+          :key="`fancard-${realIndex}-${card.cardId || card.id || 'unknown'}`"
           class="absolute top-1/2 left-1/2 w-80 h-45 bg-white rounded-xl overflow-hidden cursor-pointer"
           :style="getCardStyle(realIndex)"
           @click="handleCardClick(realIndex)"
