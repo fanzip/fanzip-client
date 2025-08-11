@@ -19,6 +19,7 @@ import paymentRoutes from './payment'
 
 import { reservationRoutes } from './reservation.js'
 import UserOnboarding from '@/pages/UserOnboarding.vue'
+import InfluencerOnboarding from '@/pages/auth/InfluencerOnboarding.vue'
 
 const routes = [
   // 기본 라우트
@@ -26,6 +27,7 @@ const routes = [
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
   { path: '/fancard', name: 'fancard', component: FanCardPage },
   { path: '/onboarding/user', name: 'UserOnboarding', component: UserOnboarding },
+  { path: '/onboarding/influencer', name: 'InfluencerOnboarding', component: InfluencerOnboarding },
   { path: '/market', name: 'market', component: MarketPage },
   { path: '/mypage', name: 'mypage', component: MyPage },
   { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
