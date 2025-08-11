@@ -39,6 +39,8 @@ const buttonClass = computed(() => {
     case 'confirm':
       base.push('bg-brand-primary', 'text-black')
       break
+    case 'other':
+      base.push('bg-subtle-border', 'text-black')
   }
 
   return base
