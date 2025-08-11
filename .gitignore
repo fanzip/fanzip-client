@@ -31,3 +31,16 @@ coverage
 *.tsbuildinfo
 *.md
 *.sql
+
+
+# Vite env files (실값만 무시하고 예시는 포함)
+.env.local
+.env.*.local
+.env.development
+.env.staging
+.env.production
+!.env.example
+
+# Tool/OS caches
+.eslintcache
+Thumbs.db
