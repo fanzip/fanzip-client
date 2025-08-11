@@ -14,4 +14,9 @@ export default [
     component: MobileTicketPage,
     meta: { hideNavbar: true },
   },
+  {
+    path: '/fancard/qr-validation',
+    name: 'QRValidationPage',
+    component: () => import('@/pages/fancard/QRValidationPage.vue'),
+  },
 ]

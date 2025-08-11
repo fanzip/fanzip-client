@@ -17,4 +17,9 @@ export const fancardApi = {
   generateQrCode: async (qrCodeData) => {
     return api.post('/api/fancards/qr', qrCodeData)
   },
+
+  // QR 코드 검증 (관리자용)
+  validateQrCode: async (validationData) => {
+    return api.post('/api/fancards/qr/validate', validationData)
+  },
 }
