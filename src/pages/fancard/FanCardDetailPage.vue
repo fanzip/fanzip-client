@@ -48,7 +48,7 @@ const fetchFancardDetail = async () => {
     fanCard.value = {
       cardId: data.cardId,
       cardNumber: data.cardNumber,
-      nickname: data.influencer?.name || '인플루언서',
+      nickname: data.influencer?.influencerName || '인플루언서',
       grade: data.membership?.grade?.gradeName || 'Silver',
       joinDate: formatDate(data.membership?.subscriptionStart),
       joinDday: calculateDaysDiff(data.membership?.subscriptionStart),
