@@ -30,29 +30,31 @@
 
     <!-- 컨트롤 버튼들 -->
     <div class="controls mt-4 flex justify-center gap-4">
-      <button 
+      <BaseButton
         @click="toggleCamera"
-        class="px-4 py-2 bg-brand-primary text-black rounded-lg font-semibold hover:bg-brand-accent"
+        variant="primary"
+        size="sm"
         :disabled="isLoading"
       >
         {{ isScanning ? '스캔 중지' : '스캔 시작' }}
-      </button>
+      </BaseButton>
       
-      <button 
+      <BaseButton
         @click="switchCamera"
-        class="px-4 py-2 bg-gray-200 text-black rounded-lg font-semibold hover:bg-gray-300"
+        variant="cancel"
+        size="sm"
         :disabled="isLoading || !isScanning"
       >
         카메라 전환
-      </button>
+      </BaseButton>
     </div>
 
     <!-- 상태 메시지 -->
     <div class="status-message mt-4 text-center">
-      <p v-if="isLoading" class="text-gray-600">카메라를 준비 중입니다...</p>
-      <p v-else-if="error" class="text-red-500">{{ error }}</p>
-      <p v-else-if="isScanning" class="text-green-600">QR 코드를 카메라에 비춰주세요</p>
-      <p v-else class="text-gray-600">스캔 시작 버튼을 누르세요</p>
+      <p v-if="isLoading" class="text-subtle-text text-sm">카메라를 준비 중입니다...</p>
+      <p v-else-if="error" class="text-text-emphasis text-sm">{{ error }}</p>
+      <p v-else-if="isScanning" class="text-green-600 text-sm">QR 코드를 카메라에 비춰주세요</p>
+      <p v-else class="text-subtle-text text-sm">스캔 시작 버튼을 누르세요</p>
     </div>
 
   </div>
@@ -61,6 +63,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import jsQR from 'jsqr'
+import BaseButton from '@/components/common/BaseButton.vue'
 
 const emit = defineEmits(['qr-detected', 'error'])
 

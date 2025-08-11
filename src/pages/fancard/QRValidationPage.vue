@@ -1,81 +1,54 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-[#f3f4f6]">
+  <div class="min-h-screen bg-base-bg font-sans mx-auto w-full max-w-xs md:max-w-sm">
     <!-- 헤더 -->
-    <header class="flex-shrink-0">
-      <AppHeader type="back" title="QR 검증" />
-    </header>
+    <AppHeader type="back" title="QR 검증" />
+
+    <!-- 회색 배경 영역 - 스캐너 하단 20px까지 -->
+    <div class="bg-subtle-bg pt-[60px] pb-5 px-4">
+      <!-- 안내 메시지 -->
+      <section class="text-center space-y-2 mb-6">
+        <h2 class="text-xl font-bold text-text-base">QR 코드 검증</h2>
+        <p class="text-subtle-text text-sm">팬미팅 입장 QR 코드를 카메라에 비춰주세요</p>
+      </section>
+
+      <!-- QR 스캐너 컴포넌트 - 흰색 박스 -->
+      <section class="mx-2 bg-base-bg rounded-lg p-4 border border-subtle-border">
+        <QRScanner ref="qrScannerRef" @qr-detected="handleQRDetected" @error="handleScanError" />
+      </section>
+    </div>
 
     <!-- 메인 컨텐츠 -->
-    <main class="flex-1 flex flex-col pt-[60px] pb-[20px] px-4">
-      <!-- QR 스캐너 -->
-      <div class="flex-1 flex flex-col">
-        <!-- 안내 메시지 -->
-        <div class="mb-6 text-center">
-          <h2 class="text-xl font-bold text-gray-900 mb-2">QR 코드 검증</h2>
-          <p class="text-gray-600">팬미팅 입장 QR 코드를 카메라에 비춰주세요</p>
-        </div>
-
-        <!-- QR 스캐너 컴포넌트 -->
-        <div class="flex-1 flex items-center justify-center">
-          <QRScanner 
-            ref="qrScannerRef"
-            @qr-detected="handleQRDetected"
-            @error="handleScanError"
-          />
-        </div>
-
-        <!-- 수동 입력 옵션 -->
-        <div class="mt-6 border-t border-gray-200 pt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">수동 입력</h3>
-          <div class="flex gap-2">
-            <input 
-              v-model="manualQRCode"
-              type="text"
-              placeholder="QR 코드를 직접 입력하세요"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-            />
-            <BaseButton 
-              @click="validateManualInput"
-              size="sm"
-              variant="primary"
-              :disabled="!manualQRCode.trim() || isValidating"
-            >
-              검증
-            </BaseButton>
-          </div>
-        </div>
-
-        <!-- 최근 검증 결과 -->
-        <div v-if="recentResults.length > 0" class="mt-6 border-t border-gray-200 pt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">최근 검증 결과</h3>
-          <div class="space-y-2 max-h-32 overflow-y-auto">
-            <div 
-              v-for="(result, index) in recentResults.slice(0, 5)"
-              :key="index"
-              class="flex items-center justify-between p-2 bg-white rounded-lg shadow-sm"
-            >
-              <div class="flex items-center gap-2">
-                <div 
-                  :class="[
-                    'w-2 h-2 rounded-full',
-                    result.isValid ? 'bg-green-500' : 'bg-red-500'
-                  ]"
-                ></div>
-                <span class="text-xs font-medium">
-                  {{ result.userName || 'Unknown' }}
-                </span>
-              </div>
-              <span class="text-xs text-gray-500">
-                {{ formatTime(result.validatedAt) }}
+    <main class="px-4">
+      <!-- 최근 검증 결과 -->
+      <section
+        v-if="recentResults.length > 0"
+        class="mt-6 bg-base-bg rounded-lg p-4 border border-subtle-border space-y-3"
+      >
+        <h3 class="text-sm font-semibold text-text-base">최근 검증 결과</h3>
+        <div class="space-y-2 max-h-32 overflow-y-auto">
+          <div
+            v-for="(result, index) in recentResults.slice(0, 5)"
+            :key="index"
+            class="flex items-center justify-between p-2 bg-subtle-bg rounded-lg"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                :class="['w-2 h-2 rounded-full', result.isValid ? 'bg-green-500' : 'bg-red-500']"
+              ></div>
+              <span class="text-xs font-medium text-text-base">
+                {{ result.userName || 'Unknown' }}
               </span>
             </div>
+            <span class="text-xs text-subtle-text">
+              {{ formatTime(result.validatedAt) }}
+            </span>
           </div>
         </div>
-      </div>
+      </section>
     </main>
 
     <!-- 검증 결과 모달 -->
-    <QRValidationResult 
+    <QRValidationResult
       :is-visible="showResult"
       :result="currentResult"
       @close="closeResultModal"
@@ -83,10 +56,13 @@
     />
 
     <!-- 로딩 오버레이 -->
-    <div v-if="isValidating" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white rounded-lg p-6 flex items-center gap-3">
+    <div
+      v-if="isValidating"
+      class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="bg-base-bg rounded-lg p-6 flex items-center gap-3 border border-subtle-border">
         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary"></div>
-        <span class="text-gray-700">검증 중...</span>
+        <span class="text-text-base">검증 중...</span>
       </div>
     </div>
   </div>
@@ -112,7 +88,6 @@ const qrScannerRef = ref(null)
 const isValidating = ref(false)
 const showResult = ref(false)
 const currentResult = ref(null)
-const manualQRCode = ref('')
 const recentResults = ref([])
 
 // QR 스캔 감지 핸들러
@@ -137,12 +112,12 @@ const validateQRCode = async (qrData) => {
     // 위치 정보 가져오기 (선택사항)
     let latitude = null
     let longitude = null
-    
+
     try {
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           timeout: 5000,
-          enableHighAccuracy: false
+          enableHighAccuracy: false,
         })
       })
       latitude = position.coords.latitude
@@ -155,7 +130,7 @@ const validateQRCode = async (qrData) => {
     const validationData = {
       qrData: qrData.trim(),
       latitude,
-      longitude
+      longitude,
     }
 
     console.log('검증 데이터 전송:', validationData)
@@ -168,7 +143,7 @@ const validateQRCode = async (qrData) => {
     // 결과를 최근 결과 목록에 추가
     recentResults.value.unshift({
       ...result,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
 
     // 최대 10개만 보관
@@ -179,13 +154,12 @@ const validateQRCode = async (qrData) => {
     // 결과 모달 표시
     currentResult.value = result
     showResult.value = true
-
   } catch (error) {
     console.error('QR 검증 실패:', error)
-    
+
     let errorMessage = 'QR 검증 중 오류가 발생했습니다.'
     let errorCode = 'UNKNOWN_ERROR'
-    
+
     if (error.response && error.response.data) {
       errorMessage = error.response.data.message || errorMessage
       errorCode = error.response.data.errorCode || errorCode
@@ -198,21 +172,12 @@ const validateQRCode = async (qrData) => {
       message: errorMessage,
       errorCode: errorCode,
       errorDetails: error.message,
-      validatedAt: new Date().toISOString()
+      validatedAt: new Date().toISOString(),
     }
-    
-    showResult.value = true
 
+    showResult.value = true
   } finally {
     isValidating.value = false
-  }
-}
-
-// 수동 입력 검증
-const validateManualInput = async () => {
-  if (manualQRCode.value.trim()) {
-    await validateQRCode(manualQRCode.value)
-    manualQRCode.value = '' // 검증 후 입력 필드 초기화
   }
 }
 
@@ -234,10 +199,10 @@ const resetAndScanAgain = () => {
 // 시간 포맷팅
 const formatTime = (dateString) => {
   const date = new Date(dateString)
-  return date.toLocaleTimeString('ko-KR', { 
-    hour: '2-digit', 
+  return date.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   })
 }
 
