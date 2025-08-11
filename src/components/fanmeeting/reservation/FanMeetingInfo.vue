@@ -18,3 +18,4 @@
 import MapPinIcon from '@/assets/common/map-pin.svg'
 defineProps({ title: String, date: String, venue: String, description: String })
 </script>
+    

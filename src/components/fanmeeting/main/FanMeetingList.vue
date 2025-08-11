@@ -4,6 +4,7 @@
       <FanMeetingCard
         :title="meeting.title"
         :venueName="meeting.venueName"
+        :imageUrl="meeting.profileImageUrl"
         @click="$emit('click', meeting.meetingId)"
       />
     </div>
