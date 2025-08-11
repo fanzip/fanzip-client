@@ -116,8 +116,8 @@ export const useAuthStore = defineStore('auth', () => {
         if ('serviceWorker' in navigator) await initFcm()
 
         alert('회원가입이 완료되었습니다!')
-        if (tempRole.value === 'USER') router.push({ name: 'UserOnBoarding' })
-        else router.push({ name: 'InfluencerOnBoarding' })
+        if (tempRole.value === 'USER') router.push({ name: 'UserOnboarding' })
+        else router.push({ name: 'InfluencerOnboarding' })
       }
     } catch (err) {
       console.error('회원가입 실패:', err)
