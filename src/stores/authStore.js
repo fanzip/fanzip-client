@@ -6,6 +6,8 @@ import userApi from '@/api/userApi'
 
 import authApi from '@/api/authApi'
 
+import { initFcm } from '@/fcm-init' // ✅ [FCM] 추가: 순환참조 방지용 별도 파일에서 import
+
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
 
@@ -75,6 +77,10 @@ export const useAuthStore = defineStore('auth', () => {
         const jwt = res.headers['authorization']?.split(' ')[1]
         if (jwt) {
           setToken(jwt)
+
+          // ✅ [FCM] 토큰 저장 직후 자동 등록
+          if ('serviceWorker' in navigator) await initFcm()
+
           router.push('/')
         }
       } else if (res.status === 202) {
@@ -97,6 +103,10 @@ export const useAuthStore = defineStore('auth', () => {
       const jwt = res.headers['authorization']?.split(' ')[1]
       if (jwt) {
         setToken(jwt)
+
+        // ✅ [FCM] 회원가입 직후도 자동 등록
+        if ('serviceWorker' in navigator) await initFcm()
+
         alert('회원가입 완료!')
         router.push('/')
       }
