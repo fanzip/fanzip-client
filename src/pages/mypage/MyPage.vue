@@ -5,11 +5,13 @@ import { useAuthStore } from '@/stores/authStore'
 import { computed, onMounted } from 'vue'
 import userApi from '@/api/userApi'
 import AppNav from '@/components/layout/AppNav.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
+import router from '@/router'
 
 const authStore = useAuthStore()
 const logout = authStore.logout
 const userName = computed(() => authStore.userInfo.name)
-
+const role = computed(() => authStore.userInfo.role)
 onMounted(async () => {
   const token = authStore.token
   if (token) {
@@ -25,12 +27,21 @@ onMounted(async () => {
 <template>
   <div class="w-full flex flex-col">
     <AppHeader type="logo" />
-    <div class="mt-12">
-      <p class="text-xl font-bold ms-5">{{ userName }}님, 안녕하세요!</p>
-      <div class="flex justify-between ms-5 w-32">
-        <p class="text-xl">최고등급</p>
-        <p class="text-xl font-bold">GOLD</p>
+    <div class="mt-12 flex justify-between">
+      <div>
+        <p class="text-xl font-bold ms-5">{{ userName }}님, 안녕하세요!</p>
+        <div class="flex justify-between ms-5 w-32">
+          <p class="text-xl">최고등급</p>
+          <p class="text-xl font-bold">GOLD</p>
+        </div>
       </div>
+      <BaseButton
+        v-if="role === 'INFLUENCER'"
+        variant="buy"
+        size="sm"
+        @click.prevent="router.push({ name: 'influencers-mypage' })"
+        >인플루언서 페이지로 이동</BaseButton
+      >
     </div>
     <div class="border border-subtle-border mt-6"></div>
     <div class="mt-4 mb-4">
