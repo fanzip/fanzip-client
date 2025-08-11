@@ -109,6 +109,7 @@ const colorPalette = [
     hex: '#FFD633',
     bg: 'bg-brand-primary',
     text: 'text-text-inverse',
+    border: 'border-brand-primary',
     description: '✔ 메인 컬러 (Primary 버튼, 포인트 강조)',
   },
   {
