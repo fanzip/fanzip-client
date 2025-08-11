@@ -13,6 +13,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   const token = ref(localStorage.getItem('access-token') || null)
 
+  const tempRole = ref('USER')
+
+  const setTempRole = (role) => {
+    tempRole.value = role
+  }
+
   const kakaoInfo = reactive({
     socialType: null,
     socialId: null,
@@ -24,6 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: null,
     name: null,
     phone: null,
+    role: null,
     socialType: null,
     socialId: null,
     address1: null,
@@ -57,6 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
       (userInfo.email = data.email),
       (userInfo.name = data.name),
       (userInfo.phone = data.phone),
+      (userInfo.role = data.role),
       (userInfo.socialType = data.socialType),
       (userInfo.socialId = data.socialId),
       (userInfo.address1 = data.address1),
@@ -92,7 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const registerUser = async ({ name, phone }) => {
+  const registerUser = async ({ name, phone, role }) => {
     try {
       const payload = {
         ...kakaoInfo,
@@ -107,8 +115,9 @@ export const useAuthStore = defineStore('auth', () => {
         // ✅ [FCM] 회원가입 직후도 자동 등록
         if ('serviceWorker' in navigator) await initFcm()
 
-        alert('회원가입 완료!')
-        router.push('/')
+        alert('회원가입이 완료되었습니다!')
+        if (tempRole.value === 'USER') router.push({ name: 'UserOnBoarding' })
+        else router.push({ name: 'InfluencerOnBoarding' })
       }
     } catch (err) {
       console.error('회원가입 실패:', err)
@@ -120,5 +129,14 @@ export const useAuthStore = defineStore('auth', () => {
     clearToken()
     router.push('/login')
   }
-  return { token, handleKakaoLogin, registerUser, logout, setToken, userInfo, setUserInfo }
+  return {
+    token,
+    handleKakaoLogin,
+    registerUser,
+    logout,
+    setToken,
+    userInfo,
+    setUserInfo,
+    setTempRole,
+  }
 })
