@@ -7,6 +7,7 @@ import FanMeetingDetailPage from '@/pages/reservation/FanMeetingDetailPage.vue'
 import InfluencerListPage from '@/pages/InfluencerListPage.vue'
 import influencerMypage from './influencerMypage'
 // import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
+import Onboarding from '@/pages/Onboarding.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -24,6 +25,7 @@ const routes = [
   { path: '/', name: 'home', component: InfluencerListPage },
   { path: '/guide', name: 'Guide', component: DesignGuidePage },
   { path: '/fancard', name: 'fancard', component: FanCardPage },
+  { path: '/onboarding', name: 'onboarding', component: Onboarding },
   { path: '/market', name: 'market', component: MarketPage },
   { path: '/mypage', name: 'mypage', component: MyPage },
   { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
