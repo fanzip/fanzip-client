@@ -116,17 +116,13 @@ const cartData = ref({
   address1: '',
   address2: '',
   name: '',
+  phone: '',
   zipcode: '',
 })
 
 // 바로 구매용 임시 product
 const buyItem = ref(null)
 const isProcessing = ref(false)
-
-// 로드
-// onMounted(async () => {
-//   cartData.value = await marketApi.getCartItems()
-// })
 
 async function loadAll() {
   // 장바구니 정보
@@ -203,7 +199,7 @@ async function createOrder() {
       shippingAddress1: cartData.value.address1,
       shippingAddress2: cartData.value.address2,
       zipcode: cartData.value.zipcode,
-      paymentMethod: selectedPayment.value,
+      paymentMethod: selectedPayment.value || 'TOSSPAY',
       orderType: route.query.type === 'buy' ? 'buy' : 'cart',
       items: orderItems.value.map((item) => ({
         productId: item.productId,
@@ -221,7 +217,7 @@ async function createOrder() {
 
     router.push({
       name: 'PaymentPage',
-      query: { orderId: response.orderId },
+      query: { paymentType: 'ORDER', orderId: response.orderId, amount: orderTotal.value },
     })
   } catch (e) {
     console.error('주문 생성 실패: ', e)

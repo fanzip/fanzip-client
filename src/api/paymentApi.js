@@ -1,14 +1,13 @@
-import axios from 'axios'
 import api from '@/api'
 
 const paymentApi = {
   createPayment: async (payload) => {
-    const res = await axios.post('/api/payments/request', payload)
+    const res = await api.post('/api/payments/request', payload)
     return res.data
   },
 
-  approvePayment: async (paymentId) => {
-    const res = await api.patch(`/api/payments/${paymentId}/approve`)
+  approvePayment: async (paymentId, payload) => {
+    const res = await api.patch(`/api/payments/${paymentId}/approve`, payload)
     return res.data
   },
 
