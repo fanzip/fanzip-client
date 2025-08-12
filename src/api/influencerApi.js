@@ -1,4 +1,4 @@
-import api from './index'
+import api from '@/api'
 
 const API_BASE_URL = '/api/influencers'
 
@@ -64,14 +64,14 @@ export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
 const influencerApi = {
   // 인플루언서 목록 전체 조회
   fetchAll: async () => {
-    const res = await api.get('/api/influencers')
+    const res = await api.get(`${API_BASE_URL}`)
     return res.data
   },
 
   // 인플루언서 목록 상세 조회
   fetchDetail: async (influencerId) => {
     try {
-      const res = await api.get(`/api/influencers/${influencerId}`)
+      const res = await api.get(`${API_BASE_URL}/${influencerId}`)
       console.log('📦 fetchDetail API 응답 전체:', res)
       return res.data
     } catch (e) {
