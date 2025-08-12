@@ -10,11 +10,6 @@ export const getFanMeetings = async () => {
   return res.data
 }
 
-export const fetchFanMeeting = async (meetingId) => {
-  const res = await api.get(`/api/fan-meetings/${meetingId}`)
-  return res.data
-}
-
 export const fetchSeatsByMeetingId = async (meetingId) => {
   const response = await api.get(`/api/fan-meetings/${meetingId}/seats`)
   return response.data
@@ -23,4 +18,23 @@ export const fetchSeatsByMeetingId = async (meetingId) => {
 export const checkIfAlreadyReserved = async (meetingId) => {
   const res = await api.get(`/api/fan-meetings/${meetingId}/reservation/check`)
   return res.data.reserved
+}
+
+export const fetchFanMeeting = async (meetingId) => {
+  const { data } = await api.get(`/api/fan-meetings/${meetingId}`)
+  return data
+}
+
+export const startReservationPayment = async ({ meetingId, seatId }) => {
+  const { data } = await api.post(`/api/fan-meetings/${meetingId}/seats/${seatId}/start-payment`)
+  return data // { paymentId, amount, ttlSeconds, reservationId? }
+}
+
+export const reserveSeat = async (meetingId, seatId) => {
+  const { data } = await api.post(`/api/fan-meetings/${meetingId}/seats/${seatId}/reservation`)
+  return data
+}
+
+export const cancelReservation = async (meetingId) => {
+  await api.delete(`/api/fan-meetings/${meetingId}/reservation`)
 }
