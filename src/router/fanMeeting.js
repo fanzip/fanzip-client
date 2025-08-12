@@ -8,6 +8,6 @@ export default [
   { path: '/reservation', name: 'reservation', component: FanMeetingPage },
   { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
   { path: '/seat-select/:id', name: 'SeatSelect', component: SeatSelectPage },
-  { path: '/payment/:id', name: 'Payment', component: FanMeetingPaymentPage },
+  { path: '/payment/:id', name: 'FanMeetingPaymentPage', component: FanMeetingPaymentPage },
   { path: '/payment-success', name: 'PaymentSuccess', component: PaymentSuccessPage },
 ]

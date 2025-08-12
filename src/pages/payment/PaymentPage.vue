@@ -83,13 +83,11 @@ export default {
     }
 
     const createPaymentInBackend = async (amount) => {
-      if (route.query.paymentId) {
+      if (route.query.paymentId && route.query.paymentType === 'RESERVATION') {
+        // 예약 결제의 경우 이미 백엔드에서 결제 데이터가 생성됨
         paymentId = route.query.paymentId
         try {
-          const response = await fetch(`/api/payments/${paymentId}`)
-          if (!response.ok) throw new Error(`결제 정보 조회 실패: ${response.status}`)
-
-          const data = await response.json()
+          const data = await paymentApi.getPaymentDetail(paymentId)
           backendPaymentData = data
           return generateOrderIdFromPaymentData(data)
         } catch (err) {
@@ -98,28 +96,12 @@ export default {
         }
       }
 
+      // 일반 결제의 경우 새로 생성
       try {
-        // const response = await fetch('/api/payments/request', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({
-        //     userId: 1,
-        //     orderId: route.query.orderId || null,
-        //     reservationId: null,
-        //     membershipId: null,
-        //     transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        //     paymentType: route.query.paymentType,
-        //     paymentMethod: 'TOSSPAY',
-        //     amount,
-        //   }),
-        // })
-
-        // if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
-        // const data = await response.json()
         const data = await paymentApi.createPayment({
           userId: 1,
           orderId: route.query.orderId ? Number(route.query.orderId) : null,
-          reservationId: null,
+          reservationId: route.query.reservationId ? Number(route.query.reservationId) : null,
           membershipId: null,
           transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           paymentType: route.query.paymentType,

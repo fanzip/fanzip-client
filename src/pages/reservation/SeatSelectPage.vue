@@ -54,6 +54,7 @@ import SeatMap from '@/components/fanmeeting/reservation/SeatMap.vue'
 import SelectedSeatInfo from '@/components/fanmeeting/reservation/SelectedSeatInfo.vue'
 import { fetchFanMeeting, fetchSeatsByMeetingId, checkIfAlreadyReserved } from '@/api/fanMeetingApi'
 import BaseModal from '@/components/common/BaseModal.vue'
+import api from '@/api'
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
@@ -144,10 +145,7 @@ const selectSeat = (rowIndex, seatIndex) => {
 }
 
 const proceedToPayment = async () => {
-  if (!selectedSeat.value || !selectedSeat.value.seatId || !selectedSeat.value.price) {
-    console.warn('좌석이 선택되지 않았거나 필드가 없음:', selectedSeat.value)
-    return
-  }
+  if (!selectedSeat.value?.seatId || !selectedSeat.value?.price) return
 
   try {
     const alreadyReserved = await checkIfAlreadyReserved(route.params.id)
@@ -155,18 +153,31 @@ const proceedToPayment = async () => {
       showAlreadyReservedModal.value = true
       return
     }
-  } catch (err) {
+  } catch {
     showAlreadyReservedModal.value = true
     return
   }
 
-  router.push({
-    path: `/reservation/${route.params.id}/payment`,
-    query: {
-      seat: `${selectedSeat.value.row}${selectedSeat.value.number}`,
-      price: selectedSeat.value.price.toString(),
-      seatId: selectedSeat.value.seatId.toString(),
-    },
-  })
+  try {
+    const { data: intent } = await api.post(
+      `/api/fan-meetings/${route.params.id}/seats/${selectedSeat.value.seatId}/start-payment`,
+    )
+
+    router.push({
+      name: 'FanMeetingPaymentPage', // 라우터에 등록된 FanMeetingPaymentPage.vue의 name
+      query: {
+        paymentType: 'RESERVATION',
+        paymentId: intent.paymentId,
+        reservationId: intent.reservationId,
+        meetingId: route.params.id,
+        seatId: selectedSeat.value.seatId,
+        seat: `${selectedSeat.value.row}${selectedSeat.value.number}`,
+        amount: selectedSeat.value.price + 3000,
+        ttl: intent.ttlSeconds,
+      },
+    })
+  } catch (err) {
+    console.error('❌ start-payment 호출 실패:', err)
+  }
 }
 </script>
