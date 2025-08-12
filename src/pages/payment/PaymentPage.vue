@@ -2,15 +2,17 @@
   <div class="min-h-screen bg-subtle-bg px-5 pt-12 flex items-center justify-center">
     <div class="text-center">
       <div v-if="isLoading" class="space-y-4">
-        <div class="animate-spin rounded-full h-16 w-16 border-4 brand-accent border-t-transparent mx-auto"></div>
+        <div
+          class="animate-spin rounded-full h-16 w-16 border-4 brand-accent border-t-transparent mx-auto"
+        ></div>
         <p class="text-lg font-semibold">토스 결제를 준비하고 있습니다...</p>
         <p class="text-sm text-subtle">잠시만 기다려주세요</p>
       </div>
-      
+
       <div v-else class="space-y-4">
         <p class="text-lg font-semibold text-emphasis">결제를 시작할 수 없습니다</p>
-        <button 
-          @click="handlePayment" 
+        <button
+          @click="handlePayment"
           class="px-6 py-2 brand-accent text-base rounded-lg hover:brand-accent"
         >
           다시 시도
@@ -22,14 +24,16 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import BaseButton from '@/components/common/BaseButton.vue'
+import paymentApi from '@/api/paymentApi'
 
 export default {
   name: 'PaymentPage',
   components: { BaseButton },
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const paymentMethodRef = ref(null)
     const agreementRef = ref(null)
     const isCouponApplied = ref(false)
@@ -41,6 +45,11 @@ export default {
     let backendPaymentData = null
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
     const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY
+
+    const getFinalAmount = () => {
+      const q = Number(route.query.amount)
+      return Number.isFinite(q) && q > 0 ? q : 10000
+    }
 
     const initializeTossPayments = async () => {
       try {
@@ -74,25 +83,49 @@ export default {
     }
 
     const createPaymentInBackend = async (amount) => {
+      if (route.query.paymentId) {
+        paymentId = route.query.paymentId
+        try {
+          const response = await fetch(`/api/payments/${paymentId}`)
+          if (!response.ok) throw new Error(`결제 정보 조회 실패: ${response.status}`)
+
+          const data = await response.json()
+          backendPaymentData = data
+          return generateOrderIdFromPaymentData(data)
+        } catch (err) {
+          console.error('❌ 기존 결제 정보 조회 실패:', err)
+          throw err
+        }
+      }
+
       try {
-        const response = await fetch('/api/payments/request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: 1,
-            orderId: 1,
-            reservationId: null,
-            membershipId: null,
-            transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            paymentType: 'RESERVATION',
-            paymentMethod: 'TOSSPAY',
-            amount,
-          }),
+        // const response = await fetch('/api/payments/request', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({
+        //     userId: 1,
+        //     orderId: route.query.orderId || null,
+        //     reservationId: null,
+        //     membershipId: null,
+        //     transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        //     paymentType: route.query.paymentType,
+        //     paymentMethod: 'TOSSPAY',
+        //     amount,
+        //   }),
+        // })
+
+        // if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
+        // const data = await response.json()
+        const data = await paymentApi.createPayment({
+          userId: 1,
+          orderId: route.query.orderId ? Number(route.query.orderId) : null,
+          reservationId: null,
+          membershipId: null,
+          transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          paymentType: route.query.paymentType,
+          paymentMethod: 'TOSSPAY',
+          amount,
         })
-
-        if (!response.ok) throw new Error(`결제 요청 생성 실패: ${response.status}`)
-        const data = await response.json()
-
         paymentId = data.paymentId
         backendPaymentData = data
         return generateOrderIdFromPaymentData(data)
@@ -120,7 +153,7 @@ export default {
       isLoading.value = true
 
       try {
-        const finalAmount = isCouponApplied.value ? baseAmount - discountAmount : baseAmount
+        const finalAmount = getFinalAmount()
         const orderId = await createPaymentInBackend(finalAmount)
         const orderName = generateOrderName(backendPaymentData)
 
@@ -136,13 +169,22 @@ export default {
           customerName: '김토스',
           customerMobilePhone: '01012341234',
           // QR 코드가 먼저 표시되도록 설정
-          flowMode: 'DIRECT'
+          flowMode: 'DIRECT',
         })
       } catch (error) {
         console.error('결제 요청 실패:', error)
         if (paymentId) {
           try {
-            await fetch(`/api/payments/${paymentId}/fail`, { method: 'PATCH' })
+            // await fetch(`/api/payments/${paymentId}/fail`, { method: 'PATCH' })
+
+            await paymentApi.failPayment(paymentId)
+
+            // ORDER 타입인 경우에만 Market Order 실패 처리 호출
+            if (route.query.paymentType === 'ORDER' && route.query.orderId) {
+              await fetch(`/api/market/orders/${route.query.orderId}/on-payment-failed`, {
+                method: 'POST',
+              })
+            }
           } catch (e) {
             console.error('결제 실패 상태 업데이트 실패:', e)
           }
@@ -156,19 +198,19 @@ export default {
     onMounted(async () => {
       console.log('🔍 TossPayments 로드 확인:', typeof window.TossPayments)
       console.log('🔍 window.TossPayments:', window.TossPayments)
-      
+
       if (typeof window.TossPayments === 'undefined') {
         console.error('❌ TossPayments 스크립트가 로드되지 않았습니다.')
         isLoading.value = false
         return
       }
-      
+
       // 바로 토스페이 결제 (QR 코드) 호출 - iframe 생략
       isLoading.value = true
-      
+
       try {
         // 백엔드에 결제 요청 생성
-        const finalAmount = baseAmount
+        const finalAmount = getFinalAmount()
         const orderId = await createPaymentInBackend(finalAmount)
         const orderName = generateOrderName(backendPaymentData)
 
@@ -177,31 +219,31 @@ export default {
         const tossPayments = window.TossPayments(clientKey)
         console.log('✅ TossPayments 객체:', tossPayments)
         console.log('🔍 requestPayment 메서드 존재:', typeof tossPayments.requestPayment)
-        
+
         // 사용 가능한 메서드들 확인
         console.log('🔍 TossPayments 메서드들:', Object.getOwnPropertyNames(tossPayments))
-        
+
         // Widget API 사용 (requestPayment가 없으므로)
         console.log('🔄 Widget API 사용하여 토스페이 결제 진행')
         const widgets = tossPayments.widgets({ customerKey })
-        
+
         if (widgets) {
           console.log('✅ widgets 객체 생성 성공')
           await widgets.setAmount({ currency: 'KRW', value: finalAmount })
-          
+
           // 임시 div를 body에 추가하여 결제 수단 렌더링
           const tempDiv = document.createElement('div')
           tempDiv.id = 'temp-payment-methods'
           tempDiv.style.position = 'fixed'
-          tempDiv.style.top = '-9999px'  // 화면 밖에 숨김
+          tempDiv.style.top = '-9999px' // 화면 밖에 숨김
           tempDiv.style.left = '-9999px'
           document.body.appendChild(tempDiv)
-          
-          await widgets.renderPaymentMethods({ 
-            selector: '#temp-payment-methods', 
-            variantKey: 'DEFAULT' 
+
+          await widgets.renderPaymentMethods({
+            selector: '#temp-payment-methods',
+            variantKey: 'DEFAULT',
           })
-          
+
           // 잠시 대기 후 바로 결제 요청
           setTimeout(async () => {
             try {
@@ -215,7 +257,7 @@ export default {
                 customerName: '김토스',
                 customerMobilePhone: '01012341234',
               })
-              
+
               // 임시 div 제거
               document.body.removeChild(tempDiv)
             } catch (err) {
@@ -226,7 +268,7 @@ export default {
               }
               isLoading.value = false
             }
-          }, 2000)  // 2초 대기
+          }, 2000) // 2초 대기
         } else {
           console.error('❌ widgets 생성 실패')
           isLoading.value = false

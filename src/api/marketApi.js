@@ -51,6 +51,11 @@ const marketApi = {
     const res = await api.post('/api/market/orders', orderData)
     return res.data
   },
+
+  getOrderPayment: async (orderId) => {
+    const res = await api.get(`/api/market/orders/${orderId}/payment`)
+    return res.data
+  },
 }
 
 export default marketApi

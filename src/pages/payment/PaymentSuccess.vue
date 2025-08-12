@@ -18,13 +18,14 @@
     <p class="mt-14 text-xl text-base font-normal">결제가 완료되었습니다!</p>
 
     <!-- 버튼 -->
-    <div v-if="isFromFanMeeting" class="fixed bottom-14 left-5 right-5 flex flex-col items-center space-y-3">
+    <div
+      v-if="isFromFanMeeting"
+      class="fixed bottom-14 left-5 right-5 flex flex-col items-center space-y-3"
+    >
       <BaseButton variant="primary" size="lg" @click="goToMobileTicket">
         내 카드 보러가기
       </BaseButton>
-      <BaseButton variant="cancel" size="lg" @click="goToHome">
-        돌아가기
-      </BaseButton>
+      <BaseButton variant="cancel" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
     </div>
     <div v-else class="fixed bottom-14 left-0 right-0 flex justify-center">
       <BaseButton variant="primary" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
@@ -51,6 +52,7 @@ import { useRouter, useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import CheckSymbol from '@/assets/icons/CheckSymbol.svg'
+import paymentApi from '@/api/paymentApi'
 
 export default {
   name: 'PaymentSuccess',
@@ -85,7 +87,7 @@ export default {
           orderId: `fanmeeting_${params.fanMeetingId}_${Date.now()}`,
           amount: params.amount,
           paymentMethod: '간편결제',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         }
         return
       }
@@ -98,24 +100,28 @@ export default {
       isLoading.value = true
 
       try {
-        const approveResponse = await fetch(`/api/payments/${paymentId}/approve`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            paymentKey: params.paymentKey,
-            orderId: params.orderId,
-            amount: parseInt(params.amount),
-          }),
+        // const approveResponse = await fetch(`/api/payments/${paymentId}/approve`, {
+        //   method: 'PATCH',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({
+        //     paymentKey: params.paymentKey,
+        //     orderId: params.orderId,
+        //     amount: parseInt(params.amount),
+        //   }),
+        // })
+        // if (!approveResponse.ok) {
+        //   const errorData = await approveResponse.json()
+        //   throw new Error(errorData.message || '결제 승인 실패')
+        // }
+
+        // const approvedData = await approveResponse.json()
+        const approvedData = await paymentApi.approvePayment(paymentId, {
+          paymentKey: params.paymentKey,
+          orderId: params.orderId,
+          amount: parseInt(params.amount, 10),
         })
-
-        if (!approveResponse.ok) {
-          const errorData = await approveResponse.json()
-          throw new Error(errorData.message || '결제 승인 실패')
-        }
-
-        const approvedData = await approveResponse.json()
         paymentData.value = {
           orderId: approvedData.orderId,
           amount: approvedData.amount,
