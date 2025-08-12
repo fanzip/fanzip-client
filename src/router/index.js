@@ -7,6 +7,8 @@ import FanMeetingDetailPage from '@/pages/reservation/FanMeetingDetailPage.vue'
 import InfluencerListPage from '@/pages/InfluencerListPage.vue'
 import influencerMypage from './influencerMypage'
 // import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
+import UserOnboarding from '@/pages/UserOnboarding.vue'
+import InfluencerOnboarding from '@/pages/InfluencerOnboarding.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -18,8 +20,6 @@ import fanCardRoutes from './fanCard'
 import paymentRoutes from './payment'
 
 import { reservationRoutes } from './reservation.js'
-import UserOnboarding from '@/pages/UserOnboarding.vue'
-import InfluencerOnboarding from '@/pages/auth/InfluencerOnboarding.vue'
 
 const routes = [
   // 기본 라우트
