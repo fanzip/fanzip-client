@@ -22,4 +22,9 @@ export const fancardApi = {
   validateQrCode: async (validationData) => {
     return api.post('/api/fancards/qr/validate', validationData)
   },
+
+  // 모바일 티켓 데이터 조회
+  getMobileTicketData: async (reservationId, seatId, meetingId) => {
+    return api.get(`/api/fancards/mobile-ticket/${reservationId}/${seatId}/${meetingId}`)
+  },
 }
