@@ -30,12 +30,6 @@ export const checkIfAlreadyReserved = async (meetingId) => {
   return res.data.reserved
 }
 
-<<<<<<< Updated upstream
-export const fetchFanMeeting = async (meetingId) => {
-  const { data } = await api.get(`/api/fan-meetings/${meetingId}`)
-  return data
-}
-
 export const startReservationPayment = async ({ meetingId, seatId }) => {
   const { data } = await api.post(`/api/fan-meetings/${meetingId}/seats/${seatId}/start-payment`)
   return data // { paymentId, amount, ttlSeconds, reservationId? }
@@ -49,6 +43,5 @@ export const reserveSeat = async (meetingId, seatId) => {
 export const cancelReservation = async (meetingId) => {
   await api.delete(`/api/fan-meetings/${meetingId}/reservation`)
 }
-=======
+
 export const fetchFanMeeting = getFanMeetingDetail // 별칭
->>>>>>> Stashed changes
