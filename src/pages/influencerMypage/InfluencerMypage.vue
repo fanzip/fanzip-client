@@ -1,25 +1,26 @@
 <script setup>
-import InfluencerAccountMenu from '@/components/influencerMypage/InfluencerAccountMenu.vue'
-import InfluencerFanMeetingMenu from '@/components/influencerMypage/InfluencerFanMeetingMenu.vue'
-import InfluencerMarketMenu from '@/components/influencerMypage/InfluencerMarketMenu.vue'
+import InfluencerAccountMenu from '@/components/influencerMypage/menu/InfluencerAccountMenu.vue'
+import InfluencerFanMeetingMenu from '@/components/influencerMypage/menu/InfluencerFanMeetingMenu.vue'
+import InfluencerMarketMenu from '@/components/influencerMypage/menu/InfluencerMarketMenu.vue'
 import InfluencerProfile from '@/components/influencerMypage/InfluencerProfile.vue'
+import StatisticsSummary from '@/components/influencerMypage/statistics/StatisticsSummary.vue'
+import Statistics from '@/components/influencerMypage/statistics/Statistics.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
+import ReportAlert from '@/components/influencerMypage/ReportAlert.vue'
+import InfluencerMenu from '@/components/influencerMypage/InfluencerMenu.vue'
 </script>
 
 <template>
-  <div class="bg-base-bg overflow-hidden pb-20 min-h-screen">
-    <AppHeader type="logo" />
+  <AppHeader type="logo" />
+  <div class="bg-base-bg overflow-hidden p-5 pb-20 min-h-screen bg-subtle-bg space-y-4">
     <InfluencerProfile />
-    <hr />
-    <InfluencerAccountMenu />
-    <hr />
-    <InfluencerMarketMenu />
-    <hr />
-    <InfluencerFanMeetingMenu />
-
+    <StatisticsSummary />
+    <Statistics />
+    <ReportAlert />
+    <InfluencerMenu />
     <!-- 컴포넌트 넣기 -->
-    <div class="bg-subtle-bg py-3 pl-5">
+    <div class="bg-subtle-bg py-3">
       <div class="text-xs flex gap-5">
         <p>이용약관</p>
         <p>개인정보 처리방침</p>
