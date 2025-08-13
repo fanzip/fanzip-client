@@ -13,10 +13,9 @@ const router = useRouter()
 const fanMeetingId = Number(route.params.id)
 
 const fanMeetingData = ref({})
-const userGrade = ref('GENERAL') // 사용자의 실제 멤버십 등급
+const userGrade = ref('GENERAL')
 
 const mapDetail = (raw) => {
-  console.log('🔍 매핑 전 원본 데이터:', raw)
   const d = raw?.data ?? raw
 
   const mapped = {
@@ -44,54 +43,31 @@ const mapDetail = (raw) => {
     whiteOpenTime: d?.whiteOpenTime ?? d?.white_open_time ?? '',
     generalOpenTime: d?.generalOpenTime ?? d?.general_open_time ?? ''
   }
-  
-  console.log('🔍 매핑된 결과:', mapped)
   return mapped
 }
 
 onMounted(async () => {
   try {
-    console.log('🔄 팬미팅 상세 조회 시작, ID:', fanMeetingId)
     const res = await getFanMeetingDetail(fanMeetingId)
-    console.log('📦 팬미팅 상세 API 원본 응답:', res)
     
     fanMeetingData.value = mapDetail(res)
-    console.log('📝 매핑된 팬미팅 데이터:', fanMeetingData.value)
-
+    
     // 사용자의 멤버십 등급 조회 (인플루언서 ID 필요)
     if (fanMeetingData.value.influencerId) {
-      console.log('🔄 멤버십 등급 조회 시작, influencerId:', fanMeetingData.value.influencerId)
       try {
         const subscriptionResponse = await api.get(`/api/memberships/subscription/${fanMeetingData.value.influencerId}`)
-        console.log('📦 사용자 구독 정보 API 응답:', subscriptionResponse.data)
         
         // gradeName을 userGrade로 사용 (VIP, GOLD, SILVER, WHITE, GENERAL)
         userGrade.value = subscriptionResponse.data?.gradeName || 'GENERAL'
-        console.log('🎯 최종 사용자 멤버십 등급:', userGrade.value)
+        
       } catch (gradeError) {
-        console.warn('⚠️ 멤버십 등급 조회 실패, GENERAL로 설정:', gradeError)
-        console.warn('⚠️ 에러 상세:', gradeError.response?.data)
         userGrade.value = 'GENERAL'
       }
     } else {
-      console.warn('⚠️ influencerId가 없어서 멤버십 등급을 GENERAL로 설정')
       userGrade.value = 'GENERAL'
     }
   } catch (e) {
-    console.error('❌ 팬미팅 상세 조회 실패:', e)
-    console.error('❌ 에러 상세:', {
-      status: e.response?.status,
-      statusText: e.response?.statusText,
-      data: e.response?.data,
-      message: e.message,
-      config: {
-        method: e.config?.method,
-        url: e.config?.url,
-        baseURL: e.config?.baseURL
-      }
-    })
-    
-    // 에러가 발생해도 기본값으로 설정
+  
     fanMeetingData.value = {
       title: '팬미팅 로딩 실패',
       description: '팬미팅 정보를 불러올 수 없습니다.',
@@ -123,15 +99,6 @@ const canReserve = computed(() => {
   const serverOpen = fanMeetingData.value.isReservationOpen
   const hasSeats = fanMeetingData.value.availableSeats > 0
   const timeOpen = isOpenByTime.value
-  
-  console.log('🔍 예약 가능 여부 체크:', {
-    serverOpen,
-    hasSeats, 
-    timeOpen,
-    currentTime: new Date().toISOString(),
-    openTime: getCurrentGradeOpenTime.value,
-    grade: userGrade.value
-  })
   
   return (serverOpen || timeOpen) && hasSeats
 })
