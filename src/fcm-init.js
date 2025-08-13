@@ -2,6 +2,7 @@
 import { requestFcmToken, bindForegroundMessage } from '@/firebase'
 
 let booted = false
+let messageHandlerBound = false
 const LAST_KEY = 'last_sent_fcm_token'
 
 /**
@@ -54,16 +55,47 @@ export async function initFcm({ force = false } = {}) {
       localStorage.setItem(LAST_KEY, token)
     }
 
-    // 5) 포그라운드 알림 핸들링
-    bindForegroundMessage((payload) => {
-      const title = payload.notification?.title || '알림'
-      const body  = payload.notification?.body  || ''
-      const url   = payload.fcmOptions?.link || payload.data?.targetUrl || '/'
-      if (Notification.permission === 'granted') {
-        const n = new Notification(title, { body })
-        n.onclick = () => window.open(url, '_blank')
-      }
-    })
+    // 5) 포그라운드 알림 핸들링 (중복 방지 + 쓰로틀링)
+    if (!messageHandlerBound) {
+      let lastNotificationTime = 0
+      const NOTIFICATION_THROTTLE = 2000 // 2초 내 중복 알림 방지
+      
+      bindForegroundMessage((payload) => {
+        console.log('[FCM] 포그라운드 메시지 수신:', payload)
+        
+        const now = Date.now()
+        if (now - lastNotificationTime < NOTIFICATION_THROTTLE) {
+          console.log('[FCM] 중복 알림 방지 - 무시됨')
+          return
+        }
+        
+        const title = payload.notification?.title || '알림'
+        const body = payload.notification?.body || ''
+        const url = payload.fcmOptions?.link || payload.data?.targetUrl || '/'
+        
+        console.log('[FCM] 포그라운드 알림 표시:', title)
+        lastNotificationTime = now
+        
+        // 포그라운드에서만 알림 표시
+        if (Notification.permission === 'granted') {
+          const notification = new Notification(title, { 
+            body,
+            icon: '/logo.svg',
+            badge: '/logo.svg',
+            tag: 'fanzip-notification' // 동일한 tag로 중복 방지
+          })
+          notification.onclick = () => {
+            window.focus()
+            if (url && url !== '/') {
+              window.location.href = url
+            }
+            notification.close()
+          }
+        }
+      })
+      messageHandlerBound = true
+      console.log('[FCM] 포그라운드 메시지 핸들러 등록 완료 (중복 방지 적용)')
+    }
 
     booted = true
   } catch (e) {

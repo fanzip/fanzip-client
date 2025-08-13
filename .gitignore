@@ -44,3 +44,4 @@ coverage
 # Tool/OS caches
 .eslintcache
 Thumbs.db
+.env

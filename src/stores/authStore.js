@@ -129,6 +129,17 @@ export const useAuthStore = defineStore('auth', () => {
     clearToken()
     router.push('/login')
   }
+
+  const fetchUserInfo = async () => {
+    try {
+      const res = await userApi.getUserInfo()
+      setUserInfo(res.data)
+      return res.data
+    } catch (err) {
+      console.error('사용자 정보 조회 실패', err)
+      return null
+    }
+  }
   return {
     token,
     handleKakaoLogin,
@@ -138,5 +149,6 @@ export const useAuthStore = defineStore('auth', () => {
     userInfo,
     setUserInfo,
     setTempRole,
+    fetchUserInfo,
   }
 })

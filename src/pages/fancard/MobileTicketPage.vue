@@ -10,6 +10,11 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
+// 고유 모바일 티켓 여부 확인
+const isUniqueTicket = ref(false)
+const ticketData = ref(null)
+const isLoadingTicketData = ref(false)
+
 // 닫기 버튼 클릭 시 이전 페이지로 돌아가기
 const handleClose = () => {
   router.go(-1)
@@ -35,8 +40,38 @@ const handleImageError = (event) => {
 }
 
 // 현재 로그인한 사용자 ID 가져오기
-const getCurrentUserId = () => {
-  return authStore.user?.id || 1 // fallback to 1 for testing
+const getCurrentUserId = async () => {
+  if (!authStore.userInfo?.userId) {
+    console.log('🔄 사용자 정보 없음, 서버에서 조회 중...')
+    await authStore.fetchUserInfo()
+  }
+  const userId = authStore.userInfo?.userId || 1 // fallback to 1 for testing
+  console.log('🔍 현재 사용자 ID:', userId, 'authStore.userInfo:', authStore.userInfo)
+  return userId
+}
+
+// 고유 모바일 티켓 데이터 로드
+const loadUniqueTicketData = async () => {
+  const { reservationId, seatId, meetingId } = route.params
+  if (!reservationId || !seatId || !meetingId) return
+
+  isUniqueTicket.value = true
+  isLoadingTicketData.value = true
+
+  try {
+    const response = await fancardApi.getMobileTicketData(reservationId, seatId, meetingId)
+    ticketData.value = response.data
+    
+    // 티켓 정보 업데이트
+    if (response.data.reservation) {
+      updateTicketFromReservation(response.data.reservation)
+    }
+  } catch (error) {
+    console.error('모바일 티켓 데이터 로드 실패:', error)
+    // 오류 시 기본 샘플 데이터 유지
+  } finally {
+    isLoadingTicketData.value = false
+  }
 }
 
 // 예약 정보로부터 티켓 정보 업데이트
@@ -129,10 +164,16 @@ const generateQrCode = async () => {
 
     console.log('현재 위치:', currentLocation.value) // 디버깅용
 
+    // 고유 티켓인 경우 route params에서, 아니면 query에서 가져오기
+    const reservationId = isUniqueTicket.value ? route.params.reservationId : (route.query.reservationId || 1)
+    const fanMeetingId = isUniqueTicket.value ? route.params.meetingId : (route.query.fanMeetingId || 1)
+    
+    const userId = await getCurrentUserId() // 사용자 ID 조회
+    
     const qrRequest = {
-      reservationId: route.query.reservationId || 1,
-      userId: getCurrentUserId(), // 로그인한 사용자 ID
-      fanMeetingId: route.query.fanMeetingId || 1,
+      reservationId: parseInt(reservationId),
+      userId: userId, // 로그인한 사용자 ID
+      fanMeetingId: parseInt(fanMeetingId),
       latitude: currentLocation.value.latitude,
       longitude: currentLocation.value.longitude,
       deviceInfo: navigator.userAgent,
@@ -201,7 +242,11 @@ const checkLocationPermission = async () => {
 
 // onClose 함수는 AppHeader의 close 타입에서 자동으로 처리됨
 
-onMounted(() => {
+onMounted(async () => {
+  // 고유 모바일 티켓 데이터 로드
+  await loadUniqueTicketData()
+  
+  // 위치 권한 확인
   checkLocationPermission()
 })
 
@@ -215,7 +260,17 @@ onUnmounted(() => {
 <template>
   <div class="w-full min-h-screen flex flex-col bg-subtle-bg p-5">
     <AppHeader type="close" @close="handleClose"></AppHeader>
-    <div class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
+    
+    <!-- 로딩 상태 -->
+    <div v-if="isLoadingTicketData" class="flex justify-center items-center min-h-[400px]">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
+        <p class="text-subtle-text">모바일 티켓을 불러오는 중...</p>
+      </div>
+    </div>
+    
+    <!-- 티켓 내용 -->
+    <div v-else class="bg-white rounded-lg shadow-md max-w-md w-full mt-12">
       <div class="p-5 flex flex-col">
         <img
           v-if="!imageError && ticket.imgUrl"
