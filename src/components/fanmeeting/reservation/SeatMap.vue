@@ -14,7 +14,7 @@
           <button
             v-for="(seat, seatIndex) in row"
             :key="seatIndex"
-            :disabled="seat.status === 'occupied'"
+            :disabled="seat.status === 'occupied' || seat.status === 'pending'"
             @click="$emit('selectSeat', rowIndex, seatIndex)"
             :class="getSeatClass(seat)"
             :style="getSeatStyle(seat)"
@@ -37,11 +37,12 @@ defineProps({ seatMap: Array, seatRows: Array })
 
 const getSeatClass = (seat) => {
   if (seat.status === 'occupied') return 'cursor-not-allowed border-2'
+  if (seat.status === 'pending') return 'cursor-not-allowed border-2'
   if (seat.selected) return 'border-2'
   return 'bg-white border-2 hover:border-brand-primary'
 }
 const getSeatStyle = (seat) => {
-  if (seat.status === 'occupied')
+  if (seat.status === 'occupied' || seat.status === 'pending')
     return 'background-color: #CCCCCC; border-color: #666666; color: #60584C;'
   if (seat.selected) return 'background-color: #FFE685; border-color: #666666; color: #60584C;'
   return 'border-color: #666666; color: #60584C;'

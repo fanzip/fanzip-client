@@ -45,14 +45,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomButton from '@/components/common/ButtonNav.vue'
 import FanMeetingInfo from '@/components/fanmeeting/reservation/FanMeetingInfo.vue'
 import SeatMap from '@/components/fanmeeting/reservation/SeatMap.vue'
 import SelectedSeatInfo from '@/components/fanmeeting/reservation/SelectedSeatInfo.vue'
-import { fetchFanMeeting, fetchSeatsByMeetingId, checkIfAlreadyReserved } from '@/api/fanMeetingApi'
+import { fetchFanMeeting, fetchSeatsByMeetingId, fetchPendingSeatsByMeetingId, checkIfAlreadyReserved } from '@/api/fanMeetingApi'
 import BaseModal from '@/components/common/BaseModal.vue'
 import api from '@/api'
 
@@ -76,12 +76,14 @@ const currentFanMeeting = ref(null)
 
 onMounted(async () => {
   try {
-    const [rawMeeting, rawSeats] = await Promise.all([
+    const [rawMeeting, rawSeats, pendingSeats] = await Promise.all([
       fetchFanMeeting(route.params.id),
       fetchSeatsByMeetingId(route.params.id),
+      fetchPendingSeatsByMeetingId(route.params.id)
     ])
 
     console.log('🔥 [rawSeats 응답 확인]', rawSeats)
+    console.log('🔥 [pendingSeats 응답 확인]', pendingSeats)
 
     currentFanMeeting.value = {
       title: rawMeeting.title || '팬미팅 제목',
@@ -89,6 +91,9 @@ onMounted(async () => {
       date: dayjs(rawMeeting.meetingDate).format('YYYY년 M월 D일 (dd) A h:mm'),
       venue: rawMeeting.venueName || '장소 미정',
     }
+
+    // pending 상태인 seatId들을 Set으로 만들기
+    const pendingSeatIds = new Set(pendingSeats.map(seat => seat.seatId))
 
     // 좌석을 행(row) 기준으로 그룹화
     const groupedSeats = seatRows.map((rowLetter) => {
@@ -103,7 +108,7 @@ onMounted(async () => {
           seatId: seat.seatId,
           number: parseInt(seat.seatNumber.slice(1)),
           row: rowLetter,
-          status: seat.reserved ? 'occupied' : 'available',
+          status: seat.reserved ? 'occupied' : pendingSeatIds.has(seat.seatId) ? 'pending' : 'available',
           selected: false,
           price: seat.price,
         }))
@@ -122,6 +127,28 @@ onMounted(async () => {
   } catch (err) {
     console.error('팬미팅/좌석 정보 불러오기 실패:', err)
   }
+
+  // 페이지 포커스 이벤트 리스너 추가 (다른 탭에서 돌아왔을 때)
+  const handleVisibilityChange = () => {
+    if (!document.hidden) {
+      console.log('🔄 페이지 포커스, 좌석 상태 새로고침')
+      refreshSeatData()
+    }
+  }
+
+  const handleFocus = () => {
+    console.log('🔄 윈도우 포커스, 좌석 상태 새로고침')
+    refreshSeatData()
+  }
+
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+  window.addEventListener('focus', handleFocus)
+
+  // 컴포넌트 언마운트 시 이벤트 리스너 제거
+  onUnmounted(() => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange)
+    window.removeEventListener('focus', handleFocus)
+  })
 })
 
 const selectSeat = (rowIndex, seatIndex) => {
@@ -144,6 +171,72 @@ const selectSeat = (rowIndex, seatIndex) => {
   }
 }
 
+const updateSeatStatus = (seatId, newStatus) => {
+  seatMap.value.forEach((row) => {
+    row.forEach((seat) => {
+      if (seat.seatId === seatId) {
+        seat.status = newStatus
+        if (newStatus !== 'available') {
+          seat.selected = false
+        }
+      }
+    })
+  })
+  
+  // 선택된 좌석이 사용 불가능하게 되면 선택 해제
+  if (selectedSeat.value?.seatId === seatId && newStatus !== 'available') {
+    selectedSeat.value = null
+  }
+}
+
+const refreshSeatData = async () => {
+  try {
+    const [rawSeats, pendingSeats] = await Promise.all([
+      fetchSeatsByMeetingId(route.params.id),
+      fetchPendingSeatsByMeetingId(route.params.id)
+    ])
+    
+    console.log('🔥 [rawSeats]', rawSeats)
+    console.log('🔥 [pendingSeats]', pendingSeats)
+    
+    // pending 상태인 seatId들을 Set으로 만들기
+    const pendingSeatIds = new Set(pendingSeats.map(seat => seat.seatId))
+    
+    // 좌석을 행(row) 기준으로 그룹화
+    const groupedSeats = seatRows.map((rowLetter) => {
+      const seatsInRow = rawSeats
+        .filter((seat) => seat.seatNumber.trim().startsWith(rowLetter))
+        .sort((a, b) => {
+          const numA = parseInt(a.seatNumber.slice(1))
+          const numB = parseInt(b.seatNumber.slice(1))
+          return numA - numB
+        })
+        .map((seat) => ({
+          seatId: seat.seatId,
+          number: parseInt(seat.seatNumber.slice(1)),
+          row: rowLetter,
+          status: seat.reserved ? 'occupied' : pendingSeatIds.has(seat.seatId) ? 'pending' : 'available',
+          selected: false,
+          price: seat.price,
+        }))
+
+      return seatsInRow.length
+        ? seatsInRow
+        : Array.from({ length: 11 }, (_, i) => ({
+            number: i + 1,
+            row: rowLetter,
+            status: 'empty',
+            selected: false,
+          }))
+    })
+
+    seatMap.value = groupedSeats
+    selectedSeat.value = null // 새로고침 시 선택 초기화
+  } catch (err) {
+    console.error('좌석 정보 새로고침 실패:', err)
+  }
+}
+
 const proceedToPayment = async () => {
   if (!selectedSeat.value?.seatId || !selectedSeat.value?.price) return
 
@@ -159,12 +252,20 @@ const proceedToPayment = async () => {
   }
 
   try {
+    console.log('🚀 start-payment API 호출 시작:', {
+      meetingId: route.params.id,
+      seatId: selectedSeat.value.seatId
+    })
+    
     const { data: intent } = await api.post(
       `/api/fan-meetings/${route.params.id}/seats/${selectedSeat.value.seatId}/start-payment`,
     )
+    
+    console.log('✅ start-payment API 성공:', intent)
 
-    router.push({
-      name: 'FanMeetingPaymentPage', // 라우터에 등록된 FanMeetingPaymentPage.vue의 name
+    console.log('🔄 라우터 푸시 시작')
+    await router.push({
+      name: 'FanMeetingPaymentPage',
       query: {
         paymentType: 'RESERVATION',
         paymentId: intent.paymentId,
@@ -176,8 +277,15 @@ const proceedToPayment = async () => {
         ttl: intent.ttlSeconds,
       },
     })
+    
+    console.log('✅ 라우터 푸시 완료')
+    
+    // 라우팅 후에 좌석 상태 변경 (페이지가 이미 이동했으므로 영향 없음)
+    updateSeatStatus(selectedSeat.value.seatId, 'pending')
+    
   } catch (err) {
     console.error('❌ start-payment 호출 실패:', err)
+    alert('결제를 시작할 수 없습니다. 다시 시도해주세요.')
   }
 }
 </script>
