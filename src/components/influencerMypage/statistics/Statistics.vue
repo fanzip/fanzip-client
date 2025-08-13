@@ -1,44 +1,104 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import BarChart from './BarChart.vue'
+import chartApi from '@/api/chartApi'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
 const graphSelection = ref('Revenue')
 const filterSelection = ref('Day')
-const revenue = [
-  { label: '3월', value: 9_000_000 },
-  { label: '4월', value: 7_000_000 },
-  { label: '5월', value: 11_000_000 },
-  { label: '6월', value: 11_800_000 },
-  { label: '7월', value: 5_000_000 },
-]
 
-const dailyFanGrowth = [
-  { label: '10일', value: 600 },
-  { label: '11일', value: 600 },
-  { label: '12일', value: 600 },
-  { label: '13일', value: 450 },
-  { label: '14일', value: 600 },
-  { label: '15일', value: 900 },
-  { label: '16일', value: 1150 },
-]
+const influencerId = computed(() => authStore.influencerUserInfo.influencerId)
 
-const weeklyFanGrowth = [
-  { label: '6주전', value: 600 },
-  { label: '5주전', value: 600 },
-  { label: '4주전', value: 600 },
-  { label: '3주전', value: 450 },
-  { label: '2주전', value: 600 },
-  { label: '1주전', value: 900 },
-]
+const revenue = ref([])
+const dailyFanGrowth = ref([])
+const weeklyFanGrowth = ref([])
+const monthlyFanGrowth = ref([])
 
-const monthlyFanGrowth = [
-  { label: '2월', value: 600 },
-  { label: '3월', value: 600 },
-  { label: '4월', value: 600 },
-  { label: '5월', value: 450 },
-  { label: '6월', value: 600 },
-  { label: '7월', value: 900 },
-  { label: '8월', value: 1150 },
-]
+const transformApiData = (apiData) => {
+  return apiData.map((item) => ({
+    label: item.date,
+    value: item.subscriberCount,
+  }))
+}
+
+const transformApiData2 = (apiData) => {
+  return apiData.map((item) => ({
+    label: item.date,
+    value: item.revenue,
+  }))
+}
+const fetchDailyData = async () => {
+  try {
+    const data = await chartApi.getSubscriberStatsDaily(influencerId.value)
+    dailyFanGrowth.value = transformApiData(data)
+  } catch (e) {
+    console.log('Daily fetch error:', e)
+  }
+}
+
+const fetchWeeklyData = async () => {
+  try {
+    const data = await chartApi.getSubscriberStatsWeekly(influencerId.value)
+    weeklyFanGrowth.value = transformApiData(data)
+  } catch (e) {
+    console.log('Weekly fetch error:', e)
+  }
+}
+
+const fetchMonthlyData = async () => {
+  try {
+    const data = await chartApi.getSubscriberStatsMonthly(influencerId.value)
+    monthlyFanGrowth.value = transformApiData(data)
+  } catch (e) {
+    console.log('Monthly fetch error:', e)
+  }
+}
+const fetchMonthlyRevenue = async () => {
+  try {
+    const data = await chartApi.getMonthlyRevenue(influencerId.value)
+    revenue.value = transformApiData2(data)
+  } catch (e) {
+    console.log('Mothly Revenue fetch error:', e)
+  }
+}
+const fetchAllData = async () => {
+  if (!influencerId.value) {
+    return
+  }
+
+  try {
+    await Promise.all([
+      fetchMonthlyRevenue(),
+      fetchDailyData(),
+      fetchWeeklyData(),
+      fetchMonthlyData(),
+    ])
+  } catch (e) {
+    console.error('데이터 로딩 실패:', e)
+  }
+}
+
+// influencerId 변경 감지
+watch(
+  influencerId,
+  (newId, oldId) => {
+    if (newId) {
+      fetchAllData()
+    }
+  },
+  { immediate: true },
+) // immediate: true로 즉시 실행
+
+onMounted(() => {
+  console.log('차트 컴포넌트 마운트됨')
+  console.log('현재 influencerId:', influencerId.value)
+
+  // 이미 값이 있다면 바로 실행
+  if (influencerId.value) {
+    fetchAllData()
+  }
+})
 </script>
 <template>
   <div class="w-full rounded-xl p-5 flex flex-col bg-white">
