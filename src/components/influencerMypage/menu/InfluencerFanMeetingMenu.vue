@@ -27,7 +27,7 @@ const goToByName = (name) => {
 <template>
   <div>
     <div class="px-5 pt-5">
-      <p class="text-xl font-bold text-black">나의 팬미팅 정보</p>
+      <p class="text-lg font-bold text-black">나의 팬미팅 정보</p>
     </div>
 
     <div
