@@ -1,14 +1,11 @@
 <script setup>
-import InfluencerAccountMenu from '@/components/influencerMypage/menu/InfluencerAccountMenu.vue'
-import InfluencerFanMeetingMenu from '@/components/influencerMypage/menu/InfluencerFanMeetingMenu.vue'
-import InfluencerMarketMenu from '@/components/influencerMypage/menu/InfluencerMarketMenu.vue'
 import InfluencerProfile from '@/components/influencerMypage/InfluencerProfile.vue'
 import StatisticsSummary from '@/components/influencerMypage/statistics/StatisticsSummary.vue'
 import Statistics from '@/components/influencerMypage/statistics/Statistics.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
-import ReportAlert from '@/components/influencerMypage/ReportAlert.vue'
-import InfluencerMenu from '@/components/influencerMypage/InfluencerMenu.vue'
+import ReportAlert from '@/components/influencerMypage/statistics/ReportAlert.vue'
+import InfluencerMenu from '@/components/influencerMypage/menu/InfluencerMenu.vue'
 </script>
 
 <template>
