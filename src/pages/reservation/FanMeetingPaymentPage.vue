@@ -96,7 +96,7 @@ const currentFanMeeting = ref({
   venue: '장소 미정',
 })
 
-const ticketPrice = ref(33000)
+const ticketPrice = ref(20000)
 const serviceFee = ref(3000)
 const selectedPaymentMethod = ref('TOSSPAY')
 const isProcessing = ref(false)
