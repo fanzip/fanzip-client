@@ -10,6 +10,16 @@ export const getFanMeetings = async () => {
   return res.data
 }
 
+export const createFanMeeting = async (payload) => {
+  const res = await api.post('/api/fan-meetings', payload)
+  return res.data
+}
+
+// export const fetchFanMeeting = async (meetingId) => {
+//   const res = await api.get(`/api/fan-meetings/${meetingId}`)
+//   return res.data
+// }
+
 export const fetchSeatsByMeetingId = async (meetingId) => {
   const response = await api.get(`/api/fan-meetings/${meetingId}/seats`)
   return response.data
@@ -20,6 +30,7 @@ export const checkIfAlreadyReserved = async (meetingId) => {
   return res.data.reserved
 }
 
+<<<<<<< Updated upstream
 export const fetchFanMeeting = async (meetingId) => {
   const { data } = await api.get(`/api/fan-meetings/${meetingId}`)
   return data
@@ -38,3 +49,6 @@ export const reserveSeat = async (meetingId, seatId) => {
 export const cancelReservation = async (meetingId) => {
   await api.delete(`/api/fan-meetings/${meetingId}/reservation`)
 }
+=======
+export const fetchFanMeeting = getFanMeetingDetail // 별칭
+>>>>>>> Stashed changes
