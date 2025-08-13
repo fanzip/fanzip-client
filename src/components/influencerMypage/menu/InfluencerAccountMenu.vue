@@ -1,21 +1,27 @@
 <script setup>
 import Lock from '@/assets/mypage/Lock.svg'
 import Card from '@/assets/mypage/Card.svg'
-import Logout from '@/assets/mypage/Logout.svg'
-import SadFace from '@/assets/mypage/SadFace.svg'
 
+import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
+
+const influencerId = computed(() => authStore.influencerUserInfo.influencerId)
 
 const menuItems = [
   {
     icon: Lock,
     label: '프로필 관리',
-    action: () => router.push('/influencer/profile'),
+    action: () => router.push(`/influencers/${influencerId.value}/profile`),
   },
-  { icon: Logout, label: '로그아웃' },
-  { icon: SadFace, label: '회원탈퇴' },
+  {
+    icon: Lock,
+    label: '팬미팅 만족 조사',
+    action: null,
+  },
 ]
 </script>
 
