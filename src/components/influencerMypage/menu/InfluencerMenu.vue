@@ -1,7 +1,7 @@
 <script setup>
-import InfluencerAccountMenu from './menu/InfluencerAccountMenu.vue'
-import InfluencerMarketMenu from './menu/InfluencerMarketMenu.vue'
-import InfluencerFanMeetingMenu from './menu/InfluencerFanMeetingMenu.vue'
+import InfluencerAccountMenu from './InfluencerAccountMenu.vue'
+import InfluencerMarketMenu from './InfluencerMarketMenu.vue'
+import InfluencerFanMeetingMenu from './InfluencerFanMeetingMenu.vue'
 </script>
 <template>
   <div class="w-full rounded-xl flex flex-col bg-white py-2">
