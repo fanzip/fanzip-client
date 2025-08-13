@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-9 pr-5 pb-24">
+  <div class="pl-9 pr-5 pb-8">
     <div v-for="meeting in meetings" :key="meeting.meetingId" class="mt-6 first:mt-0">
       <FanMeetingCard
         :title="meeting.title"
