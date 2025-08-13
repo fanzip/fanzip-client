@@ -43,6 +43,28 @@ export const useAuthStore = defineStore('auth', () => {
     deletedAt: null,
   })
 
+  const influencerUserInfo = reactive({
+    influencerId: null,
+    userId: null,
+    influencerName: null,
+    category: null,
+    description: null,
+    profileImage: null,
+    fanCardImage: null,
+    isVerified: null,
+  })
+
+  const setinfluencerUserInfo = (data) => {
+    ;(influencerUserInfo.influencerId = data.influencerId),
+      (influencerUserInfo.userId = data.userId),
+      (influencerUserInfo.influencerName = data.influencerName),
+      (influencerUserInfo.category = data.category),
+      (influencerUserInfo.description = data.description),
+      (influencerUserInfo.profileImage = data.profileImage),
+      (influencerUserInfo.fanCardImage = data.fanCardImage),
+      (influencerUserInfo.isVerified = data.isVerified)
+  }
+
   const setToken = (jwt) => {
     token.value = jwt
     localStorage.setItem('access-token', jwt)
@@ -147,8 +169,10 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     setToken,
     userInfo,
+    influencerUserInfo,
     setUserInfo,
     setTempRole,
     fetchUserInfo,
+    setinfluencerUserInfo,
   }
 })
