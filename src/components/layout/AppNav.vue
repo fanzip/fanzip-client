@@ -47,7 +47,7 @@ const isActive = (path) => {
         <span
           :class="[
             'block text-xs leading-none text-center whitespace-nowrap transition-colors duration-200',
-            isActive(item.path) ? 'text-text-base' : 'text-nav-stroke',
+            isActive(item.path) ? 'text-text-base' : 'text-nav-deactivated',
           ]"
         >
           {{ item.name }}
