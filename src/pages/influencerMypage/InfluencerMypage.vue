@@ -6,6 +6,23 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNav from '@/components/layout/AppNav.vue'
 import ReportAlert from '@/components/influencerMypage/statistics/ReportAlert.vue'
 import InfluencerMenu from '@/components/influencerMypage/menu/InfluencerMenu.vue'
+import { getInfluencerMyProfile } from '@/api/influencerApi'
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  // 데이터가 없을 때만 API 호출
+  if (!authStore.influencerUserInfo.influencerName) {
+    try {
+      const data = await getInfluencerMyProfile()
+      authStore.setinfluencerUserInfo(data)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+})
 </script>
 
 <template>
@@ -22,7 +39,7 @@ import InfluencerMenu from '@/components/influencerMypage/menu/InfluencerMenu.vu
         <p>이용약관</p>
         <p>개인정보 처리방침</p>
       </div>
-      <div class="text-sm text-subtle-text mt-24 mb-0">
+      <div class="text-sm text-subtle-text mt-6 mb-0">
         <p>COPYRIGHT © (주)좋은데요</p>
         <p>ALL RIGHTS RESERVED.</p>
       </div>
