@@ -14,6 +14,16 @@ export const getInfluencerProfile = async (influencerId) => {
   }
 }
 
+export const getInfluencerMyProfile = async () => {
+  try {
+    const response = await api.get(`${API_BASE_URL}/profile`)
+    console.log('API 응답 전체:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('인플루언서 프로필 조회 실패:', error)
+    throw error
+  }
+}
 // 인플루언서 프로필 수정
 export const updateInfluencerProfile = async (influencerId, profileData) => {
   try {
@@ -33,8 +43,8 @@ export const updateInfluencerProfileImage = async (influencerId, imageData) => {
 
     const response = await api.post(`${API_BASE_URL}/${influencerId}/profile/image`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {
@@ -51,8 +61,8 @@ export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
 
     const response = await api.post(`${API_BASE_URL}/${influencerId}/fancard/image`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {
@@ -77,7 +87,8 @@ const influencerApi = {
     } catch (e) {
       console.error('❌ fetchDetail API 실패:', e.response?.data || e.message)
       return undefined
-  }}
+    }
+  },
 }
 
 export default influencerApi
