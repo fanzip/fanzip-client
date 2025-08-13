@@ -121,7 +121,7 @@ onMounted(() => {
       </button>
     </div>
     <div v-if="graphSelection === 'Revenue'">
-      <p class="mt-7 text-center text-xl font-semibold">월별 수익 비교</p>
+      <p class="mt-7 text-center text-xl font-semibold">월별 수익</p>
       <BarChart :data="revenue" :yTicks="4" :type="'revenue'" />
     </div>
     <div v-else>
