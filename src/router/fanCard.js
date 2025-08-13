@@ -15,6 +15,12 @@ export default [
     meta: { hideNavbar: true },
   },
   {
+    path: '/fancard/mobile-ticket/:reservationId/:seatId/:meetingId',
+    name: 'UniqueMobileTicketPage',
+    component: MobileTicketPage,
+    meta: { hideNavbar: true },
+  },
+  {
     path: '/fancard/qr-validation',
     name: 'QRValidationPage',
     component: () => import('@/pages/fancard/QRValidationPage.vue'),
