@@ -1,8 +1,13 @@
 <script setup>
 import profile from '../../assets/influencer/찰스엔터프로필.svg'
+import { getInfluencerProfile } from '@/api/influencerApi'
+import { useAuthStore } from '@/stores/authStore'
+import { onMounted } from 'vue'
+import { computed } from 'vue'
+const authStore = useAuthStore()
 
-const name = '찰스엔터'
-const imageUrl = profile
+const name = computed(() => authStore.influencerUserInfo.influencerName)
+const imageUrl = computed(() => authStore.influencerUserInfo.profileImage)
 </script>
 
 <template>
