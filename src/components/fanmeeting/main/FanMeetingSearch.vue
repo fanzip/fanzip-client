@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-[68px] mb-7 flex justify-center">
+  <div class="mb-7 flex justify-center">
     <SearchBar ref="searchBarRef" />
   </div>
 </template>

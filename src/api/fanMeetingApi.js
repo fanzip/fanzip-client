@@ -10,6 +10,20 @@ export const getFanMeetings = async () => {
   return res.data
 }
 
+export const getSubscribedFanMeetings = async (grade = 'GENERAL') => {
+  const res = await api.get('/api/fan-meetings/subscribed', {
+    params: { grade }
+  })
+  return res.data
+}
+
+export const getNonSubscribedFanMeetings = async (grade = 'GENERAL') => {
+  const res = await api.get('/api/fan-meetings/non-subscribed', {
+    params: { grade }
+  })
+  return res.data
+}
+
 export const createFanMeeting = async (payload) => {
   const res = await api.post('/api/fan-meetings', payload)
   return res.data
@@ -23,6 +37,16 @@ export const createFanMeeting = async (payload) => {
 export const fetchSeatsByMeetingId = async (meetingId) => {
   const response = await api.get(`/api/fan-meetings/${meetingId}/seats`)
   return response.data
+}
+
+export const fetchPendingSeatsByMeetingId = async (meetingId) => {
+  try {
+    const response = await api.get(`/api/fan-meetings/${meetingId}/pending-seats`)
+    return response.data
+  } catch (err) {
+    console.warn('pending-seats API가 없습니다. 빈 배열을 반환합니다.')
+    return []
+  }
 }
 
 export const checkIfAlreadyReserved = async (meetingId) => {
