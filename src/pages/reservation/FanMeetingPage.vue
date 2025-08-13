@@ -25,10 +25,11 @@
     </div>
 
     <!-- 구독하지 않은 인플루언서의 팬미팅 -->
-    <div v-if="filteredNonSubscribedMeetings.length > 0">
-      <h2 class="text-md font-semibold text-text-base mb-3 pl-10">모든 인플루언서</h2>
-      <FanMeetingList :meetings="filteredNonSubscribedMeetings" @click="goToDetail" />
-    </div>
+    <div v-if="filteredNonSubscribedMeetings.length > 0" class="pb-20">
+  <h2 class="text-md font-semibold text-text-base mb-3 pl-10">모든 인플루언서</h2>
+  <FanMeetingList :meetings="filteredNonSubscribedMeetings" @click="goToDetail" />
+</div>
+
 
     <!-- 검색 결과가 없을 때 -->
     <div
