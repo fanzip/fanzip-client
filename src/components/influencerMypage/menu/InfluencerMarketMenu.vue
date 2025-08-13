@@ -19,7 +19,7 @@ const items = [
 <template>
   <div>
     <div class="px-5 pt-5">
-      <p class="text-xl font-bold text-black">나의 마켓</p>
+      <p class="text-lg font-bold text-black">나의 마켓</p>
     </div>
     <div v-for="(item, index) in items" :key="index" class="flex items-center gap-2 px-5 py-3">
       <img :src="item.icon" alt="아이콘" class="w-5 h-5 cursor-pointer" />
