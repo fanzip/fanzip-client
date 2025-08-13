@@ -2,11 +2,20 @@ import api from '@/api'
 
 const marketApi = {
   // 전체 상품 목록 조회
-  getProducts: async ({ limit = 20, keyword = '', lastProductId = null }) => {
+  getProducts: async ({
+    limit = 20,
+    keyword = '',
+    lastProductId = null,
+    sort = null,
+    category = null,
+    onlySubscribed = null,
+  }) => {
     const params = { limit }
     if (keyword) params.q = keyword
     if (lastProductId) params.lastProductId = lastProductId
-
+    if (sort) params.sort = sort
+    if (category) params.category = category
+    if (onlySubscribed) params.onlySubscribed = onlySubscribed
     const res = await api.get('/api/market/products', { params })
     return res.data
   },

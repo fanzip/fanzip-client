@@ -43,7 +43,7 @@ onMounted(async () => {
     if (product.value.detailImagesList.length) {
       setInterval(() => {
         currentSlide.value = (currentSlide.value + 1) % product.value.detailImagesList.length
-      }, 2000)
+      }, 1000)
     }
   } catch (e) {
     console.error('상품 상세 조회 실패', e)
