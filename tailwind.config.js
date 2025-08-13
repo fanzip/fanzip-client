@@ -29,15 +29,17 @@ export default {
         },
       },
       spacing: {
-        'btn-lg-w': '22.06rem',   // 353px
-        'btn-md-w': '10.56rem',   // 169px
-        'btn-sm-w': '8.75rem',    // 140px
-        'btn-h': '3rem',          // 48px
+        'btn-lg-w': '22.06rem', // 353px
+        'btn-md-w': '10.56rem', // 169px
+        'btn-sm-w': '8.75rem', // 140px
+        'btn-h': '3rem', // 48px
       },
       fontFamily: {
         sans: ['Pretendard', 'sans-serif'],
       },
-      
+      boxShadow: {
+        '3xl': '5px 5px 10px rgba(0, 0, 0, 0.5)',
+      },
     },
   },
   plugins: [],
