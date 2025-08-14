@@ -59,26 +59,26 @@ export async function initFcm({ force = false } = {}) {
     if (!messageHandlerBound) {
       let lastNotificationTime = 0
       const NOTIFICATION_THROTTLE = 2000 // 2초 내 중복 알림 방지
-      
+
       bindForegroundMessage((payload) => {
         console.log('[FCM] 포그라운드 메시지 수신:', payload)
-        
+
         const now = Date.now()
         if (now - lastNotificationTime < NOTIFICATION_THROTTLE) {
           console.log('[FCM] 중복 알림 방지 - 무시됨')
           return
         }
-        
+
         const title = payload.notification?.title || '알림'
         const body = payload.notification?.body || ''
         const url = payload.fcmOptions?.link || payload.data?.targetUrl || '/'
-        
+
         console.log('[FCM] 포그라운드 알림 표시:', title)
         lastNotificationTime = now
-        
+
         // 포그라운드에서만 알림 표시
         if (Notification.permission === 'granted') {
-          const notification = new Notification(title, { 
+          const notification = new Notification(title, {
             body,
             icon: '/logo.svg',
             badge: '/logo.svg',
