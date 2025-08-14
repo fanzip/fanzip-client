@@ -1,5 +1,22 @@
 <script setup>
 import Report from '@/assets/InfluencerProfile/Report.svg'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const latestMeetingId = 1 // *** 하드코딩 ***
+const influencerId = 14 // *** 하드코딩 => 추후 수정 ***
+
+const goToReport = () => {
+  router.push({
+    name: 'FanmeetingSummary',
+    params: { influencerId },
+    query: {
+      meetingId: latestMeetingId,
+      regenerate: true, // 기본값으로 새로 생성
+    },
+  })
+}
 </script>
 <template>
   <div class="w-full rounded-xl flex flex-col bg-white p-4">
@@ -8,9 +25,14 @@ import Report from '@/assets/InfluencerProfile/Report.svg'
       <p class="text-md font-semibold">AI 기반 활동 리포트가 준비됐어요</p>
     </div>
 
-    <p class="text-sm font-medium mt-1">지난주 패턴을 바탕으로 다음 주 행동 가이드를 만들었어요.</p>
-    <button class="bg-subtle-bg rounded-lg mt-3 mx-auto py-2 px-3 text-sm font-medium">
-      리포트 확인하기
+    <p class="text-sm font-medium mt-1">팬미팅 리뷰를 바탕으로 종합 리포트를 만들었어요</p>
+    <button
+      class="bg-subtle-bg rounded-lg mt-3 mx-auto py-2 px-3 text-sm font-medium transition-opacity"
+      :class="{ 'opacity-50 cursor-not-allowed': !latestMeetingId }"
+      @click="goToReport"
+      :disabled="!latestMeetingId"
+    >
+      {{ latestMeetingId ? '리포트 확인하기' : '리포트 준비 중...' }}
     </button>
   </div>
 </template>
