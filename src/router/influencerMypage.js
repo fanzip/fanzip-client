@@ -4,6 +4,7 @@ import EditNamePage from '@/pages/influencerMypage/EditNamePage.vue'
 import EditCategoryPage from '@/pages/influencerMypage/EditCategoryPage.vue'
 import EditIntroPage from '@/pages/influencerMypage/EditIntroPage.vue'
 import EditFanCardPage from '@/pages/influencerMypage/EditFanCardPage.vue'
+import FanmeetingSummaryPage from '@/pages/influencerMypage/FanmeetingSummaryPage.vue'
 
 export default [
   {
@@ -35,5 +36,16 @@ export default [
     path: '/influencers/:influencerId/profile/edit-fancard',
     name: 'EditFanCard',
     component: EditFanCardPage,
+  },
+  {
+    path: '/influencers/:influencerId/fanmeeting-summary',
+    name: 'FanmeetingSummary',
+    component: FanmeetingSummaryPage,
+    // meetingId는 쿼리 파라미터로 전달
+    props: (route) => ({
+      influencerId: route.params.influencerId,
+      meetingId: route.query.meetingId,
+      regenerate: route.query.regenerate,
+    }),
   },
 ]
