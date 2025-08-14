@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import DateTimeStepper from './DateTimeStepper.vue'
+import calendarIcon from '@/assets/mypage/calendar.svg'
+import chevronDown from '@/assets/membership/IoChevronBackSharp.svg'
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
@@ -58,7 +60,14 @@ function onInput(key, e) {
         :model-value="form.meetingDate"
         @update:modelValue="(v) => setField('meetingDate', v)"
         :minute-step="30"
-      />
+      >
+        <template #prefix>
+          <img :src="calendarIcon" alt="" class="w-4 h-4 shrink-0" />
+        </template>
+        <template #suffix>
+          <img :src="chevronDown" alt="" class="w-4 h-4 shrink-0" />
+        </template>
+      </DateTimeStepper>
     </div>
 
     <!-- 일반 예매 오픈 -->
@@ -68,7 +77,12 @@ function onInput(key, e) {
         :model-value="form.generalOpenTime"
         @update:modelValue="(v) => setField('generalOpenTime', v)"
         :minute-step="30"
-      />
+      >
+        <template #prefix>
+          <img :src="calendarIcon" alt="" class="w-4 h-4 shrink-0" />
+        </template>
+        <template #suffix> <img :src="chevronDown" alt="" class="w-4 h-4 shrink-0" /> </template
+      ></DateTimeStepper>
     </div>
   </div>
 </template>

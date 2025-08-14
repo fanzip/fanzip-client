@@ -2,6 +2,7 @@ import MarketPage from '@/pages/market/MarketPage.vue'
 import MarketDetailPage from '@/pages/market/MarketDetailPage.vue'
 import MarketOrderPage from '@/pages/market/MarketOrderPage.vue'
 import MarketOrderFinishPage from '@/pages/market/MarketOrderFinishPage.vue'
+import MarketCreatePage from '@/pages/influencerMypage/MarketCreatePage.vue'
 
 export default [
   {
@@ -24,5 +25,11 @@ export default [
     path: '/market/order/finish',
     nmae: 'market-order-finish',
     component: MarketOrderFinishPage,
+  },
+  {
+    path: '/influencers/:influencerId/market/create',
+    name: 'market-create',
+    component: MarketCreatePage,
+    props: true,
   },
 ]
