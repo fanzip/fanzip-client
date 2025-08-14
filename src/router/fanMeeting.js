@@ -11,5 +11,15 @@ export default [
   { path: '/seat-select/:id', name: 'SeatSelect', component: SeatSelectPage },
   { path: '/payment/:id', name: 'FanMeetingPaymentPage', component: FanMeetingPaymentPage },
   { path: '/payment-success', name: 'PaymentSuccess', component: PaymentSuccessPage },
-  { path: '/fanmeeting/new', name: 'FanmeetingCreate', component: FanmeetingCreatePage },
+
+  {
+    path: '/influencers/:influencerId/fanmeetings/create',
+    name: 'FanmeetingCreate',
+    component: FanmeetingCreatePage,
+    props: true, // 원하면 컴포넌트에서 props로 받을 수 있게
+  },
+  // {
+  //   path: '/fanmeeting/new',
+  //   redirect: (to) => ({ name: 'FanmeetingCreate', params: { influencerId: '' } }),
+  // },
 ]
