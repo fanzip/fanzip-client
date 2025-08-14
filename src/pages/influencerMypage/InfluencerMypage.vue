@@ -27,7 +27,7 @@ onMounted(async () => {
 
 <template>
   <AppHeader type="logo" />
-  <div class="bg-base-bg overflow-hidden p-5 pb-20 min-h-screen bg-subtle-bg space-y-4">
+  <div class="overflow-hidden p-5 pb-20 min-h-screen bg-subtle-bg space-y-4">
     <InfluencerProfile />
     <StatisticsSummary />
     <Statistics />
