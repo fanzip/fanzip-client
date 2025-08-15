@@ -22,7 +22,7 @@ export default defineConfig({
         name: 'Fan.zip',
         short_name: 'Fan.zip',
         description: '팬미팅/멤버십 웹앱',
-        start_url: '/',
+        start_url: '/login',
         scope: '/',
         display: 'standalone',
         background_color: '#FFFFFF',
