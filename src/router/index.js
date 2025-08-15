@@ -9,6 +9,10 @@ import influencerMypage from './influencerMypage'
 // import FanMeetingDetailPage from '@/pages/FanMeetingDetailPage.vue'
 import UserOnboarding from '@/pages/UserOnboarding.vue'
 import InfluencerOnboarding from '@/pages/InfluencerOnboarding.vue'
+import InfluencerReviewPage from '@/pages/InfluencerReviewPage.vue'
+import ReviewCompletePage from '@/pages/ReviewCompletePage.vue' // 아래 선택 페이지
+import AdminReviewPage from '@/pages/AdminReviewPage.vue'
+import ReviewPendingPage from '@/pages/ReviewPendingPage.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -31,6 +35,10 @@ const routes = [
   { path: '/market', name: 'market', component: MarketPage },
   { path: '/mypage', name: 'mypage', component: MyPage },
   { path: '/reservation/:id', name: 'FanMeetingDetail', component: FanMeetingDetailPage },
+  { path: '/influencer/review', name: 'InfluencerReview', component: InfluencerReviewPage },
+  { path: '/review/complete', component: ReviewCompletePage }, // 선택
+  { path: '/admin/reviews', component: AdminReviewPage },
+  { path: '/review/pending', component: ReviewPendingPage },
 
   // 도메인 라우트
   ...authRoutes,
