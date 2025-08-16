@@ -22,3 +22,7 @@ export const getMyMembershipInfo = () =>
 /** 특정 인플루언서에 대한 나의 구독 정보 */
 export const getUserSubscriptionByInfluencer = (influencerId) =>
   api.get(`/api/memberships/subscription/${influencerId}`).then(res => res.data)
+
+/** 멤버십 구독 취소 */
+export const cancelMembership = (membershipId) =>
+  api.delete(`/api/memberships/${membershipId}/cancel`).then(res => res.data)

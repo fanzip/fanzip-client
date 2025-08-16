@@ -18,10 +18,23 @@ const error = ref(null)
 const activeIndex = ref(0)
 
 const visibleCards = computed(() => {
-  const range = 2
   const total = cards.value.length
+  if (total === 0) return []
+  
+  // 카드 개수에 따른 동적 range 설정
+  const maxRange = Math.min(2, Math.floor(total / 2))
+  const range = total < 5 ? Math.floor(total / 2) : maxRange
   const result = []
 
+  // 5장 미만일 때는 중복 렌더링 방지
+  if (total < 5) {
+    for (let i = 0; i < total; i++) {
+      result.push({ card: cards.value[i], realIndex: i })
+    }
+    return result
+  }
+  
+  // 5장 이상일 때는 기존 로직 사용
   for (let i = -range; i <= range; i++) {
     const realIndex = (activeIndex.value + i + total) % total
     result.push({ card: cards.value[realIndex], realIndex })
@@ -112,31 +125,77 @@ const handleImageError = (event, card) => {
 
 const getCardStyle = (cardIndex) => {
   const total = cards.value.length
+  
+  // 5장 미만일 때는 단순 수직 스택 스타일 적용
+  if (total < 5) {
+    let translateY, scale, opacity, boxShadow, zIndex
+    const distanceFromActive = Math.abs(cardIndex - activeIndex.value)
+    
+    if (cardIndex === activeIndex.value) {
+      // 중앙 카드 (최고 z-index)
+      translateY = 0
+      scale = 1
+      opacity = 1
+      boxShadow = '0 10px 20px rgba(0, 0, 0, 0.15)'
+      zIndex = 100
+    } else if (distanceFromActive === 1) {
+      // 인접 카드
+      const isUp = cardIndex < activeIndex.value
+      translateY = isUp ? -80 : 80
+      scale = 0.9
+      opacity = 0.8
+      boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)'
+      zIndex = 90
+    } else {
+      // 멀리 있는 카드
+      const isUp = cardIndex < activeIndex.value
+      translateY = isUp ? -140 : 140
+      scale = 0.8
+      opacity = 0.6
+      boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)'
+      zIndex = 80 - distanceFromActive
+    }
+    
+    return {
+      transform: `translate(-50%, -50%) translateY(${translateY}px) scale(${scale})`,
+      opacity,
+      zIndex,
+      boxShadow,
+      transformStyle: 'preserve-3d',
+      transition: 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease',
+      cursor: 'pointer',
+    }
+  }
+  
+  // 5장 이상일 때는 순환 로직 사용 (개선된 버전)
   let offset = cardIndex - activeIndex.value
-
   if (offset > total / 2) offset -= total
   if (offset < -total / 2) offset += total
 
-  let translateY, scale, opacity, boxShadow
+  let translateY, scale, opacity, boxShadow, zIndex
 
   if (offset === 0) {
+    // 중앙 카드
     translateY = 0
     scale = 1
     opacity = 1
-    boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)'
+    boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)'
+    zIndex = 100
   } else if (Math.abs(offset) === 1) {
-    translateY = offset > 0 ? 100 : -100 // 120 → 100 (20px 줄임)
-    scale = 0.85
-    opacity = 0.6
-    boxShadow = '0 5px 10px rgba(0,0,0,0.05)'
+    // 인접 카드 - 개선된 스택 순서
+    translateY = offset > 0 ? 90 : -90
+    scale = 0.88
+    opacity = 0.75
+    boxShadow = '0 6px 16px rgba(0, 0, 0, 0.1)'
+    zIndex = offset > 0 ? 85 : 95 // 아래쪽 카드가 위쪽 카드보다 낮은 z-index
   } else {
-    translateY = offset > 0 ? 180 : -180 // 200 → 180 (20px 줄임)
-    scale = 0.7
-    opacity = 0.3
-    boxShadow = 'none'
+    // 멀리 있는 카드 - 투명도 개선
+    translateY = offset > 0 ? 160 : -160
+    scale = 0.75
+    opacity = 0.5 // 0.3에서 0.5로 높여서 덜 투명하게
+    boxShadow = '0 3px 8px rgba(0, 0, 0, 0.05)'
+    zIndex = offset > 0 ? 70 - Math.abs(offset) : 80 + offset // 자연스러운 스택
   }
-
-  const zIndex = 100 - Math.abs(offset)
 
   return {
     transform: `translate(-50%, -50%) translateY(${translateY}px) scale(${scale})`,
@@ -144,7 +203,7 @@ const getCardStyle = (cardIndex) => {
     zIndex,
     boxShadow,
     transformStyle: 'preserve-3d',
-    transition: 'transform 0.6s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.6s ease',
+    transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease',
     cursor: 'pointer',
   }
 }
@@ -256,7 +315,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-[#f3f4f6]">
+  <div class="flex flex-col min-h-screen bg-white">
     <header class="flex-shrink-0">
       <AppHeader type="logo" />
     </header>
