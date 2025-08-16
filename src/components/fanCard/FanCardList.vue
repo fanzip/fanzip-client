@@ -80,7 +80,14 @@ const getBadgeClass = (grade) => {
         :alt="card.name"
         class="w-full h-full object-cover pointer-events-none"
       />
-      <span class="absolute top-3 right-3 badge" :class="getBadgeClass(card.grade)">
+      <span class="absolute top-3 right-3 badge"
+            :class="{
+              'badge-vip': card.grade?.toString().toUpperCase() === 'VIP',
+              'badge-gold': card.grade?.toString().toUpperCase() === 'GOLD',
+              'badge-silver': card.grade?.toString().toUpperCase() === 'SILVER',
+              'badge-white': card.grade?.toString().toUpperCase() === 'WHITE'
+            }"
+            :title="`Debug: grade='${card.grade}', type=${typeof card.grade}`">
         {{ card.grade }}
       </span>
     </div>

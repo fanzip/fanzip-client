@@ -200,7 +200,14 @@ onMounted(() => {
       >
         이미지를 불러올 수 없습니다
       </div>
-      <span :class="getBadgeClass(fanCard.grade)" class="absolute top-2 right-2">
+      <span class="absolute top-2 right-2 badge"
+            :class="{
+              'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
+              'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
+              'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
+              'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE'
+            }"
+            :title="`Debug: grade='${fanCard.grade}', type=${typeof fanCard.grade}`">
         {{ fanCard.grade }}
       </span>
     </div>
@@ -222,7 +229,13 @@ onMounted(() => {
       <div class="bg-base-bg rounded-lg shadow-md p-4 space-y-3">
         <div class="flex items-center gap-2">
           <span class="font-bold text-base-text text-base">{{ fanCard.nickname }}</span>
-          <span :class="getBadgeClass(fanCard.grade)">{{ fanCard.grade }}</span>
+          <span class="badge"
+                :class="{
+                  'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
+                  'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
+                  'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
+                  'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE'
+                }">{{ fanCard.grade }}</span>
         </div>
         <p class="text-sm subtle-text flex items-center gap-2">
           <span>가입일</span>

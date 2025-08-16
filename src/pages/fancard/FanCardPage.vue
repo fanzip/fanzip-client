@@ -391,8 +391,14 @@ onMounted(() => {
             {{ card.name }}
           </div>
           <span
-            class="absolute top-2 right-2 w-20 h-6 text-base font-bold flex items-center justify-center rounded-full"
-            :class="getBadgeClass(card.grade)"
+            class="absolute top-2 right-2 w-20 h-6 text-base font-bold flex items-center justify-center rounded-full badge"
+            :class="{
+              'badge-vip': card.grade?.toString().toUpperCase() === 'VIP',
+              'badge-gold': card.grade?.toString().toUpperCase() === 'GOLD',
+              'badge-silver': card.grade?.toString().toUpperCase() === 'SILVER',
+              'badge-white': card.grade?.toString().toUpperCase() === 'WHITE'
+            }"
+            :title="`Debug: grade='${card.grade}', type=${typeof card.grade}`"
           >
             {{ card.grade }}
           </span>
