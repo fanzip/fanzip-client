@@ -5,6 +5,7 @@ import { useRouter, useRoute } from 'vue-router'
 import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { fancardApi } from '@/api/fancardApi'
+import { cancelMembership } from '@/api/membershipApi'
 import { useAuthStore } from '@/stores/authStore'
 
 import tomoTomoImg from '@/assets/fancard/TomoTomo.svg'
@@ -55,8 +56,9 @@ const fetchFancardDetail = async () => {
       monthlyFee: data.membership?.monthlyAmount || 0,
       totalPaid: data.membership?.totalPaidAmount || 0,
       benefits: formatBenefits(data.benefits || []),
-      history: [],
-      imageUrl: data.cardDesignUrl // MySQL에서 받은 URL 그대로 사용
+      history: formatPaymentHistory(data.paymentHistory || []), // 결제 히스토리를 추억 형식으로 변환
+      imageUrl: data.cardDesignUrl, // MySQL에서 받은 URL 그대로 사용
+      membershipId: data.membership?.membershipId // 구독 취소용 멤버십 ID 추가
     }
   } catch (err) {
     console.error('팬카드 상세 조회 실패:', err)
@@ -88,6 +90,15 @@ const formatBenefits = (benefits) => {
   return benefits.map(benefit => benefit.description || benefit)
 }
 
+const formatPaymentHistory = (paymentHistory) => {
+  return paymentHistory.map(payment => ({
+    title: `구독 결제 완료`,
+    amount: payment.amount,
+    date: formatDate(payment.paymentDate || payment.paidAt),
+    bold: false
+  }))
+}
+
 const imageError = ref(false)
 
 const handleImageError = (event) => {
@@ -108,6 +119,41 @@ const getBadgeClass = (grade) => {
       return 'badge badge-white'
     default:
       return 'badge badge-silver'
+  }
+}
+
+// 구독 취소 기능
+const isConfirmingCancel = ref(false)
+const isCancelling = ref(false)
+
+const handleCancelSubscription = async () => {
+  if (!fanCard.value) return
+  
+  if (!isConfirmingCancel.value) {
+    // 첫 지지 클릭 - 확인 메시지 표시
+    isConfirmingCancel.value = true
+    setTimeout(() => {
+      isConfirmingCancel.value = false
+    }, 5000) // 5초 후 자동 취소
+    return
+  }
+  
+  // 두 번째 클릭 - 실제 취소 실행
+  try {
+    isCancelling.value = true
+    
+    // API 함수 사용으로 변경
+    await cancelMembership(fanCard.value.membershipId)
+    
+    alert('구독이 취소되었습니다.')
+    // 페이지 새로고침 또는 메인 페이지로 이동
+    router.push('/fancard')
+  } catch (error) {
+    console.error('구독 취소 중 오류:', error)
+    alert(`구독 취소에 실패했습니다: ${error.message || '알 수 없는 오류'}`)
+  } finally {
+    isCancelling.value = false
+    isConfirmingCancel.value = false
   }
 }
 
@@ -228,9 +274,21 @@ onMounted(() => {
       </ul>
     </div>
 
-    <!-- 6. 하단 구독 취소 텍스트 -->
+    <!-- 6. 하단 구독 취소 버튼 -->
     <div class="w-full flex justify-center mt-10">
-      <span class="text-subtle-text text-sm">구독 취소하기</span>
+      <button 
+        @click="handleCancelSubscription"
+        :disabled="isCancelling"
+        :class="{
+          'text-red-500 hover:text-red-600': isConfirmingCancel,
+          'text-subtle-text hover:text-red-400': !isConfirmingCancel
+        }"
+        class="text-sm transition-colors duration-200 disabled:opacity-50"
+      >
+        <span v-if="isCancelling">취소 중...</span>
+        <span v-else-if="isConfirmingCancel">정말로 취소하시겠습니까? (다시 클릭)</span>
+        <span v-else>구독 취소하기</span>
+      </button>
     </div>
 
     <app-nav class="fixed bottom-0 left-0 w-full" />
