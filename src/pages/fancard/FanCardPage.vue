@@ -20,7 +20,7 @@ const activeIndex = ref(0)
 const visibleCards = computed(() => {
   const total = cards.value.length
   if (total === 0) return []
-  
+
   // 카드 개수에 따른 동적 range 설정
   const maxRange = Math.min(2, Math.floor(total / 2))
   const range = total < 5 ? Math.floor(total / 2) : maxRange
@@ -33,7 +33,7 @@ const visibleCards = computed(() => {
     }
     return result
   }
-  
+
   // 5장 이상일 때는 기존 로직 사용
   for (let i = -range; i <= range; i++) {
     const realIndex = (activeIndex.value + i + total) % total
@@ -125,12 +125,12 @@ const handleImageError = (event, card) => {
 
 const getCardStyle = (cardIndex) => {
   const total = cards.value.length
-  
+
   // 5장 미만일 때는 단순 수직 스택 스타일 적용
   if (total < 5) {
     let translateY, scale, opacity, boxShadow, zIndex
     const distanceFromActive = Math.abs(cardIndex - activeIndex.value)
-    
+
     if (cardIndex === activeIndex.value) {
       // 중앙 카드 (최고 z-index)
       translateY = 0
@@ -155,7 +155,7 @@ const getCardStyle = (cardIndex) => {
       boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)'
       zIndex = 80 - distanceFromActive
     }
-    
+
     return {
       transform: `translate(-50%, -50%) translateY(${translateY}px) scale(${scale})`,
       opacity,
@@ -166,7 +166,7 @@ const getCardStyle = (cardIndex) => {
       cursor: 'pointer',
     }
   }
-  
+
   // 5장 이상일 때는 순환 로직 사용 (개선된 버전)
   let offset = cardIndex - activeIndex.value
   if (offset > total / 2) offset -= total
@@ -308,7 +308,6 @@ const getBadgeClass = (grade) => {
   }
 }
 
-
 onMounted(() => {
   fetchFancards()
 })
@@ -319,7 +318,6 @@ onMounted(() => {
     <header class="flex-shrink-0">
       <AppHeader type="logo" />
     </header>
-
 
     <!-- 메인 컨텐츠 영역: 헤더와 네비게이션 사이의 공간 활용 -->
     <main class="flex-1 flex items-center justify-center pt-[100px] pb-[108px]">

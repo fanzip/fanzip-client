@@ -17,7 +17,7 @@ const props = defineProps({
 
 <template>
   <div :class="`w-full flex gap-${gap} mt-4`">
-    <img :src="src" alt="" class="ms-5" />
+    <img :src="src" alt="" />
     <p class="font-semibold">{{ menu }}</p>
   </div>
 </template>
