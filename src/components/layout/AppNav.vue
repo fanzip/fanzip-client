@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-
+import { computed } from 'vue'
 import Home from '@/assets/Navigation/Home.svg'
 import HomeActive from '@/assets/Navigation/HomeActive.svg'
 import Reservation from '@/assets/Navigation/Reservation.svg'
@@ -13,13 +13,19 @@ import Person from '@/assets/Navigation/Person.svg'
 import PersonActive from '@/assets/Navigation/PersonActive.svg'
 
 const route = useRoute()
+const role = computed(() => authStore.userInfo.role)
 
 const navItems = [
   { name: '홈', path: '/', icon: Home, iconActive: HomeActive },
   { name: '예매하기', path: '/reservation', icon: Reservation, iconActive: ReservationActive },
   { name: '팬카드', path: '/fancard', icon: FanCard, iconActive: FanCardActive },
   { name: '공구마켓', path: '/market', icon: Cart, iconActive: CartActive },
-  { name: '마이페이지', path: '/mypage', icon: Person, iconActive: PersonActive },
+  {
+    name: '마이페이지',
+    path: role === 'USER' ? '/mypage' : '/influencers-mypage',
+    icon: Person,
+    iconActive: PersonActive,
+  },
 ]
 
 const isActive = (path) => {
