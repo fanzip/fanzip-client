@@ -81,27 +81,6 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!--   <div class="gap-4 flex">
-    <div class="w-1/2 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
-      <p class="font-semibold">현재 구독자</p>
-      <p class="font-semibold">{{ currentSubscribers.toLocaleString() }}명</p>
-      <div class="flex gap-2 text-xs font-medium">
-        <p>Today:</p>
-        <img :src="Increase" />
-        <p>{{ todaySubscriberGrowth.toLocaleString() }}명</p>
-      </div>
-    </div>
-    <div class="w-1/2 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
-      <p class="font-semibold">누적 수익</p>
-      <p class="font-semibold">{{ totalRevenue.toLocaleString() }}원</p>
-      <div class="flex gap-2 text-xs font-medium">
-        <p class="font-medium">Today:</p>
-        <img :src="Decrease" />
-        <p>{{ todayRevenueGrowth.toLocaleString() }}원</p>
-      </div>
-    </div>
-  </div> -->
-
     <div class="gap-4 bg-white pt-2 p-4 rounded-xl">
       <router-link to="/account">
         <ListItem :src="lockIcon" menu="프로필 관리" gap="2"></ListItem
