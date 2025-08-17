@@ -149,7 +149,8 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     await authApi.requestLogout()
     clearToken()
-    router.push('/login')
+    if (confirm('로그아웃 하시겠습니까?')) router.push('/login')
+    // router.push('/login')
   }
 
   const fetchUserInfo = async () => {
