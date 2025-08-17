@@ -204,7 +204,7 @@ function handleDetailFiles(files) {
       :second-step="30"
       :show-seconds="true"
       placeholder="연도-월-일  --  --:--:--"
-      class="mb-4 focus:outline-none focus:border-brand-primary"
+      class="mb-4"
     >
       <template #prefix><img :src="calendarIcon" alt="" class="w-4 h-4 shrink-0" /></template>
       <template #suffix><img :src="chevronDown" alt="" class="w-4 h-4 shrink-0" /></template>
