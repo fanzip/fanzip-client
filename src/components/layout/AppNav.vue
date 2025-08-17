@@ -11,22 +11,23 @@ import Cart from '@/assets/Navigation/Cart.svg'
 import CartActive from '@/assets/Navigation/CartActive.svg'
 import Person from '@/assets/Navigation/Person.svg'
 import PersonActive from '@/assets/Navigation/PersonActive.svg'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const route = useRoute()
-const role = computed(() => authStore.userInfo.role)
 
-const navItems = [
+const navItems = computed(() => [
   { name: '홈', path: '/', icon: Home, iconActive: HomeActive },
   { name: '예매하기', path: '/reservation', icon: Reservation, iconActive: ReservationActive },
   { name: '팬카드', path: '/fancard', icon: FanCard, iconActive: FanCardActive },
   { name: '공구마켓', path: '/market', icon: Cart, iconActive: CartActive },
   {
     name: '마이페이지',
-    path: role === 'USER' ? '/mypage' : '/influencers-mypage',
+    path: authStore.userInfo.role === 'USER' ? '/mypage' : '/influencers-mypage',
     icon: Person,
     iconActive: PersonActive,
   },
-]
+])
 
 const isActive = (path) => {
   return path === '/' ? route.path === '/' : route.path.startsWith(path)
