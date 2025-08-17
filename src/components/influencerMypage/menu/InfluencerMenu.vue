@@ -7,11 +7,11 @@ import InfluencerEtcMenu from './InfluencerEtcMenu.vue'
 <template>
   <div class="w-full rounded-xl flex flex-col bg-white py-2">
     <InfluencerAccountMenu />
-    <hr />
+    <hr class="mx-4 my-1" />
     <InfluencerMarketMenu />
-    <hr />
+    <hr class="mx-4 my-1" />
     <InfluencerFanMeetingMenu />
-    <hr />
+    <hr class="mx-4 my-1" />
     <InfluencerEtcMenu />
   </div>
 </template>
