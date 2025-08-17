@@ -1,24 +1,35 @@
-<!-- src/components/influencerMypage/market/MarketThumbnail.vue -->
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import imageIcon from '@/assets/mypage/imageIcon.svg'
 
 const props = defineProps({
-  modelValue: { type: String, default: '' },
+  modelValue: { type: [String, Object], default: '' },
   uploadThumbnail: { type: Function, default: null },
 })
 const emit = defineEmits(['update:modelValue'])
 
 const fileInput = ref(null)
-const previewUrl = ref(props.modelValue || '')
+
+const getUrlFromModel = (mv) =>
+  (typeof mv === 'object' && mv !== null) ? (mv.imageUrl || '') : (mv || '')
+
+const previewUrl = ref(getUrlFromModel(props.modelValue))
 const fileName = ref('')
 const uploading = ref(false)
 const errorMsg = ref('')
 const hasImage = computed(() => !!previewUrl.value)
 
+watch(() => props.modelValue, (nv) => {
+  previewUrl.value = getUrlFromModel(nv)
+})
+
 function setImage(url) {
   previewUrl.value = url
-  emit('update:modelValue', url)
+  if (typeof props.modelValue === 'object' && props.modelValue !== null) {
+    emit('update:modelValue', { ...props.modelValue, imageUrl: url })
+  } else {
+    emit('update:modelValue', url)
+  }
 }
 
 async function handleFile(file) {
@@ -52,12 +63,10 @@ async function handleFile(file) {
     uploading.value = false
   }
 }
+
 const openPicker = () => fileInput.value?.click()
 const onSelect = (e) => handleFile(e.target.files?.[0])
-const onDrop = (e) => {
-  e.preventDefault()
-  handleFile(e.dataTransfer?.files?.[0])
-}
+const onDrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer?.files?.[0]) }
 const onDragOver = (e) => e.preventDefault()
 const clearImage = () => {
   setImage('')

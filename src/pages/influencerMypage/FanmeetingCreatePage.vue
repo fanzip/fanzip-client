@@ -1,32 +1,32 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import FanmeetingPlaceInfo from '@/components/influencerMypage/fanmeeting/FanmeetingPlaceInfo.vue'
 import FanmeetingForm from '@/components/influencerMypage/fanmeeting/FanmeetingForm.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import { createFanMeeting } from '@/api/fanMeetingApi'
+import { createFanMeeting, uploadFanMeetingPoster } from '@/api/fanMeetingApi'
 
-// 폼 상태 (자식들이 v-model로 업데이트)
 const form = ref({
   influencerId: null,
   title: '',
   description: '',
-  meetingDate: '', // 'YYYY-MM-DDTHH:mm'
-  generalOpenTime: '', // 'YYYY-MM-DDTHH:mm'
+  meetingDate: '',
+  generalOpenTime: '',
   posterImageUrl: '',
 })
 
+const route = useRoute()
+const router = useRouter()
 const submitting = ref(false)
 const address = ref('서울특별시 광진구 능동로 195-16, 602호')
 
-const route = useRoute()
 onMounted(() => {
   const id = Number(route.params.influencerId)
   if (Number.isFinite(id)) form.value.influencerId = id
 })
 
-// 'YYYY-MM-DDTHH:mm' → 'YYYY-MM-DDTHH:mm:ss'
+
 const toLocalDateTime = (v) => {
   if (!v) return null
   if (typeof v === 'string' && v.length === 16) return `${v}:00`
@@ -37,12 +37,17 @@ const toLocalDateTime = (v) => {
   return String(v)
 }
 
-// DEMO 업로드 (실서비스에선 실제 API 교체)
-async function uploadPosterApi(file) {
-  return new Promise((r) => setTimeout(() => r({ url: URL.createObjectURL(file) }), 600))
+// 실제 S3 업로드 사용: 업로드 후 form.posterImageUrl에 즉시 반영
+const uploadPosterApi = async (file) => {
+  const id = Number(form.value.influencerId ?? route.params.influencerId)
+  if (!Number.isFinite(id)) throw new Error('influencerId를 확인할 수 없습니다.')
+
+  const { url } = await uploadFanMeetingPoster(file, id)
+  form.value.posterImageUrl = url
+  return { url }
 }
 
-// 유효성 (필요 필드만 엄격 체크)
+// 필수값 간단 검증
 const isValid = computed(() => {
   const f = form.value
   return !!(f.influencerId && f.title?.trim() && f.meetingDate && f.generalOpenTime)
@@ -50,9 +55,9 @@ const isValid = computed(() => {
 
 const onSubmit = async () => {
   if (submitting.value || !isValid.value) return
-
   submitting.value = true
   try {
+    // DTO 그대로 매핑
     const payload = {
       influencerId: form.value.influencerId,
       title: form.value.title.trim(),
@@ -61,10 +66,12 @@ const onSubmit = async () => {
       generalOpenTime: toLocalDateTime(form.value.generalOpenTime),
       posterImageUrl: form.value.posterImageUrl || null,
     }
-    const res = await createFanMeeting(payload)
-    console.log('created', res)
+
+    console.log('fanmeeting payload >>>', payload)
+    await createFanMeeting(payload)
+
     alert('팬미팅이 등록되었습니다!')
-    // ex) router.push({ name: 'FanmeetingDetail', params: { meetingId: res.meetingId } })
+    router.replace('/influencers-mypage')
   } catch (e) {
     console.error(e)
     alert('등록 중 오류가 발생했습니다.')
@@ -78,16 +85,16 @@ const onSubmit = async () => {
   <div>
     <AppHeader type="back-title" title="팬미팅 정보 추가" />
 
-    <!-- 자식들이 form을 직접 업데이트 -->
+    <!-- 자식이 포스터를 업로드하면 위의 uploadPosterApi가 S3 → URL 반환 → form.posterImageUrl에 주입 -->
     <FanmeetingPlaceInfo
       v-model="form"
       :address="address"
       :uploadPoster="uploadPosterApi"
       class="mt-16 mb-4"
     />
+
     <FanmeetingForm v-model="form" class="mt-4" />
 
-    <!-- Figma처럼: 비활성 시 회색/클릭막기 -->
     <BaseButton
       size="lg"
       class="m-auto mt-4 mb-4"
