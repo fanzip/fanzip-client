@@ -29,15 +29,15 @@ const goToTicket = (fanMeetingId) => {
   console.log('🎫 모바일 티켓으로 이동:', {
     fanMeetingId,
     reservationId: fanCard.value?.reservationId,
-    seatId: fanCard.value?.seatId
+    seatId: fanCard.value?.seatId,
   })
-  
+
   router.push({
     path: '/fancard/mobile-ticket',
-    query: { 
+    query: {
       fanMeetingId,
       reservationId: fanCard.value?.reservationId,
-      seatId: fanCard.value?.seatId
+      seatId: fanCard.value?.seatId,
     },
   })
 }
@@ -84,7 +84,7 @@ const fetchFancardDetail = async () => {
       membershipStatus: data.membership?.status || 'UNKNOWN', // 멤버십 상태
       influencer: data.influencer, // 인플루언서 정보 추가
     }
-    
+
     // 팬미팅 예약 여부 확인
     await checkFanMeetingReservation()
   } catch (err) {
@@ -99,21 +99,21 @@ const checkFanMeetingReservation = async () => {
   console.log('🔍 팬미팅 예약 확인 시작', {
     fanCard: fanCard.value,
     influencer: fanCard.value?.influencer,
-    influencerId: fanCard.value?.influencer?.influencerId
+    influencerId: fanCard.value?.influencer?.influencerId,
   })
-  
+
   if (!fanCard.value?.influencer?.influencerId) {
     console.warn('⚠️ influencerId가 없어서 팬미팅 예약 확인을 건너뜁니다')
     return
   }
-  
+
   try {
     isCheckingMeeting.value = true
     console.log('📡 API 호출:', fanCard.value.influencer.influencerId)
     const response = await checkUpcomingMeetingWithInfluencer(fanCard.value.influencer.influencerId)
     console.log('📡 API 응답:', response)
     hasUpcomingMeeting.value = response.hasUpcomingMeeting || false
-    
+
     // 팬미팅 ID, 예약 ID, 좌석 ID를 fanCard에 저장 (API 응답에 포함되어야 함)
     if (response.meetingId) {
       fanCard.value.fanMeetingId = response.meetingId
@@ -124,7 +124,7 @@ const checkFanMeetingReservation = async () => {
     if (response.seatId) {
       fanCard.value.seatId = response.seatId
     }
-    
+
     console.log('✅ 팬미팅 예약 여부:', hasUpcomingMeeting.value)
   } catch (err) {
     console.error('❌ 팬미팅 예약 확인 실패:', err)
@@ -321,7 +321,7 @@ onMounted(() => {
 
     <!-- 2. 예약 안내 배너 (20px 아래) - 조건부 표시 -->
     <div
-      v-if="hasUpcomingMeeting && (fanCard.isActive && fanCard.membershipStatus === 'ACTIVE')"
+      v-if="hasUpcomingMeeting && fanCard.isActive && fanCard.membershipStatus === 'ACTIVE'"
       class="mx-5 mt-5 h-[47px] bg-base-bg rounded-lg shadow-md flex flex-col items-center justify-center text-xs font-semibold text-center"
     >
       예약한 팬미팅 내역이 있어요.<br />
@@ -332,7 +332,7 @@ onMounted(() => {
         바로 확인하기
       </span>
     </div>
-    
+
     <!-- 팬미팅 예약 확인 중 로딩 -->
     <div
       v-if="isCheckingMeeting"
@@ -394,8 +394,8 @@ onMounted(() => {
     </div>
 
     <!-- 5. 구독 히스토리 -->
-    <div class="mx-5 mt-5 bg-base-bg rounded-lg shadow-md px-[11px] py-4 pl-5">
-      <div class="flex items-center mb-2 gap-2 border-b border-subtle-border pb-2">
+    <div class="mx-5 mt-5 bg-base-bg rounded-lg shadow-md px-[11px] pt-4 pl-5">
+      <div class="flex items-center gap-2 border-b border-subtle-border pb-2">
         <img :src="iconFanzip" class="w-5 h-5" alt="추억" />
         <h3 class="font-semibold text-base">{{ fanCard.nickname }}님와의 추억</h3>
       </div>
@@ -407,7 +407,6 @@ onMounted(() => {
           <img v-else-if="item.title.includes('해지')" :src="BrokenHeart" />
           <div>
             <p :class="{ 'font-bold': item.bold }">{{ item.title }}</p>
-            <p v-if="item.amount" class="text-base">{{ item.amount.toLocaleString() }}원</p>
             <p class="text-xs mt-[1px]">{{ item.date }}</p>
           </div>
         </li>
