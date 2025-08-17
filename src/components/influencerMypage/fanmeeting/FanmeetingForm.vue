@@ -26,13 +26,12 @@ function onInput(key, e) {
 <template>
   <div class="w-full px-5 space-y-4">
     <hr />
-
     <!-- 제목 -->
     <div>
       <label class="block font-semibold text-base mb-2">제목</label>
       <input
         type="text"
-        class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm"
+        class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
         placeholder="팬미팅 제목을 입력하세요"
         :value="form.title"
         @input="onInput('title', $event)"
@@ -44,7 +43,7 @@ function onInput(key, e) {
       <label class="block font-semibold text-base mb-3">설명</label>
       <textarea
         rows="3"
-        class="w-full px-4 py-3 rounded-xl border border-base-border bg-base-bg text-sm resize-none"
+        class="w-full px-4 py-3 rounded-xl border border-base-border bg-base-bg text-sm resize-none focus:outline-none focus:border-brand-primary"
         placeholder="설명을 입력하세요"
         :value="form.description"
         @input="onInput('description', $event)"
