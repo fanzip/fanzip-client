@@ -5,7 +5,6 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
-
 const router = useRouter()
 const auth = useAuthStore()
 const influencerId = computed(() => auth.influencerUserInfo?.influencerId)
@@ -16,7 +15,7 @@ const influencerId = computed(() => auth.influencerUserInfo?.influencerId)
 
 const items = [
   { icon: ticket, label: '팬미팅 정보 추가', routeName: 'FanmeetingCreate', needsId: true },
-  { icon: check,  label: '예매 확인',       routeName: 'TicketCheck' }, // 실제 등록된 name으로
+  { icon: check, label: '예매 확인', routeName: 'TicketCheck' }, // 실제 등록된 name으로
 ]
 
 const goToByName = (name, needsId = false) => {
@@ -34,18 +33,18 @@ const goToByName = (name, needsId = false) => {
 
 <template>
   <div>
-    <div class="px-5 pt-5">
+    <!-- <div class="px-5 pt-5">
       <p class="text-lg font-bold text-black">나의 팬미팅 정보</p>
-    </div>
+    </div> -->
 
     <div
       v-for="(item, index) in items"
       :key="index"
-      class="flex items-center gap-3 px-5 py-3 cursor-pointer"
+      class="flex items-center gap-2 px-5 py-3 cursor-pointer"
       @click="goToByName(item.routeName, item.needsId)"
     >
-      <img :src="item.icon" alt="아이콘" class="w-5 h-5" />
-      <span class="text-base font-medium text-black">{{ item.label }}</span>
+      <img :src="item.icon" alt="아이콘" />
+      <span class="text-base font-semibold text-black">{{ item.label }}</span>
     </div>
   </div>
 </template>
