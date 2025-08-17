@@ -8,7 +8,6 @@ const router = useRouter()
 const route = useRoute()
 const influencerStore = useInfluencerStore()
 
-
 const goToEditFanCard = () => {
   const influencerId = route.params.influencerId
   router.push(`/influencers/${influencerId}/profile/edit-fancard`)
@@ -19,7 +18,7 @@ const goToEditFanCard = () => {
   <div class="px-5 mt-6 mb-6 space-y-2">
     <!-- 타이틀 + 아이콘 -->
     <div class="flex items-center justify-between cursor-pointer" @click="goToEditFanCard">
-      <span class="text-sm text-base">팬카드 이미지</span>
+      <span class="text-base font-medium">팬카드 이미지</span>
       <img :src="Icon" alt=">" class="w-3 h-3 rotate-180" />
     </div>
 
@@ -29,7 +28,7 @@ const goToEditFanCard = () => {
         :src="influencerStore.fanCardImage || defaultFanCardImage"
         class="w-full h-full object-cover"
         alt="팬카드 이미지"
-      />    
+      />
     </div>
   </div>
 </template>
