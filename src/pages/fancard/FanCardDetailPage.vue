@@ -222,11 +222,8 @@ onMounted(() => {
       <!-- 비활성 상태 오버레이 -->
       <div
         v-if="!fanCard.isActive"
-        class="absolute inset-0 bg-black bg-opacity-30 z-10 flex items-end justify-start p-3 rounded-lg"
+        class="absolute inset-0 bg-black bg-opacity-30 z-10 rounded-lg"
       >
-        <span class="px-2 py-1 bg-red-600 text-white text-xs font-semibold rounded-full">
-          비활성
-        </span>
       </div>
 
       <img
