@@ -15,7 +15,9 @@ const marketApi = {
     if (lastProductId) params.lastProductId = lastProductId
     if (sort) params.sort = sort
     if (category) params.category = category
-    if (onlySubscribed) params.onlySubscribed = onlySubscribed
+    if (onlySubscribed !== null && onlySubscribed !== undefined) {
+      params.onlySubscribed = onlySubscribed
+    }
     const res = await api.get('/api/market/products', { params })
     return res.data
   },
@@ -64,6 +66,44 @@ const marketApi = {
   getOrderPayment: async (orderId) => {
     const res = await api.get(`/api/market/orders/${orderId}/payment`)
     return res.data
+  },
+
+  // 상품 생성(공구 마켓 등록)
+  createProduct: async (payload) => {
+    const res = await api.post('/api/market/products', payload)
+    return res.data
+  },
+
+  // ✅ 썸네일 1장 업로드
+  uploadMarketThumbnail: async (file, influencerId) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    const { data } = await api.post(
+      `/api/influencers/${influencerId}/market/images/thumbnail`,
+      fd,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    )
+    return data // { url }
+  },
+
+  // ✅ 슬라이드 여러 장 업로드
+  uploadMarketSlides: async (files, influencerId) => {
+    const fd = new FormData()
+    for (const f of files) fd.append('files', f) // 컨트롤러 @RequestParam("files")
+    const { data } = await api.post(`/api/influencers/${influencerId}/market/images/slide`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return data // { urls: [] }
+  },
+
+  // ✅ 상세 여러 장 업로드
+  uploadMarketDetails: async (files, influencerId) => {
+    const fd = new FormData()
+    for (const f of files) fd.append('files', f)
+    const { data } = await api.post(`/api/influencers/${influencerId}/market/images/detail`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return data // { urls: [] }
   },
 }
 
