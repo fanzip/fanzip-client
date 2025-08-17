@@ -81,7 +81,7 @@ onMounted(async () => {
       </div>
     </section>
 
-    <div class="gap-4 bg-white pt-2 p-4 rounded-xl">
+    <div class="gap-4 bg-white pt-1 px-4 pb-6 rounded-xl">
       <router-link to="/account">
         <ListItem :src="lockIcon" menu="프로필 관리" gap="2"></ListItem
       ></router-link>
@@ -96,8 +96,14 @@ onMounted(async () => {
         <ListItem :src="shoppingBagIcon" menu="결제 내역" gap="2"></ListItem
       ></router-link>
 
-      <ListItem :src="logoutIcon" menu="로그아웃" @click="logout" gap="2"></ListItem>
-      <ListItem :src="sadFaceIcon" menu="회원탈퇴" gap="3"></ListItem>
+      <ListItem
+        :src="logoutIcon"
+        menu="로그아웃"
+        @click="logout"
+        gap="2"
+        class="cursor-pointer"
+      ></ListItem>
+      <ListItem :src="sadFaceIcon" menu="회원탈퇴" gap="3" class="cursor-pointer"></ListItem>
     </div>
 
     <div class="bg-subtle-bg py-3">
