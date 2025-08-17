@@ -3,11 +3,21 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/logo.svg">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Vite App</title>
   </head>
   <body>
     <div id="app"></div>
+    <style>
+      body {
+        touch-action: manipulation;
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      html {
+        overflow-x: hidden;
+      }
+    </style>
     <script type="module" src="/src/main.js"></script>
         <!-- 토스페이먼트 스크립트 추가 -->
     <script src="https://js.tosspayments.com/v2/standard"></script>
