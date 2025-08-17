@@ -51,6 +51,9 @@ const fetchFancardDetail = async () => {
     const response = await fancardApi.getFancardDetail(cardId)
     const data = response.data
 
+    console.log('팬카드 상세 데이터:', data)
+    console.log('결제 히스토리:', data.paymentHistory)
+
     fanCard.value = {
       cardId: data.cardId,
       cardNumber: data.cardNumber,
@@ -64,6 +67,8 @@ const fetchFancardDetail = async () => {
       history: formatPaymentHistory(data.paymentHistory || []), // 결제 히스토리를 추억 형식으로 변환
       imageUrl: data.cardDesignUrl, // MySQL에서 받은 URL 그대로 사용
       membershipId: data.membership?.membershipId, // 구독 취소용 멤버십 ID 추가
+      isActive: data.isActive !== undefined ? data.isActive : true, // 팬카드 활성 상태
+      membershipStatus: data.membership?.status || 'UNKNOWN', // 멤버십 상태
     }
   } catch (err) {
     console.error('팬카드 상세 조회 실패:', err)
@@ -100,15 +105,10 @@ const formatBenefits = (benefits) => {
 
 const formatPaymentHistory = (paymentHistory) => {
   return paymentHistory.map((payment) => ({
-    title:
-      // `구독 결제 완료`,
-      // '꿀떡 구매',
-      // '팬미팅 예매',
-      '구독 해지',
-
+    title: payment.title || '결제 완료',
     amount: payment.amount,
     date: formatDate(payment.paymentDate || payment.paidAt),
-    bold: false,
+    bold: payment.bold || false,
   }))
 }
 
@@ -199,30 +199,62 @@ onMounted(() => {
 
   <!-- 팬카드 정보 -->
   <div v-else-if="fanCard" class="bg-subtle-bg min-h-screen pt-24 pb-28 flex flex-col">
+    <!-- 상태 알림 배너 (비활성 카드인 경우) -->
+    <div
+      v-if="!fanCard.isActive || fanCard.membershipStatus === 'CANCELLED'"
+      class="mx-5 mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+    >
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+        <span class="text-red-700 text-sm font-medium">
+          {{
+            fanCard.membershipStatus === 'CANCELLED'
+              ? '구독이 해지된 팬카드입니다'
+              : '비활성 상태의 팬카드입니다'
+          }}
+        </span>
+      </div>
+      <p class="text-red-600 text-xs mt-1">과거의 추억과 결제 내역을 확인할 수 있습니다.</p>
+    </div>
+
     <!-- 1. 상단 이미지 + 배지 -->
     <div class="relative mx-5 h-[180px] rounded-lg overflow-hidden shadow-md">
+      <!-- 비활성 상태 오버레이 -->
+      <div
+        v-if="!fanCard.isActive"
+        class="absolute inset-0 bg-black bg-opacity-30 z-10 rounded-lg"
+      >
+      </div>
+
       <img
         v-if="!imageError && fanCard.imageUrl"
         :src="fanCard.imageUrl"
         alt="fan card"
-        class="w-full h-full object-cover rounded-lg fancard-image"
+        :class="{
+          'w-full h-full object-cover rounded-lg fancard-image': true,
+          'filter grayscale opacity-80': !fanCard.isActive,
+        }"
         @error="handleImageError"
       />
       <!-- 이미지 로드 실패 시 표시할 fallback -->
       <div
         v-else
         class="w-full h-[180px] bg-gray-200 flex items-center justify-center text-gray-500 text-sm rounded-lg fancard-detail-fallback"
+        :class="{ 'opacity-60': !fanCard.isActive }"
       >
         이미지를 불러올 수 없습니다
       </div>
-      <span class="absolute top-2 right-2 badge"
-            :class="{
-              'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
-              'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
-              'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
-              'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE'
-            }"
-            :title="`Debug: grade='${fanCard.grade}', type=${typeof fanCard.grade}`">
+      <span
+        class="absolute top-2 right-2 badge z-20"
+        :class="{
+          'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
+          'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
+          'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
+          'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE',
+          'opacity-90': !fanCard.isActive,
+        }"
+        :title="`Debug: grade='${fanCard.grade}', type=${typeof fanCard.grade}`"
+      >
         {{ fanCard.grade }}
       </span>
     </div>
@@ -246,13 +278,16 @@ onMounted(() => {
       <div class="bg-base-bg rounded-lg shadow-md p-4 space-y-3">
         <div class="flex items-center gap-2">
           <span class="font-bold text-base-text text-base">{{ fanCard.nickname }}</span>
-          <span class="badge"
-                :class="{
-                  'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
-                  'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
-                  'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
-                  'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE'
-                }">{{ fanCard.grade }}</span>
+          <span
+            class="badge"
+            :class="{
+              'badge-vip': fanCard.grade?.toString().toUpperCase() === 'VIP',
+              'badge-gold': fanCard.grade?.toString().toUpperCase() === 'GOLD',
+              'badge-silver': fanCard.grade?.toString().toUpperCase() === 'SILVER',
+              'badge-white': fanCard.grade?.toString().toUpperCase() === 'WHITE',
+            }"
+            >{{ fanCard.grade }}</span
+          >
         </div>
         <p class="text-sm subtle-text flex items-center gap-2">
           <span>가입일</span>
@@ -310,9 +345,11 @@ onMounted(() => {
       </ul>
     </div>
 
-    <!-- 6. 하단 구독 취소 버튼 -->
+    <!-- 6. 하단 액션 버튼 -->
     <div class="w-full flex justify-center mt-10">
+      <!-- 활성 카드인 경우: 구독 취소 버튼 -->
       <button
+        v-if="fanCard.isActive && fanCard.membershipStatus === 'ACTIVE'"
         @click="handleCancelSubscription"
         :disabled="isCancelling"
         :class="{
@@ -325,6 +362,18 @@ onMounted(() => {
         <span v-else-if="isConfirmingCancel">정말로 취소하시겠습니까? (다시 클릭)</span>
         <span v-else>구독 취소하기</span>
       </button>
+
+      <!-- 비활성 카드인 경우: 재구독 안내 -->
+      <div v-else class="text-center">
+        <p class="text-subtle-text text-sm mb-2">이 팬카드는 현재 비활성 상태입니다</p>
+        <p class="text-xs text-subtle-text">
+          다시 구독하려면
+          <span class="text-brand-primary underline cursor-pointer hover:text-brand-accent">
+            멤버십 페이지
+          </span>
+          를 이용해주세요
+        </p>
+      </div>
     </div>
 
     <app-nav class="fixed bottom-0 left-0 w-full" />
