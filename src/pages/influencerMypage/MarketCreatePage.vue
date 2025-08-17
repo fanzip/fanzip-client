@@ -1,87 +1,176 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import MarketThumbnail from '@/components/influencerMypage/market/MarketThumbnail.vue'
 import MarketForm from '@/components/influencerMypage/market/MarketForm.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import marketApi from '@/api/marketApi'
+import { useAuthStore } from '@/stores/authStore'
 
-// 자식이 어떤 키로 올려줘도 받도록 기본값 세팅
+const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+
+const influencerId = computed(() => {
+  const fromRoute = Number(route.params.id ?? route.params.influencerId)
+  if (Number.isFinite(fromRoute)) return fromRoute
+  const fromAuth = Number(auth?.profile?.influencerId ?? auth?.user?.influencerId)
+  return Number.isFinite(fromAuth) ? fromAuth : null
+})
+
+// 폼 상태
 const form = ref({
-  thumbnailUrl: '',
+  thumbnail: '',
   title: '',
-  openAt: '',
-  closeAt: '',
-
   price: null,
   stock: null,
-
-  // 상세/카테고리 네이밍 혼용 대응
-  descImageUrl: '',
+  shippingFee: null,
+  openAt: null,   // DTO: generalOpenTime
+  closeAt: null,  // 화면용
   descriptionImages: [],
   detailImages: [],
-  shippingFee: null,
   selectedCategories: [],
 })
 
-// --- 통합 뷰(자식이 어떤 키를 쓰든 여기서 통일) ---
-const startAt = computed(() => form.value.openAt || form.value.saleStartAt || '')
-const endAt   = computed(() => form.value.closeAt || form.value.saleEndAt || '')
-const catsLen = computed(
-  () => (form.value.selectedCategories?.length || form.value.categories?.length || 0)
-)
-const dateOk = computed(() => {
-  if (!startAt.value || !endAt.value) return false
-  // ISO 문자열이면 문자열 비교도 가능하지만 안전하게 Date 비교
-  return new Date(endAt.value) >= new Date(startAt.value)
-})
+// 카테고리 라벨 → 서버 enum 이름
+const CATEGORY_CODE = {
+  의류: 'APPAREL',
+  뷰티: 'BEAUTY',
+  식품: 'FOOD',
+  유아: 'INFANT',
+  반려동물: 'PETS',
+  가전: 'ELECTRONICS',
+  가구: 'FURNITURE',
+  인테리어: 'INTERIOR',
+  주방: 'KITCHEN',
+  '스포츠/레저': 'SPORTS_LEISURE',
+  자동차: 'AUTOMOTIVE',
+  생활: 'LIFESTYLE',
+  악기: 'MUSICAL_INSTRUMENTS',
+  여행: 'TRAVEL',
+  기타: 'OTHER',
+}
 
-// 최소 유효성 (필요시 규칙 더 추가/수정)
+// 날짜 유효성 (종료일 비교는 화면 보조용)
+const hasDates = computed(() => !!(form.value.openAt && form.value.closeAt))
+const dateOk = computed(
+  () => !hasDates.value || new Date(form.value.closeAt) >= new Date(form.value.openAt),
+)
+
+// generalOpenTime(=openAt) 포함
 const isValid = computed(() => {
   const f = form.value
   return !!(
-    f.thumbnailUrl &&
+    f.thumbnail &&
     f.title?.trim() &&
-    startAt.value &&
-    endAt.value &&
-    dateOk.value &&
     Number(f.price) >= 100 &&
     Number(f.stock) >= 1 &&
-    catsLen.value > 0 &&
-    f.shippingFee !== null &&
-    f.shippingFee !== '' &&
-    !isNaN(Number(f.shippingFee))
+    Number(f.shippingFee) >= 0 &&
+    (f.selectedCategories?.length || 0) > 0 &&
+    f.openAt &&
+    dateOk.value
   )
 })
 
-function submit() {
-  if (!isValid.value) return
-  // TODO: 제출 로직 (startAt/endAt 사용해 서버 payload 만들 것)
-  // const payload = {
-  //   ...form.value,
-  //   openAt: startAt.value,
-  //   closeAt: endAt.value,
-  // }
+const submitting = ref(false)
+
+// 날짜 → ISO 문자열
+const toLdt = (v) => {
+  if (!v) return null
+  if (typeof v === 'string') return v.length === 16 ? `${v}:00` : v
+  if (v instanceof Date) {
+    const p = (n) => String(n).padStart(2, '0')
+    return `${v.getFullYear()}-${p(v.getMonth() + 1)}-${p(v.getDate())}T${p(v.getHours())}:${p(v.getMinutes())}:${p(v.getSeconds())}`
+  }
+  return String(v)
+}
+
+// 업로드 어댑터 (썸네일)
+const uploadThumbnail = async (file) => {
+  const { url } = await marketApi.uploadMarketThumbnail(file, influencerId.value)
+  return { url }
+}
+
+// 업로드 어댑터 (슬라이드/상세)
+const uploadImage = async (file, kind = 'slide') => {
+  if (kind === 'detail') {
+    const { urls } = await marketApi.uploadMarketDetails([file], influencerId.value)
+    return { url: urls[0] }
+  } else {
+    const { urls } = await marketApi.uploadMarketSlides([file], influencerId.value)
+    return { url: urls[0] }
+  }
+}
+
+/* DTO 매핑 payload */
+function buildPayload() {
+  const f = form.value
+  return {
+    influencerId: influencerId.value,
+    name: (f.title || '').trim(),
+    description: '',
+    price: Number(f.price),
+    groupBuyPrice: null,
+    discountedPrice: null,
+    shippingPrice: Number(f.shippingFee),
+    stock: Number(f.stock),
+    thumbnailImage: f.thumbnail || null,
+    categories: (f.selectedCategories || []).map(ko => CATEGORY_CODE[ko]).filter(Boolean),
+    detailImages: Array.isArray(f.detailImages) ? f.detailImages.filter(Boolean) : [],
+    descriptionImages: Array.isArray(f.descriptionImages) ? f.descriptionImages.filter(Boolean) : [],
+    generalOpenTime: toLdt(f.openAt),
+  }
+}
+
+async function submit() {
+  if (!isValid.value || submitting.value) return
+  if (!Number.isFinite(influencerId.value)) {
+    alert('influencerId를 확인할 수 없습니다.')
+    return
+  }
+  submitting.value = true
+  try {
+    const payload = buildPayload()
+    await marketApi.createProduct(payload)
+
+    alert('상품이 등록되었습니다!')
+    await router.replace('/influencers-mypage')
+  } catch (err) {
+    console.error('API ERROR:', {
+      status: err?.response?.status,
+      data: err?.response?.data,
+      message: err?.message,
+    })
+    alert(err?.response?.data?.message || err?.message || '등록 중 오류가 발생했습니다.')
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
 <template>
   <div>
     <AppHeader type="back-title" title="상품추가" />
-    <MarketThumbnail v-model="form.thumbnailUrl" />
-    <MarketForm v-model="form" />
+
+    <!-- 썸네일 업로더 연결 -->
+    <MarketThumbnail v-model="form.thumbnail" :uploadThumbnail="uploadThumbnail" />
+
+    <!-- 슬라이드/상세 업로더 연결 -->
+    <MarketForm v-model="form" :uploadImage="uploadImage" />
 
     <BaseButton
       size="lg"
       class="m-auto mt-8 mb-4"
-      :disabled="!isValid"
+      :disabled="!isValid || submitting"
       :class="
-        !isValid
-          ? 'bg-subtle-bg cursor-not-allowed pointer-events-none'
+        !isValid || submitting
+          ? 'bg-subtle-bg border-2 border-subtle-border cursor-not-allowed pointer-events-none'
           : 'bg-primary text-base'
       "
       @click="submit"
     >
-      등록완료
+      {{ submitting ? '등록 중...' : '등록' }}
     </BaseButton>
   </div>
 </template>

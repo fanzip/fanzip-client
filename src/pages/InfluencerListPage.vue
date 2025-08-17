@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, toValue, onMounted } from 'vue'
 
-import influencerApi from '@/api/influencerApi' // ✅ API import
-
+import influencerApi from '@/api/influencerApi'
 import SearchBar from '@/components/common/SearchBar.vue'
 import InfluencerIntro from '@/components/influencer/InfluencerIntro.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -15,7 +14,7 @@ const authStore = useAuthStore()
 
 const searchBarRef = ref(null)
 
-const influencers = ref([]) // ✅ 목 데이터 대신 API 데이터 담을 ref
+const influencers = ref([])
 
 onMounted(async () => {
   try {
@@ -47,26 +46,28 @@ const filteredInfluencers = computed(() => {
     <InfluencerIntro />
     <SearchBar ref="searchBarRef" class="mb-1" />
 
-    <div class="bg-subtle-bg p-2 flex-grow">
-      <template v-if="filteredInfluencers.length > 0">
-        <div class="grid grid-cols-2 gap-4 mt-2 w-fit mx-auto pb-20">
-          <InfluencerCard
-            v-for="influencer in filteredInfluencers"
-            :key="influencer.influencerId"
-            :id="influencer.influencerId"
-            :name="influencer.influencerName"
-            :profileImage="influencer.profileImage"
-            :coverImage="influencer.profileImage"
-            :description="influencer.description"
-          />
-        </div>
-      </template>
+    <div class="bg-subtle-bg flex-grow">
+      <div class="w-full box-border px-5">
+        <template v-if="filteredInfluencers.length > 0">
+          <div class="grid grid-cols-2 gap-4 mt-2 pb-20">
+            <InfluencerCard
+              v-for="inf in filteredInfluencers"
+              :key="inf.influencerId"
+              :id="inf.influencerId"
+              :name="inf.influencerName"
+              :profileImage="inf.profileImage"
+              :coverImage="inf.profileImage"
+              :description="inf.description"
+            />
+          </div>
+        </template>
 
-      <template v-else>
-        <div class="flex justify-center items-center h-60">
-          <p class="text-gray-400 text-base">검색 결과가 없습니다.</p>
-        </div>
-      </template>
+        <template v-else>
+          <div class="flex justify-center items-center h-60">
+            <p class="text-gray-400 text-base">검색 결과가 없습니다.</p>
+          </div>
+        </template>
+      </div>
     </div>
     <AppNav />
   </div>
