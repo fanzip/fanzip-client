@@ -12,8 +12,8 @@ const form = ref({
   influencerId: null,
   title: '',
   description: '',
-  meetingDate: '',       // 'YYYY-MM-DDTHH:mm'
-  generalOpenTime: '',   // 'YYYY-MM-DDTHH:mm'
+  meetingDate: '', // 'YYYY-MM-DDTHH:mm'
+  generalOpenTime: '', // 'YYYY-MM-DDTHH:mm'
   posterImageUrl: '',
 })
 
@@ -32,7 +32,7 @@ const toLocalDateTime = (v) => {
   if (typeof v === 'string' && v.length === 16) return `${v}:00`
   if (v instanceof Date) {
     const p = (n) => String(n).padStart(2, '0')
-    return `${v.getFullYear()}-${p(v.getMonth()+1)}-${p(v.getDate())}T${p(v.getHours())}:${p(v.getMinutes())}:${p(v.getSeconds())}`
+    return `${v.getFullYear()}-${p(v.getMonth() + 1)}-${p(v.getDate())}T${p(v.getHours())}:${p(v.getMinutes())}:${p(v.getSeconds())}`
   }
   return String(v)
 }
@@ -45,12 +45,7 @@ async function uploadPosterApi(file) {
 // 유효성 (필요 필드만 엄격 체크)
 const isValid = computed(() => {
   const f = form.value
-  return !!(
-    f.influencerId &&
-    f.title?.trim() &&
-    f.meetingDate &&
-    f.generalOpenTime
-  )
+  return !!(f.influencerId && f.title?.trim() && f.meetingDate && f.generalOpenTime)
 })
 
 const onSubmit = async () => {
@@ -94,15 +89,17 @@ const onSubmit = async () => {
 
     <!-- Figma처럼: 비활성 시 회색/클릭막기 -->
     <BaseButton
-      size="sm"
+      size="lg"
       class="m-auto mt-4 mb-4"
       :disabled="submitting || !isValid"
-      :class="(submitting || !isValid)
-        ? 'bg-subtle-bg text-white cursor-not-allowed pointer-events-none'
-        : 'bg-brand-primary text-white'"
+      :class="
+        submitting || !isValid
+          ? 'bg-subtle-bg  cursor-not-allowed pointer-events-none'
+          : 'bg-brand-primary '
+      "
       @click="onSubmit"
     >
-      {{ submitting ? '등록 중...' : '등록' }}
+      {{ submitting ? '등록 중...' : '등록완료' }}
     </BaseButton>
   </div>
 </template>
