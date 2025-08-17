@@ -17,9 +17,24 @@ const error = ref(null)
 
 const activeIndex = ref(0)
 
+// Filter state for active/inactive cards
+const filterState = ref('all') // 'all', 'active'
+const filteredCards = computed(() => {
+  if (filterState.value === 'active') {
+    return cards.value.filter((card) => card.isActive)
+  }
+  return cards.value
+})
+
 const visibleCards = computed(() => {
-  const total = cards.value.length
+  const currentCards = filteredCards.value
+  const total = currentCards.length
   if (total === 0) return []
+
+  // 활성 인덱스가 필터된 카드 범위를 벗어나면 조정
+  if (activeIndex.value >= total) {
+    activeIndex.value = Math.max(0, total - 1)
+  }
 
   // 카드 개수에 따른 동적 range 설정
   const maxRange = Math.min(2, Math.floor(total / 2))
@@ -29,7 +44,7 @@ const visibleCards = computed(() => {
   // 5장 미만일 때는 중복 렌더링 방지
   if (total < 5) {
     for (let i = 0; i < total; i++) {
-      result.push({ card: cards.value[i], realIndex: i })
+      result.push({ card: currentCards[i], realIndex: i })
     }
     return result
   }
@@ -37,7 +52,7 @@ const visibleCards = computed(() => {
   // 5장 이상일 때는 기존 로직 사용
   for (let i = -range; i <= range; i++) {
     const realIndex = (activeIndex.value + i + total) % total
-    result.push({ card: cards.value[realIndex], realIndex })
+    result.push({ card: currentCards[realIndex], realIndex })
   }
 
   return result
@@ -49,7 +64,7 @@ const handleCardClick = (realIndex) => {
     return
   }
 
-  const card = cards.value[realIndex]
+  const card = filteredCards.value[realIndex]
   if (!card) {
     console.error('카드를 찾을 수 없습니다:', realIndex)
     return
@@ -66,16 +81,21 @@ const handleCardClick = (realIndex) => {
   router.push({ name: 'FanCardDetailPage', params: { id: String(cardId) } })
 }
 
+// Filter change handler
+const changeFilter = (newFilter) => {
+  filterState.value = newFilter
+  activeIndex.value = 0 // Reset to first card when filter changes
+}
+
 let scrollCooldown = false
 
 const onScroll = (e) => {
   if (scrollCooldown) return
   scrollCooldown = true
 
+  const total = filteredCards.value.length
   activeIndex.value =
-    e.deltaY > 0
-      ? (activeIndex.value + 1) % cards.value.length
-      : (activeIndex.value - 1 + cards.value.length) % cards.value.length
+    e.deltaY > 0 ? (activeIndex.value + 1) % total : (activeIndex.value - 1 + total) % total
 
   setTimeout(() => {
     scrollCooldown = false
@@ -96,10 +116,9 @@ const onDrag = (e) => {
   const diffY = currentY - startY
 
   if (Math.abs(diffY) > 50) {
+    const total = filteredCards.value.length
     activeIndex.value =
-      diffY > 0
-        ? (activeIndex.value - 1 + cards.value.length) % cards.value.length
-        : (activeIndex.value + 1) % cards.value.length
+      diffY > 0 ? (activeIndex.value - 1 + total) % total : (activeIndex.value + 1) % total
     startY = currentY
   }
 }
@@ -141,7 +160,7 @@ const getCardStyle = (cardIndex) => {
     } else if (distanceFromActive === 1) {
       // 인접 카드
       const isUp = cardIndex < activeIndex.value
-      translateY = isUp ? -80 : 80
+      translateY = isUp ? -100 : 100
       scale = 0.9
       opacity = 0.8
       boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)'
@@ -149,7 +168,7 @@ const getCardStyle = (cardIndex) => {
     } else {
       // 멀리 있는 카드
       const isUp = cardIndex < activeIndex.value
-      translateY = isUp ? -140 : 140
+      translateY = isUp ? -170 : 170
       scale = 0.8
       opacity = 0.6
       boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)'
@@ -183,14 +202,14 @@ const getCardStyle = (cardIndex) => {
     zIndex = 100
   } else if (Math.abs(offset) === 1) {
     // 인접 카드 - 개선된 스택 순서
-    translateY = offset > 0 ? 90 : -90
+    translateY = offset > 0 ? 110 : -110
     scale = 0.88
     opacity = 0.75
     boxShadow = '0 6px 16px rgba(0, 0, 0, 0.1)'
     zIndex = offset > 0 ? 85 : 95 // 아래쪽 카드가 위쪽 카드보다 낮은 z-index
   } else {
     // 멀리 있는 카드 - 투명도 개선
-    translateY = offset > 0 ? 160 : -160
+    translateY = offset > 0 ? 200 : -200
     scale = 0.75
     opacity = 0.5 // 0.3에서 0.5로 높여서 덜 투명하게
     boxShadow = '0 3px 8px rgba(0, 0, 0, 0.05)'
@@ -252,6 +271,7 @@ const fetchFancards = async () => {
           cardNumber: fancard.cardNumber,
           influencerId: fancard.influencerId,
           category: fancard.category,
+          isActive: fancard.isActive !== undefined ? fancard.isActive : true, // 기본값은 true
           hasError: false,
         }
       })
@@ -308,6 +328,24 @@ const getBadgeClass = (grade) => {
   }
 }
 
+const getEmptyMessage = () => {
+  if (filterState.value === 'active') {
+    return '활성 팬카드가 없습니다.'
+  }
+  return '보유한 팬카드가 없습니다.'
+}
+
+const getFilterLabel = (filter) => {
+  switch (filter) {
+    case 'all':
+      return '전체'
+    case 'active':
+      return '활성'
+    default:
+      return '전체'
+  }
+}
+
 onMounted(() => {
   fetchFancards()
 })
@@ -320,86 +358,130 @@ onMounted(() => {
     </header>
 
     <!-- 메인 컨텐츠 영역: 헤더와 네비게이션 사이의 공간 활용 -->
-    <main class="flex-1 flex items-center justify-center pt-[100px] pb-[108px]">
-      <!-- 로딩 상태 -->
-      <div v-if="isLoading" class="flex items-center justify-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
-      </div>
-
-      <!-- 에러 상태 -->
-      <div v-else-if="error" class="flex flex-col items-center justify-center px-5">
-        <p class="text-text-emphasis text-center mb-4">{{ error }}</p>
-        <button
-          @click="fetchFancards"
-          class="px-4 py-2 bg-brand-primary text-black rounded-lg hover:bg-brand-accent"
-        >
-          다시 시도
-        </button>
-      </div>
-
-      <!-- 팬카드가 없는 경우 -->
-      <div v-else-if="cards.length === 0" class="flex flex-col items-center justify-center px-5">
-        <p class="text-subtle-text text-center">보유한 팬카드가 없습니다.</p>
-      </div>
-
-      <!-- 팬카드 목록 (카드 회전 애니메이션) -->
-      <div
-        v-else
-        class="relative w-full max-w-xs md:max-w-sm mx-auto touch-pan-y select-none mb-[28px]"
-        style="height: min(60vh, 480px)"
-        @wheel="onScroll"
-        @mousedown="startDrag"
-        @mousemove="onDrag"
-        @mouseup="endDrag"
-        @mouseleave="endDrag"
-        @touchstart="startDrag"
-        @touchmove="onDrag"
-        @touchend="endDrag"
-      >
-        <div
-          v-for="{ card, realIndex } in visibleCards"
-          :key="`fancard-${realIndex}-${card.cardId || card.id || 'unknown'}`"
-          class="absolute top-1/2 left-1/2 w-80 h-45 bg-white rounded-xl overflow-hidden cursor-pointer"
-          :style="getCardStyle(realIndex)"
-          @click="handleCardClick(realIndex)"
-        >
-          <img
-            v-if="!card.hasError && card.src"
-            :src="card.src"
-            :alt="card.name"
-            class="w-full h-full fancard-image"
-            @error="handleImageError($event, card)"
-          />
-          <!-- 이미지 로드 실패 시 표시할 fallback -->
-          <div
-            v-else
-            class="bg-gray-200 flex items-center justify-center text-gray-500 text-sm fancard-fallback"
-            style="
-              width: 20rem;
-              height: 11.25rem;
-              position: absolute;
-              top: 0;
-              left: 0;
-              transform: scale(1.1);
-            "
-          >
-            이미지를 불러올 수 없습니다
-          </div>
-          <div class="absolute bottom-2 left-2 text-white text-lg font-bold drop-shadow">
-            {{ card.name }}
-          </div>
-          <span
-            class="absolute top-2 right-2 w-20 h-6 text-base font-bold flex items-center justify-center rounded-full badge"
+    <main class="flex-1 flex flex-col pt-[100px] pb-[108px]">
+      <!-- 필터 컨트롤 (카드가 있을 때만 표시) -->
+      <div v-if="!isLoading && !error && cards.length > 0" class="px-5 mb-6">
+        <div class="flex justify-center gap-2">
+          <button
+            v-for="filter in ['all', 'active', 'inactive']"
+            :key="filter"
+            @click="changeFilter(filter)"
             :class="{
-              'badge-vip': card.grade?.toString().toUpperCase() === 'VIP',
-              'badge-gold': card.grade?.toString().toUpperCase() === 'GOLD',
-              'badge-silver': card.grade?.toString().toUpperCase() === 'SILVER',
-              'badge-white': card.grade?.toString().toUpperCase() === 'WHITE'
+              'bg-brand-primary text-text-inverse': filterState === filter,
+              'bg-base-bg text-subtle-text border border-subtle-border': filterState !== filter,
             }"
-            :title="`Debug: grade='${card.grade}', type=${typeof card.grade}`"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-brand-accent hover:text-text-inverse"
           >
-            {{ card.grade }}
-          </span>
+            {{ getFilterLabel(filter) }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 메인 카드 영역 -->
+      <div class="flex-1 flex items-center justify-center">
+        <!-- 로딩 상태 -->
+        <div v-if="isLoading" class="flex items-center justify-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+        </div>
+
+        <!-- 에러 상태 -->
+        <div v-else-if="error" class="flex flex-col items-center justify-center px-5">
+          <p class="text-text-emphasis text-center mb-4">{{ error }}</p>
+          <button
+            @click="fetchFancards"
+            class="px-4 py-2 bg-brand-primary text-black rounded-lg hover:bg-brand-accent"
+          >
+            다시 시도
+          </button>
+        </div>
+
+        <!-- 팬카드가 없는 경우 -->
+        <div
+          v-else-if="filteredCards.length === 0"
+          class="flex flex-col items-center justify-center px-5"
+        >
+          <p class="text-subtle-text text-center">{{ getEmptyMessage() }}</p>
+        </div>
+
+        <!-- 팬카드 목록 (카드 회전 애니메이션) -->
+        <div
+          v-else
+          class="relative w-full max-w-xs md:max-w-sm mx-auto touch-pan-y select-none mb-[28px]"
+          style="height: min(60vh, 480px)"
+          @wheel="onScroll"
+          @mousedown="startDrag"
+          @mousemove="onDrag"
+          @mouseup="endDrag"
+          @mouseleave="endDrag"
+          @touchstart="startDrag"
+          @touchmove="onDrag"
+          @touchend="endDrag"
+        >
+          <div
+            v-for="{ card, realIndex } in visibleCards"
+            :key="`fancard-${realIndex}-${card.cardId || card.id || 'unknown'}`"
+            class="absolute top-1/2 left-1/2 w-80 h-45 bg-white rounded-xl overflow-hidden cursor-pointer"
+            :style="getCardStyle(realIndex)"
+            @click="handleCardClick(realIndex)"
+          >
+            <!-- 비활성 카드 오버레이 -->
+            <div
+              v-if="!card.isActive"
+              class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-center rounded-xl"
+            >
+              <div class="text-white text-center">
+                <div class="text-sm font-semibold mb-1">구독 해지됨</div>
+                <div class="text-xs opacity-80">탭하여 추억 보기</div>
+              </div>
+            </div>
+
+            <img
+              v-if="!card.hasError && card.src"
+              :src="card.src"
+              :alt="card.name"
+              :class="{
+                'w-full h-full fancard-image': true,
+                'filter grayscale opacity-70': !card.isActive,
+              }"
+              @error="handleImageError($event, card)"
+            />
+            <!-- 이미지 로드 실패 시 표시할 fallback -->
+            <div
+              v-else
+              class="bg-gray-200 flex items-center justify-center text-gray-500 text-sm fancard-fallback"
+              :class="{ 'opacity-50': !card.isActive }"
+              style="
+                width: 20rem;
+                height: 11.25rem;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: scale(1.1);
+              "
+            >
+              이미지를 불러올 수 없습니다
+            </div>
+
+            <div
+              class="absolute bottom-2 left-2 text-white text-lg font-bold drop-shadow"
+              :class="{ 'opacity-80': !card.isActive }"
+            >
+              {{ card.name }}
+            </div>
+            <span
+              class="absolute top-2 right-2 w-20 h-6 text-base font-bold flex items-center justify-center rounded-full badge"
+              :class="{
+                'badge-vip': card.grade?.toString().toUpperCase() === 'VIP',
+                'badge-gold': card.grade?.toString().toUpperCase() === 'GOLD',
+                'badge-silver': card.grade?.toString().toUpperCase() === 'SILVER',
+                'badge-white': card.grade?.toString().toUpperCase() === 'WHITE',
+                'opacity-80': !card.isActive,
+              }"
+              :title="`Debug: grade='${card.grade}', type=${typeof card.grade}`"
+            >
+              {{ card.grade }}
+            </span>
+          </div>
         </div>
       </div>
     </main>
