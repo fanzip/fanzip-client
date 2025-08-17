@@ -22,7 +22,7 @@ const hasValue = computed(() => props.modelValue?.length > 0)
 <template>
   <div class="w-full px-5">
     <!-- 제목 텍스트 -->
-    <div class="text-base font-bold text-text-base mb-4">이름을 입력해주세요</div>
+    <div class="text-lg font-bold text-text-base mb-4">활동명을 입력해주세요</div>
 
     <!-- 입력 필드 컨테이너 -->
     <div class="relative w-full">
@@ -30,7 +30,7 @@ const hasValue = computed(() => props.modelValue?.length > 0)
         type="text"
         :value="modelValue"
         @input="onInput"
-        placeholder="이름"
+        placeholder="활동명"
         class="w-full border-b border-subtle-border py-2 pr-8 text-base outline-none placeholder-subtle-text text-text-base"
       />
 

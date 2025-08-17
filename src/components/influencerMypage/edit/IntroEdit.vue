@@ -12,7 +12,7 @@ defineExpose({ intro })
 <template>
   <div class="w-full px-5">
     <!-- 제목 -->
-    <div class="text-base font-bold mb-4">소개글을 작성해주세요</div>
+    <div class="text-lg font-bold mb-4">소개글을 작성해주세요</div>
 
     <!-- 입력 박스 -->
     <textarea
@@ -23,8 +23,6 @@ defineExpose({ intro })
     ></textarea>
 
     <!-- 글자 수 표시: textarea 아래 -->
-    <div class="mt-1 text-right text-sm text-subtle-text">
-      {{ introLength }}/{{ maxLength }}
-    </div>
+    <div class="mt-1 text-right text-sm text-subtle-text">{{ introLength }}/{{ maxLength }}</div>
   </div>
 </template>
