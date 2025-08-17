@@ -19,14 +19,14 @@ const goToMembershipSelect = () => {
 
 <template>
   <div
-    class="bg-white rounded-xl px-4 py-2 flex flex-col items-center w-[180px] shadow-sm"
+    class="bg-white rounded-xl px-4 py-2 flex flex-col items-center w-full shadow-sm"
     @click="goToMembershipSelect"
   >
     <!-- 프로필 이미지 -->
     <img
       :src="props.profileImage"
       :alt="props.name"
-      class="w-[150px] h-[150px] rounded-lg object-cover border-[2px] border-transparent hover:cursor-pointer"
+      class="w-full rounded-lg object-cover border-[2px] border-transparent hover:cursor-pointer"
     />
 
     <!-- 이름 -->
