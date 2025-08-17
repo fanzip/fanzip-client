@@ -27,17 +27,17 @@ const goTo = (routeName, needsId = false) => {
 
 <template>
   <div>
-    <div class="px-5 pt-5">
+    <!-- <div class="px-5 pt-5">
       <p class="text-lg font-bold text-black">나의 마켓</p>
-    </div>
+    </div> -->
     <div
       v-for="(item, index) in items"
       :key="index"
       class="flex items-center gap-2 px-5 py-3"
       @click="goTo(item.routeName, item.needsId)"
     >
-      <img :src="item.icon" alt="아이콘" class="w-5 h-5 cursor-pointer" />
-      <span class="text-base font-medium text-black cursor-pointer">{{ item.label }}</span>
+      <img :src="item.icon" alt="아이콘" class="cursor-pointer" />
+      <span class="text-base font-semibold text-black cursor-pointer">{{ item.label }}</span>
     </div>
   </div>
 </template>
