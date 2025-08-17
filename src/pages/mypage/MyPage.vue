@@ -103,7 +103,7 @@ onMounted(async () => {
         gap="2"
         class="cursor-pointer"
       ></ListItem>
-      <ListItem :src="sadFaceIcon" menu="회원탈퇴" gap="3" class="cursor-pointer"></ListItem>
+      <ListItem :src="sadFaceIcon" menu="회원탈퇴" gap="2" class="cursor-pointer"></ListItem>
     </div>
 
     <div class="bg-subtle-bg py-3">

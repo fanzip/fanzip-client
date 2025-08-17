@@ -16,7 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div :class="`w-full flex gap-${gap} mt-6`">
+  <div :class="`w-full flex gap-${gap} mt-6 items-center`">
     <img :src="src" alt="" class="w-5 h-5" />
     <p class="font-semibold">{{ menu }}</p>
   </div>
