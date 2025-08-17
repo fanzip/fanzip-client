@@ -11,7 +11,6 @@ const props = defineProps({
 const router = useRouter()
 
 const goToMembershipSelect = () => {
-
   // 다음 페이지로 이동
   router.push(`/membership/select/${props.id}`)
 }
@@ -23,15 +22,17 @@ const goToMembershipSelect = () => {
     @click="goToMembershipSelect"
   >
     <!-- 프로필 이미지 -->
-    <img
-      :src="props.profileImage"
-      :alt="props.name"
-      class="w-full rounded-lg object-cover border-[2px] border-transparent hover:cursor-pointer"
-    />
+    <div class="w-full aspect-square rounded-lg overflow-hidden bg-subtle-bg">
+      <img
+        :src="props.profileImage"
+        :alt="props.name"
+        class="w-full h-full object-cover hover: cursor-pointer"
+      />
+    </div>
 
     <!-- 이름 -->
     <p
-      class="mt-2 px-5 py-[2px] text-sm font-medium rounded-[8px] border border-base-border text-center text-black hover: cursor-pointer"
+      class="mt-2 px-5 py-[2px] text-sm font-medium rounded-lg border border-base-border text-center text-black hover: cursor-pointer"
     >
       {{ props.name }}
     </p>
