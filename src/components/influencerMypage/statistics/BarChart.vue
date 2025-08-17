@@ -119,7 +119,7 @@ function niceMax(v) {
       <div class="absolute inset-0 flex items-end gap-4">
         <div v-for="(d, i) in data" :key="i" class="group relative min-w-0 h-full flex-1">
           <div
-            class="absolute bottom-0 left-0 w-full shadow-3xl bg-brand-primary"
+            class="absolute bottom-0 left-0 w-full shadow-3xl bg-brand-primary rounded-t-md"
             :style="{
               height: (heights[i] || 0) + '%',
               //   boxShadow: '5px 5px 10px rgba(0,0,0,0.4)',
