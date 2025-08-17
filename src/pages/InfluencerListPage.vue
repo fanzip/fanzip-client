@@ -1,7 +1,5 @@
 <script setup>
-
 import { ref, computed, toValue, onMounted } from 'vue'
-
 
 import influencerApi from '@/api/influencerApi' // ✅ API import
 
@@ -10,13 +8,22 @@ import InfluencerIntro from '@/components/influencer/InfluencerIntro.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import InfluencerCard from '@/components/influencer/InfluencerCard.vue'
 import AppNav from '@/components/layout/AppNav.vue'
+import userApi from '@/api/userApi'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
 
 const searchBarRef = ref(null)
-
 
 const influencers = ref([]) // ✅ 목 데이터 대신 API 데이터 담을 ref
 
 onMounted(async () => {
+  try {
+    const res = await userApi.getUserInfo()
+    authStore.setUserInfo(res.data)
+  } catch (e) {
+    console.error(e)
+  }
   try {
     const data = await influencerApi.fetchAll()
     influencers.value = data
@@ -29,11 +36,9 @@ const filteredInfluencers = computed(() => {
   const keyword = toValue(searchBarRef.value?.keyword) || ''
   if (!keyword) return influencers.value
   return influencers.value.filter((influencer) =>
-    influencer.influencerName.toLowerCase().includes(keyword.toLowerCase())
+    influencer.influencerName.toLowerCase().includes(keyword.toLowerCase()),
   )
 })
-
-
 </script>
 
 <template>
