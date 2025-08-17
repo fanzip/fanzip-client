@@ -4,19 +4,18 @@ import DatePicker from '@vuepic/vue-datepicker'
 import { ko } from 'date-fns/locale'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-
 const props = defineProps({
-  modelValue: { type: String, default: '' },          // 'YYYY-MM-DDTHH:mm' or 'YYYY-MM-DD'
+  modelValue: { type: String, default: '' }, // 'YYYY-MM-DDTHH:mm' or 'YYYY-MM-DD'
   placeholder: { type: String, default: '연도-월-일 -- --:--' },
-  minuteStep: { type: Number, default: 10 },          // 5/10/30 등
-  dateOnly:   { type: Boolean, default: false },      // ✅ 추가: true면 날짜만
+  minuteStep: { type: Number, default: 10 }, // 5/10/30 등
+  dateOnly: { type: Boolean, default: false }, // ✅ 추가: true면 날짜만
 })
 const emit = defineEmits(['update:modelValue'])
 
 const open = ref(false)
 const step = ref('date') // 'date' | 'time'
 const selDate = ref(null) // Date
-const selTime = ref('')   // 'HH:mm'
+const selTime = ref('') // 'HH:mm'
 
 // modelValue → 내부 상태 동기화
 function syncFromModel() {
@@ -56,7 +55,9 @@ function next() {
     }
   }
 }
-function back() { step.value = 'date' }
+function back() {
+  step.value = 'date'
+}
 function apply() {
   emit('update:modelValue', join(selDate.value, selTime.value))
   open.value = false
@@ -88,28 +89,27 @@ const times = computed(() => {
 <template>
   <!-- 읽기전용 표시 입력 -->
   <button
-  type="button"
-  class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm
-         flex items-center justify-between"
-  @click="openSheet"
->
-  <!-- 왼쪽 묶음: 아이콘 + 라벨 -->
-  <span class="flex items-center gap-2 truncate">
-    <!-- 왼쪽 아이콘 슬롯 -->
-    <slot name="prefix"></slot>
+    type="button"
+    class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm flex items-center justify-between focus:outline-none focus:border-brand-primary"
+    @click="openSheet"
+  >
+    <!-- 왼쪽 묶음: 아이콘 + 라벨 -->
+    <span class="flex items-center gap-2 truncate">
+      <!-- 왼쪽 아이콘 슬롯 -->
+      <slot name="prefix"></slot>
 
-    <!-- 라벨 -->
-    <span class="truncate">
-      <span v-if="display">{{ display }}</span>
-      <span v-else class="text-subtle-text">{{ placeholder }}</span>
+      <!-- 라벨 -->
+      <span class="truncate">
+        <span v-if="display">{{ display }}</span>
+        <span v-else class="text-subtle-text">{{ placeholder }}</span>
+      </span>
     </span>
-  </span>
 
-  <!-- 오른쪽 아이콘 슬롯 -->
-  <span class="shrink-0">
-    <slot name="suffix"></slot>
-  </span>
-</button>
+    <!-- 오른쪽 아이콘 슬롯 -->
+    <span class="shrink-0">
+      <slot name="suffix"></slot>
+    </span>
+  </button>
   <!-- 바텀시트 -->
   <transition name="fade">
     <div v-if="open" class="fixed inset-0 z-50">
@@ -165,7 +165,11 @@ const times = computed(() => {
                 :key="t"
                 type="button"
                 class="h-10 rounded-lg border text-sm"
-                :class="t === selTime ? 'bg-black text-text-inverse border-black' : 'bg-base-bg border-subtle-bg'"
+                :class="
+                  t === selTime
+                    ? 'bg-black text-text-inverse border-black'
+                    : 'bg-base-bg border-subtle-bg'
+                "
                 @click="selTime = t"
               >
                 {{ t }}
@@ -189,9 +193,21 @@ const times = computed(() => {
 </template>
 
 <style scoped>
-.fade-enter-active,.fade-leave-active{ transition: opacity .15s; }
-.fade-enter-from,.fade-leave-to{ opacity:0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
-:deep(.dp__today){ border:1px solid black !important; color:black !important; }
-:deep(.dp__active_date){ background-color:black !important; color:white !important; }
+:deep(.dp__today) {
+  border: 1px solid black !important;
+  color: black !important;
+}
+:deep(.dp__active_date) {
+  background-color: black !important;
+  color: white !important;
+}
 </style>

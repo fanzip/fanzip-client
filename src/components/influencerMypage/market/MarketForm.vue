@@ -188,7 +188,7 @@ function handleDetailFiles(files) {
     <input
       v-model="title"
       type="text"
-      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm"
+      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
       placeholder="상품명을 입력해주세요(100자 이하)"
     />
   </div>
@@ -204,7 +204,7 @@ function handleDetailFiles(files) {
       :second-step="30"
       :show-seconds="true"
       placeholder="연도-월-일  --  --:--:--"
-      class="mb-4"
+      class="mb-4 focus:outline-none focus:border-brand-primary"
     >
       <template #prefix><img :src="calendarIcon" alt="" class="w-4 h-4 shrink-0" /></template>
       <template #suffix><img :src="chevronDown" alt="" class="w-4 h-4 shrink-0" /></template>
@@ -233,7 +233,7 @@ function handleDetailFiles(files) {
       v-model="price"
       type="number"
       min="100"
-      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm"
+      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
       placeholder="100원 이상부터 가능합니다"
     />
   </div>
@@ -244,7 +244,7 @@ function handleDetailFiles(files) {
       v-model="stock"
       type="number"
       min="1"
-      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm"
+      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
       placeholder="최소 1개, 최대 100,000개 가능합니다"
     />
   </div>
@@ -365,7 +365,7 @@ function handleDetailFiles(files) {
       v-model="shippingFee"
       type="number"
       min="0"
-      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm"
+      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
       placeholder="배송비를 입력하세요"
     />
   </div>
@@ -374,7 +374,7 @@ function handleDetailFiles(files) {
     <label class="block font-semibold text-base mb-2 mt-4">카테고리 선택</label>
     <button
       type="button"
-      class="relative w-full min-h-11 px-4 py-2 rounded-xl border border-base-border bg-base-bg text-sm text-left"
+      class="relative w-full min-h-11 px-4 py-2 rounded-xl border border-base-border bg-base-bg text-sm text-left focus:outline-none focus:border-brand-primary"
       @click="openCategoryModal"
     >
       <div class="flex flex-wrap items-center gap-2 pr-6">
