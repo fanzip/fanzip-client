@@ -11,4 +11,4 @@ onMounted(async () => {
   }
 })
 </script>
-<template>LoginCallbackPage</template>
+<template></template>
