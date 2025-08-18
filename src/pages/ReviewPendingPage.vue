@@ -33,10 +33,10 @@
         </router-link>
 
         <router-link
-          to="/support/chat?topic=review"
+          to="/review/complete"
           class="btn btn-primary h-10 px-5 inline-flex items-center justify-center w-auto flex-none"
         >
-          문의하기
+          심사 결과 확인 하기
         </router-link>
       </div>
     </div>
