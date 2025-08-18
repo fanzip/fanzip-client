@@ -68,6 +68,18 @@ const marketApi = {
     return res.data
   },
 
+  // 주문 완료 페이지용 주문 상품 조회
+  getOrderItems: async (orderId) => {
+    const res = await api.get(`/api/market/orders/${orderId}/items`)
+    return res.data
+  },
+
+  // 주문 완료 페이지용 주문 상세 정보 조회
+  getOrderDetail: async (orderId) => {
+    const res = await api.get(`/api/market/orders/${orderId}`)
+    return res.data
+  },
+
   // 상품 생성(공구 마켓 등록)
   createProduct: async (payload) => {
     const res = await api.post('/api/market/products', payload)
