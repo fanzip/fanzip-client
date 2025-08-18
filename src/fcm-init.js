@@ -36,6 +36,8 @@ export async function initFcm({ force = false, registration: registrationArg } =
 
     // 3) 토큰 발급 (앱 SW registration을 명시적으로 전달)
     const vapid = import.meta.env.VITE_FIREBASE_VAPID_KEY
+    console.log('[FCM] DEBUG - VAPID KEY:', vapid)
+    console.log('[FCM] DEBUG - All env vars:', import.meta.env)
     if (!vapid) { console.error('[FCM] VITE_FIREBASE_VAPID_KEY missing'); return }
 
     const token = await requestFcmToken(vapid, registration)

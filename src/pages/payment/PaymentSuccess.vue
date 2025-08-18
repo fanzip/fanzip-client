@@ -27,8 +27,11 @@
       </BaseButton>
       <BaseButton variant="cancel" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
     </div>
-    <div v-else class="fixed bottom-14 left-0 right-0 flex justify-center">
-      <BaseButton variant="primary" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
+    <div v-else class="fixed bottom-14 left-5 right-5 flex flex-col items-center space-y-3">
+      <BaseButton variant="primary" size="lg" @click="goToOrderFinish">
+        주문 내역 보기
+      </BaseButton>
+      <BaseButton variant="cancel" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
     </div>
   </div>
 
@@ -71,6 +74,18 @@ export default {
 
     const goToHome = () => {
       router.push('/')
+    }
+
+    const goToOrderFinish = () => {
+      const params = route.query
+      router.push({
+        path: '/market/order/finish',
+        query: {
+          orderId: params.orderId,
+          amount: params.amount,
+          paymentKey: params.paymentKey
+        }
+      })
     }
 
     const goToMobileTicket = () => {
@@ -150,6 +165,7 @@ export default {
       isFromFanMeeting,
       goToHome,
       goToMobileTicket,
+      goToOrderFinish,
       CheckSymbol,
     }
   },
