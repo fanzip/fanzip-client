@@ -14,7 +14,7 @@
     </div>
 
     <!-- slides -->
-    <div class="h-screen w-full relative overflow-hidden">
+    <div class="h-screen w-full relative overflow-hidden pb-20">
       <transition name="fade" mode="out-in">
         <div :key="idx" class="h-full w-full flex flex-col items-center justify-center px-6">
           <!-- 1. Welcome -->
@@ -47,7 +47,7 @@
               </div>
             </div>
             <h2 class="text-xl font-bold">당신의 팬심을 증명하는 디지털 팬카드</h2>
-            <p class="text-subtle-text">한 장의 카드로 시작하는 팬 활동의 모든 순간.</p>
+            <p class="text-subtle-text">한 장의 카드로 시작하는 팬 활동의 모든 순간</p>
           </div>
 
           <!-- 2. 팬카드 기능 -->
@@ -127,7 +127,7 @@
               </div>
             </div>
             <h2 class="text-xl font-bold">좋아하는 인플루언서와의 추억을 한 곳에</h2>
-            <p class="text-subtle-text">당신의 팬 여정을 기록하고 간직합니다.</p>
+            <p class="text-subtle-text">당신의 팬 여정을 기록하고 간직합니다</p>
           </div>
 
           <!-- 4. CTA (가입 직후: 팬카드로 이동) -->
@@ -164,19 +164,33 @@
       </transition>
     </div>
 
-    <!-- bottom nav -->
-    <div class="absolute bottom-0 left-0 right-0 z-20 p-5 flex items-center justify-between">
-      <button class="text-sm text-subtle-text" :disabled="idx === 0" @click="prev">이전</button>
-      <button
-        class="text-sm font-semibold text-nav-active"
-        v-if="idx < slides.length - 1"
-        @click="next"
-      >
-        다음
-      </button>
-      <button class="text-sm font-semibold text-nav-active" v-else @click="complete">
-        메인으로
-      </button>
+    <!-- bottom nav - 고정 네비바로 변경 -->
+    <!-- bottom nav - 고정 네비바 -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white p-5">
+      <div class="flex items-center justify-between">
+        <button
+          class="flex-1 text-left text-sm px-4 py-2 transition-colors"
+          :class="idx === 0 ? 'text-gray-400 cursor-not-allowed' : 'text-subtle-text'"
+          :disabled="idx === 0"
+          @click="prev"
+        >
+          이전
+        </button>
+        <button
+          class="flex-1 text-right text-sm px-4 py-2 font-semibold text-nav-active"
+          v-if="idx < slides.length - 1"
+          @click="next"
+        >
+          다음
+        </button>
+        <button
+          class="flex-1 text-right text-sm px-4 py-2 font-semibold text-nav-active"
+          v-else
+          @click="complete"
+        >
+          메인으로
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -224,7 +238,7 @@ const prev = () => {
   if (idx.value > 0) idx.value--
 }
 
-/** 온보딩 종료: 플래그 저장 후 팬카드 화면으로 이동 */
+/* 온보딩 종료: 플래그 저장 후 팬카드 화면으로 이동 */
 const complete = () => {
   try {
     localStorage.setItem('hasSeenOnboarding', '1')
