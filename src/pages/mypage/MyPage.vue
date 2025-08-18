@@ -60,7 +60,7 @@ onMounted(async () => {
         토글
       </button>
     </section>
-    g
+
     <section class="gap-4 flex">
       <div class="flex-1 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
         <p class="text-lg">🔥</p>
