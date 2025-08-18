@@ -170,15 +170,6 @@
             <div class="space-y-3 text-sm text-subtle-text">
               <p>승인 결과는 푸시 · 이메일로 안내돼요</p>
               <p>메일 문의: fanzip_devteam@gmail.com</p>
-              <button
-                type="button"
-                class="btn btn-primary h-9 px-4 w-full md:w-auto min-w-0"
-                @click="openUrgentChat"
-                :disabled="isChatting"
-              >
-                <span v-if="!isChatting">운영팀 채팅 열기</span>
-                <span v-else>연결 중...</span>
-              </button>
               <p class="text-[11px] text-subtle-text">
                 현재 작성 중인 정보가 함께 전달되어 빠르게 도와드려요.
               </p>
