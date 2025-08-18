@@ -23,7 +23,7 @@ export default [
   },
   {
     path: '/market/order/finish',
-    nmae: 'market-order-finish',
+    name: 'market-order-finish',
     component: MarketOrderFinishPage,
   },
   {
