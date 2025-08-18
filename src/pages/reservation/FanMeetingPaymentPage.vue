@@ -148,7 +148,7 @@ const processPayment = async () => {
     await widgets.requestPayment({
       orderId,
       orderName,
-      successUrl: `${window.location.origin}/payments/success?paymentId=${route.query.paymentId}`,
+      successUrl: `${window.location.origin}/payments/success?paymentId=${route.query.paymentId}&fanMeetingId=${route.query.meetingId}&reservationId=${route.query.reservationId}&seatId=${route.query.seatId}`,
       failUrl: `${window.location.origin}/payments/fail?paymentId=${route.query.paymentId}`,
       customerEmail: 'customer123@gmail.com',
       customerName: '팬집',

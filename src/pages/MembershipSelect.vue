@@ -110,11 +110,11 @@ const goToPayment = async () => {
     }
 
     // 2) 공통 PaymentPage의 "재사용 분기"를 강제로 태움
-    //    (조건: route.query.paymentId && paymentType === 'RESERVATION')
+    //    (조건: route.query.paymentId && paymentType === 'MEMBERSHIP')
     router.push({
       name: 'PaymentPage', // == '/payments/request'
       query: {
-        paymentType: 'RESERVATION', // 🔴 중요: 재사용 분기 트리거
+        paymentType: 'MEMBERSHIP', // 🔴 수정: 멤버십 결제
         paymentId: String(paymentId), // 🔴 중요: 기존 payment 재사용
         amount: String(amount), // PaymentPage가 표시/요청에 사용
       },

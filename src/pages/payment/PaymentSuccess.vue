@@ -18,20 +18,40 @@
     <p class="mt-14 text-xl text-base font-normal">결제가 완료되었습니다!</p>
 
     <!-- 버튼 -->
-    <div
-      v-if="isFromFanMeeting"
-      class="fixed bottom-14 left-5 right-5 flex flex-col items-center space-y-3"
-    >
-      <BaseButton variant="primary" size="lg" @click="goToMobileTicket">
-        내 카드 보러가기
+    <div class="fixed bottom-14 left-5 right-5 flex gap-4">
+      <!-- 홈으로 가기 버튼 (공통, 왼쪽) -->
+      <BaseButton variant="cancel" size="md" @click="goToHome" class="flex-1">
+        홈으로 가기
       </BaseButton>
-      <BaseButton variant="cancel" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
-    </div>
-    <div v-else class="fixed bottom-14 left-5 right-5 flex flex-col items-center space-y-3">
-      <BaseButton variant="primary" size="lg" @click="goToOrderFinish">
-        주문 내역 보기
+      
+      <!-- 오른쪽 버튼 (케이스별로 다름) -->
+      <BaseButton 
+        v-if="paymentType === 'MEMBERSHIP'"
+        variant="primary" 
+        size="md" 
+        @click="goToFanCard" 
+        class="flex-1"
+      >
+        팬카드 보러가기
       </BaseButton>
-      <BaseButton variant="cancel" size="lg" @click="goToHome"> 돌아가기 </BaseButton>
+      <BaseButton 
+        v-else-if="paymentType === 'RESERVATION'"
+        variant="primary" 
+        size="md" 
+        @click="goToMobileTicket" 
+        class="flex-1"
+      >
+        모바일 티켓 보러가기
+      </BaseButton>
+      <BaseButton 
+        v-else
+        variant="primary" 
+        size="md" 
+        @click="goToOrderFinish" 
+        class="flex-1"
+      >
+        결제 내역 보러가기
+      </BaseButton>
     </div>
   </div>
 
@@ -52,7 +72,6 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import AppHeader from '@/components/layout/AppHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import CheckSymbol from '@/assets/icons/CheckSymbol.svg'
 import paymentApi from '@/api/paymentApi'
@@ -60,7 +79,6 @@ import paymentApi from '@/api/paymentApi'
 export default {
   name: 'PaymentSuccess',
   components: {
-    AppHeader,
     BaseButton,
   },
   setup() {
@@ -70,7 +88,7 @@ export default {
     const paymentData = ref(null)
     const isLoading = ref(false)
     const error = ref(null)
-    const isFromFanMeeting = ref(false)
+    const paymentType = ref(null)
 
     const goToHome = () => {
       router.push('/')
@@ -88,55 +106,75 @@ export default {
       })
     }
 
-    const goToMobileTicket = () => {
-      router.push('/fancard/mobile-ticket')
+    const goToMobileTicket = async () => {
+      try {
+        // 결제 정보에서 reservationId 가져오기
+        const paymentDetail = await paymentApi.getPaymentDetail(route.query.paymentId)
+        
+        if (paymentDetail.reservationId || route.query.reservationId) {
+          // query 방식으로 모바일 티켓 페이지로 이동
+          router.push({
+            path: '/fancard/mobile-ticket',
+            query: {
+              fanMeetingId: route.query.fanMeetingId || route.query.meetingId,
+              reservationId: route.query.reservationId || paymentDetail.reservationId,
+              seatId: route.query.seatId
+            }
+          })
+        } else {
+          // 일반 모바일 티켓 페이지로 이동
+          router.push('/fancard/mobile-ticket')
+        }
+      } catch (error) {
+        console.error('모바일 티켓 이동 중 오류:', error)
+        // 오류 시 일반 페이지로 이동
+        router.push('/fancard/mobile-ticket')
+      }
+    }
+
+    const goToFanCard = () => {
+      router.push('/fancard')
     }
 
     const processPaymentSuccess = async () => {
       const params = route.query
       const paymentId = params.paymentId
 
-      // 팬미팅 예약에서 온 경우는 시뮬레이션이므로 파라미터 체크 생략
-      if (params.fromFanMeeting === 'true') {
-        paymentData.value = {
-          orderId: `fanmeeting_${params.fanMeetingId}_${Date.now()}`,
-          amount: params.amount,
-          paymentMethod: '간편결제',
-          createdAt: new Date().toISOString(),
-        }
-        return
-      }
-
-      if (!params.paymentKey || !params.orderId || !params.amount) {
-        error.value = '필수 결제 정보가 누락되었습니다.'
+      if (!paymentId) {
+        error.value = 'paymentId가 누락되었습니다.'
         return
       }
 
       isLoading.value = true
 
       try {
-        // const approveResponse = await fetch(`/api/payments/${paymentId}/approve`, {
-        //   method: 'PATCH',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify({
-        //     paymentKey: params.paymentKey,
-        //     orderId: params.orderId,
-        //     amount: parseInt(params.amount),
-        //   }),
-        // })
-        // if (!approveResponse.ok) {
-        //   const errorData = await approveResponse.json()
-        //   throw new Error(errorData.message || '결제 승인 실패')
-        // }
+        // 1. 먼저 결제 정보를 가져와서 paymentType 확인
+        const paymentDetail = await paymentApi.getPaymentDetail(paymentId)
+        paymentType.value = paymentDetail.paymentType
+        
+        // 2. 팬미팅 예약에서 온 경우는 시뮬레이션이므로 승인 생략
+        if (params.fromFanMeeting === 'true') {
+          paymentData.value = {
+            orderId: `fanmeeting_${params.fanMeetingId}_${Date.now()}`,
+            amount: params.amount,
+            paymentMethod: '간편결제',
+            createdAt: new Date().toISOString(),
+          }
+          return
+        }
 
-        // const approvedData = await approveResponse.json()
+        // 3. 실제 결제 승인 처리
+        if (!params.paymentKey || !params.orderId || !params.amount) {
+          error.value = '필수 결제 정보가 누락되었습니다.'
+          return
+        }
+
         const approvedData = await paymentApi.approvePayment(paymentId, {
           paymentKey: params.paymentKey,
           orderId: params.orderId,
           amount: parseInt(params.amount, 10),
         })
+        
         paymentData.value = {
           orderId: approvedData.orderId,
           amount: approvedData.amount,
@@ -154,7 +192,6 @@ export default {
     }
 
     onMounted(() => {
-      isFromFanMeeting.value = route.query.fromFanMeeting === 'true'
       processPaymentSuccess()
     })
 
@@ -162,9 +199,10 @@ export default {
       paymentData,
       isLoading,
       error,
-      isFromFanMeeting,
+      paymentType,
       goToHome,
       goToMobileTicket,
+      goToFanCard,
       goToOrderFinish,
       CheckSymbol,
     }
