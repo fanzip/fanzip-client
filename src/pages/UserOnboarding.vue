@@ -49,7 +49,7 @@
                 </div>
               </div>
             </div>
-            <h2 class="text-2xl font-bold">당신의 팬심을 증명하는 디지털 팬카드</h2>
+            <h2 class="text-xl font-bold">당신의 팬심을 증명하는 디지털 팬카드</h2>
             <p class="text-subtle-text">한 장의 카드로 시작하는 팬 활동의 모든 순간.</p>
           </div>
 
@@ -112,7 +112,7 @@
                 </div>
               </div>
             </div>
-            <h2 class="text-2xl font-bold">QR로 간편 입장, 손쉬운 팬미팅 예약</h2>
+            <h2 class="text-xl font-bold">QR로 간편 입장, 손쉬운 팬미팅 예약</h2>
             <p class="text-subtle-text">암표, 위조 걱정 없이 안전하게</p>
           </div>
 
@@ -129,7 +129,7 @@
                 <Polaroid caption="2025.03.10 팬미팅" :image="ticket" />
               </div>
             </div>
-            <h2 class="text-2xl font-bold">좋아하는 인플루언서와의 추억을 한 곳에</h2>
+            <h2 class="text-xl font-bold">좋아하는 인플루언서와의 추억을 한 곳에</h2>
             <p class="text-subtle-text">당신의 팬 여정을 기록하고 간직합니다.</p>
           </div>
 
@@ -155,7 +155,7 @@
                 </div>
               </div>
             </div>
-            <h2 class="text-2xl font-bold">지금 내 팬카드를 발급해 보세요</h2>
+            <h2 class="text-xl font-bold">지금 내 팬카드를 발급해 보세요</h2>
             <button
               class="w-full h-12 rounded-full bg-brand-primary text-text-base font-semibold shadow-md animate-bouncein active:opacity-90"
               @click="complete"
@@ -169,16 +169,12 @@
 
     <!-- bottom nav -->
     <div class="absolute bottom-0 left-0 right-0 z-20 p-5 flex items-center justify-between">
-      <button class="text-sm text-subtle-text" :disabled="idx === 0" @click="prev">이전</button>
       <button
         class="text-sm font-semibold text-nav-active"
         v-if="idx < slides.length - 1"
         @click="next"
       >
         다음
-      </button>
-      <button class="text-sm font-semibold text-nav-active" v-else @click="complete">
-        메인으로
       </button>
     </div>
   </div>
