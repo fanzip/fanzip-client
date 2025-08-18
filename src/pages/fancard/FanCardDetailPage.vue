@@ -6,7 +6,7 @@ import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { fancardApi } from '@/api/fancardApi'
 import { cancelMembership } from '@/api/membershipApi'
-import { checkUpcomingMeetingWithInfluencer } from '@/api/fanMeetingApi'
+import { checkUpcomingMeetingWithInfluencer, checkAnyUpcomingMeeting } from '@/api/fanMeetingApi'
 import { useAuthStore } from '@/stores/authStore'
 
 import tomoTomoImg from '@/assets/fancard/TomoTomo.svg'
@@ -109,7 +109,7 @@ const checkFanMeetingReservation = async () => {
 
   try {
     isCheckingMeeting.value = true
-    console.log('📡 API 호출:', fanCard.value.influencer.influencerId)
+    console.log('📡 특정 인플루언서 팬미팅 예약 확인 API 호출:', fanCard.value.influencer.influencerId)
     const response = await checkUpcomingMeetingWithInfluencer(fanCard.value.influencer.influencerId)
     console.log('📡 API 응답:', response)
     hasUpcomingMeeting.value = response.hasUpcomingMeeting || false
@@ -160,12 +160,27 @@ const formatBenefits = (benefits) => {
 }
 
 const formatPaymentHistory = (paymentHistory) => {
-  return paymentHistory.map((payment) => ({
-    title: payment.title || '결제 완료',
-    amount: payment.amount,
-    date: formatDate(payment.paymentDate || payment.paidAt),
-    bold: payment.bold || false,
-  }))
+  return paymentHistory.map((payment) => {
+    let title = payment.title || '결제 완료'
+    
+    // 인플루언서 이름 제거 (예: "토모토모 상품 구매" → "상품 구매")
+    title = title.replace(/^[^\s]+ /, '')
+    
+    // 멤버십 관련 문구 변경
+    if (title.includes('멤버십 해지')) {
+      title = title.replace('멤버십 해지', '구독 해지')
+    }
+    if (title.includes('멤버십 구독')) {
+      title = title.replace('멤버십 구독', '구독 시작')
+    }
+    
+    return {
+      title,
+      amount: payment.amount,
+      date: formatDate(payment.paymentDate || payment.paidAt),
+      bold: payment.bold || false,
+    }
+  })
 }
 
 const imageError = ref(false)
@@ -400,14 +415,34 @@ onMounted(() => {
         <h3 class="font-semibold text-base">{{ fanCard.nickname }}님와의 추억</h3>
       </div>
       <ul class="divide-y divide-subtle-border text-sm">
-        <li v-for="(item, idx) in fanCard.history" :key="idx" class="py-2 flex gap-4">
-          <img v-if="item.title.includes('결제')" :src="Heart" />
-          <img v-else-if="item.title.includes('예매')" :src="Ticket" />
-          <img v-else-if="item.title.includes('구매')" :src="Cart" />
-          <img v-else-if="item.title.includes('해지')" :src="BrokenHeart" />
-          <div>
-            <p :class="{ 'font-bold': item.bold }">{{ item.title }}</p>
-            <p class="text-xs mt-[1px]">{{ item.date }}</p>
+        <li v-for="(item, idx) in fanCard.history" :key="idx" class="py-2 flex gap-4 items-center">
+          <img 
+            v-if="item.title.includes('결제') || item.title.includes('구독')" 
+            :src="Heart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="구독 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('예매')" 
+            :src="Ticket" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="예매 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('구매')" 
+            :src="Cart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="구매 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('해지')" 
+            :src="BrokenHeart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="해지 아이콘"
+          />
+          <div class="flex-1">
+            <p class="font-semibold">{{ item.title }}</p>
+            <p class="text-xs mt-[1px] text-subtle-text">{{ item.date }}</p>
           </div>
         </li>
       </ul>
