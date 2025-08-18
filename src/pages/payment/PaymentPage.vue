@@ -83,8 +83,8 @@ export default {
     }
 
     const createPaymentInBackend = async (amount) => {
-      if (route.query.paymentId && route.query.paymentType === 'RESERVATION') {
-        // 예약 결제의 경우 이미 백엔드에서 결제 데이터가 생성됨
+      if (route.query.paymentId && (route.query.paymentType === 'RESERVATION' || route.query.paymentType === 'MEMBERSHIP')) {
+        // 예약 결제나 멤버십 결제의 경우 이미 백엔드에서 결제 데이터가 생성됨
         paymentId = route.query.paymentId
         try {
           const data = await paymentApi.getPaymentDetail(paymentId)

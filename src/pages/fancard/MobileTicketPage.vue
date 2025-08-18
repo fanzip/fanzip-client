@@ -15,9 +15,9 @@ const isUniqueTicket = ref(false)
 const ticketData = ref(null)
 const isLoadingTicketData = ref(false)
 
-// 닫기 버튼 클릭 시 이전 페이지로 돌아가기
+// 닫기 버튼 클릭 시 홈으로 이동
 const handleClose = () => {
-  router.go(-1)
+  router.push('/')
 }
 
 const ticket = ref({
@@ -62,6 +62,17 @@ const loadUniqueTicketData = async () => {
   
   if (!reservationId || !seatId || !meetingId) {
     console.warn('⚠️ 필수 파라미터 누락으로 loadUniqueTicketData 스킵')
+    // 파라미터가 없어도 기본 샘플 데이터로 표시
+    ticket.value = {
+      ...ticket.value,
+      title: '팬미팅 예매 완료',
+      description: '팬미팅 예매가 완료되었습니다.',
+      location: '장소 정보 없음',
+      date: new Date().toLocaleDateString(),
+      dayOfWeek: '일',
+      time: '시간 정보 없음',
+      seat: '좌석 정보 없음',
+    }
     return
   }
 
@@ -84,7 +95,17 @@ const loadUniqueTicketData = async () => {
     }
   } catch (error) {
     console.error('모바일 티켓 데이터 로드 실패:', error)
-    // 오류 시 기본 샘플 데이터 유지
+    // 오류 시 기본 샘플 데이터로 표시
+    ticket.value = {
+      ...ticket.value,
+      title: '팬미팅 예매 완료',
+      description: '팬미팅 예매가 완료되었습니다.',
+      location: '장소 정보 없음',
+      date: new Date().toLocaleDateString(),
+      dayOfWeek: '일',
+      time: '시간 정보 없음',
+      seat: '좌석 정보 없음',
+    }
   } finally {
     isLoadingTicketData.value = false
   }
