@@ -193,9 +193,17 @@ const generateQrCode = async () => {
     // 사용자 ID 조회
     const userId = await getCurrentUserId()
     
-    // 고유 티켓인 경우 route params에서, 아니면 query에서 가져오기
-    const reservationId = isUniqueTicket.value ? route.params.reservationId : route.query.reservationId
-    const fanMeetingId = isUniqueTicket.value ? route.params.meetingId : route.query.fanMeetingId
+    // route에서 파라미터 가져오기 (params 또는 query 모두 지원)
+    const reservationId = route.params.reservationId || route.query.reservationId
+    const fanMeetingId = route.params.meetingId || route.params.fanMeetingId || route.query.fanMeetingId
+    
+    console.log('🔍 라우트 파라미터 디버깅:', {
+      'route.params': route.params,
+      'route.query': route.query,
+      'isUniqueTicket': isUniqueTicket.value,
+      'extracted reservationId': reservationId,
+      'extracted fanMeetingId': fanMeetingId
+    })
     
     // 필수 파라미터 검증
     if (!reservationId || !fanMeetingId) {
