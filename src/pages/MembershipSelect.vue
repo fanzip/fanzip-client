@@ -160,7 +160,7 @@ const goToPayment = async () => {
           :disabled="!selectedPayment"
           @click="goToPayment"
         >
-          <span class="font-bold">{{ selectedAmount.toLocaleString() }} 원</span>
+          <span class="font-bold">{{ selectedAmount.toLocaleString() }}원</span>
           <span class="font-bold">결제하기</span>
         </BaseButton>
       </nav>
