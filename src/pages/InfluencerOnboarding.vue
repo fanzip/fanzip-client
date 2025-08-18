@@ -14,12 +14,9 @@
     </div>
 
     <!-- slides -->
-    <div class="h-screen w-full relative">
+    <div class="h-screen w-full relative pb-20">
       <transition name="fade" mode="out-in">
-        <div
-          :key="idx"
-          class="h-full w-full flex flex-col items-center justify-center px-6"
-        >
+        <div :key="idx" class="h-full w-full flex flex-col items-center justify-center px-6">
           <!-- 1. 팬카드 -->
           <div v-if="idx === 0" class="w-full max-w-sm text-center space-y-6">
             <div class="relative h-56 w-full mx-auto">
@@ -148,19 +145,32 @@
       </transition>
     </div>
 
-    <!-- bottom nav -->
-    <div class="absolute bottom-0 left-0 right-0 z-20 p-5 flex items-center justify-between">
-      <button class="text-sm text-subtle-text" :disabled="idx === 0" @click="prev">이전</button>
-      <button
-        v-if="idx < slides.length - 1"
-        class="text-sm font-semibold text-nav-active"
-        @click="next"
-      >
-        다음
-      </button>
-      <button v-else class="text-sm font-semibold text-nav-active" @click="complete">
-        메인으로
-      </button>
+    <!-- bottom nav - 고정 네비바로 변경 -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white p-5">
+      <div class="flex items-center justify-between">
+        <button
+          class="flex-1 text-left text-sm px-4 py-2 transition-colors"
+          :class="idx === 0 ? 'text-gray-400 cursor-not-allowed' : 'text-subtle-text'"
+          :disabled="idx === 0"
+          @click="prev"
+        >
+          이전
+        </button>
+        <button
+          class="flex-1 text-right text-sm px-4 py-2 font-semibold text-nav-active"
+          v-if="idx < slides.length - 1"
+          @click="next"
+        >
+          다음
+        </button>
+        <button
+          class="flex-1 text-right text-sm px-4 py-2 font-semibold text-nav-active"
+          v-else
+          @click="complete"
+        >
+          메인으로
+        </button>
+      </div>
     </div>
   </div>
 </template>
