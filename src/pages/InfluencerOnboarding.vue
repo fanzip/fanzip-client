@@ -18,7 +18,7 @@
       <transition name="fade" mode="out-in">
         <div
           :key="idx"
-          class="h-full w-full flex flex-col items-center justify-center px-6 pt-24 pb-28"
+          class="h-full w-full flex flex-col items-center justify-center px-6"
         >
           <!-- 1. 팬카드 -->
           <div v-if="idx === 0" class="w-full max-w-sm text-center space-y-6">
