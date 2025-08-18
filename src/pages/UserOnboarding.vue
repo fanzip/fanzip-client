@@ -14,12 +14,9 @@
     </div>
 
     <!-- slides -->
-    <div class="h-screen w-full relative">
+    <div class="h-screen w-full relative overflow-hidden">
       <transition name="fade" mode="out-in">
-        <div
-          :key="idx"
-          class="h-full w-full flex flex-col items-center justify-center px-6 pt-24 pb-28"
-        >
+        <div :key="idx" class="h-full w-full flex flex-col items-center justify-center px-6">
           <!-- 1. Welcome -->
           <div v-if="idx === 0" class="w-full max-w-sm text-center space-y-6">
             <div class="relative h-56 w-full mx-auto">
@@ -169,12 +166,16 @@
 
     <!-- bottom nav -->
     <div class="absolute bottom-0 left-0 right-0 z-20 p-5 flex items-center justify-between">
+      <button class="text-sm text-subtle-text" :disabled="idx === 0" @click="prev">이전</button>
       <button
         class="text-sm font-semibold text-nav-active"
         v-if="idx < slides.length - 1"
         @click="next"
       >
         다음
+      </button>
+      <button class="text-sm font-semibold text-nav-active" v-else @click="complete">
+        메인으로
       </button>
     </div>
   </div>

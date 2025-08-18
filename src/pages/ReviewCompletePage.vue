@@ -17,19 +17,12 @@
         <div class="flex flex-row gap-2 justify-center">
           <!-- 메인 버튼 -->
           <router-link
-            to="/dashboard"
+            to="/"
             class="btn btn-primary h-9 w-40 text-sm font-medium inline-flex items-center justify-center whitespace-nowrap"
           >
             메인으로 이동
           </router-link>
 
-          <!-- 마이페이지 버튼 -->
-          <router-link
-            to="/profile"
-            class="btn h-9 w-40 text-sm font-medium inline-flex items-center justify-center whitespace-nowrap bg-subtle-bg text-text-base border border-subtle-border hover:bg-subtle-border"
-          >
-            마이페이지로 이동
-          </router-link>
         </div>
       </div>
     </main>
