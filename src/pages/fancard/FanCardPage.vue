@@ -359,24 +359,6 @@ onMounted(() => {
 
     <!-- 메인 컨텐츠 영역: 헤더와 네비게이션 사이의 공간 활용 -->
     <main class="flex-1 flex flex-col pt-[100px] pb-[108px]">
-      <!-- 필터 컨트롤 (카드가 있을 때만 표시) -->
-      <div v-if="!isLoading && !error && cards.length > 0" class="px-5 mb-6">
-        <div class="flex justify-center gap-2">
-          <button
-            v-for="filter in ['all', 'active', 'inactive']"
-            :key="filter"
-            @click="changeFilter(filter)"
-            :class="{
-              'bg-brand-primary text-text-inverse': filterState === filter,
-              'bg-base-bg text-subtle-text border border-subtle-border': filterState !== filter,
-            }"
-            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-brand-accent hover:text-text-inverse"
-          >
-            {{ getFilterLabel(filter) }}
-          </button>
-        </div>
-      </div>
-
       <!-- 메인 카드 영역 -->
       <div class="flex-1 flex items-center justify-center">
         <!-- 로딩 상태 -->

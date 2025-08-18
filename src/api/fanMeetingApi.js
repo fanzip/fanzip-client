@@ -90,3 +90,15 @@ export const uploadFanMeetingPoster = async (file, influencerId) => {
   // data가 문자열 URL
 return { url: data }
 }
+
+// 사용자의 특정 인플루언서 팬미팅 예약 여부 확인
+export const checkUpcomingMeetingWithInfluencer = async (influencerId) => {
+  const res = await api.get(`/api/fan-meetings/user/${influencerId}/upcoming`)
+  return res.data
+}
+
+// 사용자의 모든 팬미팅 예약 여부 확인 (인플루언서 상관없이)
+export const checkAnyUpcomingMeeting = async () => {
+  const res = await api.get('/api/fan-meetings/user/upcoming')
+  return res.data
+}

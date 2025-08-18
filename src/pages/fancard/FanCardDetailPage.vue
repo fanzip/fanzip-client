@@ -6,6 +6,7 @@ import AppNav from '@/components/layout/AppNav.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { fancardApi } from '@/api/fancardApi'
 import { cancelMembership } from '@/api/membershipApi'
+import { checkUpcomingMeetingWithInfluencer, checkAnyUpcomingMeeting } from '@/api/fanMeetingApi'
 import { useAuthStore } from '@/stores/authStore'
 
 import tomoTomoImg from '@/assets/fancard/TomoTomo.svg'
@@ -25,15 +26,27 @@ const cardId = route.params.id
 const authStore = useAuthStore()
 
 const goToTicket = (fanMeetingId) => {
+  console.log('🎫 모바일 티켓으로 이동:', {
+    fanMeetingId,
+    reservationId: fanCard.value?.reservationId,
+    seatId: fanCard.value?.seatId,
+  })
+
   router.push({
     path: '/fancard/mobile-ticket',
-    query: { fanMeetingId },
+    query: {
+      fanMeetingId,
+      reservationId: fanCard.value?.reservationId,
+      seatId: fanCard.value?.seatId,
+    },
   })
 }
 
 const fanCard = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
+const hasUpcomingMeeting = ref(false)
+const isCheckingMeeting = ref(false)
 
 const fetchFancardDetail = async () => {
   try {
@@ -69,12 +82,55 @@ const fetchFancardDetail = async () => {
       membershipId: data.membership?.membershipId, // 구독 취소용 멤버십 ID 추가
       isActive: data.isActive !== undefined ? data.isActive : true, // 팬카드 활성 상태
       membershipStatus: data.membership?.status || 'UNKNOWN', // 멤버십 상태
+      influencer: data.influencer, // 인플루언서 정보 추가
     }
+
+    // 팬미팅 예약 여부 확인
+    await checkFanMeetingReservation()
   } catch (err) {
     console.error('팬카드 상세 조회 실패:', err)
     error.value = '팬카드 정보를 불러오는데 실패했습니다.'
   } finally {
     isLoading.value = false
+  }
+}
+
+const checkFanMeetingReservation = async () => {
+  console.log('🔍 팬미팅 예약 확인 시작', {
+    fanCard: fanCard.value,
+    influencer: fanCard.value?.influencer,
+    influencerId: fanCard.value?.influencer?.influencerId,
+  })
+
+  if (!fanCard.value?.influencer?.influencerId) {
+    console.warn('⚠️ influencerId가 없어서 팬미팅 예약 확인을 건너뜁니다')
+    return
+  }
+
+  try {
+    isCheckingMeeting.value = true
+    console.log('📡 특정 인플루언서 팬미팅 예약 확인 API 호출:', fanCard.value.influencer.influencerId)
+    const response = await checkUpcomingMeetingWithInfluencer(fanCard.value.influencer.influencerId)
+    console.log('📡 API 응답:', response)
+    hasUpcomingMeeting.value = response.hasUpcomingMeeting || false
+
+    // 팬미팅 ID, 예약 ID, 좌석 ID를 fanCard에 저장 (API 응답에 포함되어야 함)
+    if (response.meetingId) {
+      fanCard.value.fanMeetingId = response.meetingId
+    }
+    if (response.reservationId) {
+      fanCard.value.reservationId = response.reservationId
+    }
+    if (response.seatId) {
+      fanCard.value.seatId = response.seatId
+    }
+
+    console.log('✅ 팬미팅 예약 여부:', hasUpcomingMeeting.value)
+  } catch (err) {
+    console.error('❌ 팬미팅 예약 확인 실패:', err)
+    hasUpcomingMeeting.value = false
+  } finally {
+    isCheckingMeeting.value = false
   }
 }
 
@@ -104,12 +160,27 @@ const formatBenefits = (benefits) => {
 }
 
 const formatPaymentHistory = (paymentHistory) => {
-  return paymentHistory.map((payment) => ({
-    title: payment.title || '결제 완료',
-    amount: payment.amount,
-    date: formatDate(payment.paymentDate || payment.paidAt),
-    bold: payment.bold || false,
-  }))
+  return paymentHistory.map((payment) => {
+    let title = payment.title || '결제 완료'
+    
+    // 인플루언서 이름 제거 (예: "토모토모 상품 구매" → "상품 구매")
+    title = title.replace(/^[^\s]+ /, '')
+    
+    // 멤버십 관련 문구 변경
+    if (title.includes('멤버십 해지')) {
+      title = title.replace('멤버십 해지', '구독 해지')
+    }
+    if (title.includes('멤버십 구독')) {
+      title = title.replace('멤버십 구독', '구독 시작')
+    }
+    
+    return {
+      title,
+      amount: payment.amount,
+      date: formatDate(payment.paymentDate || payment.paidAt),
+      bold: payment.bold || false,
+    }
+  })
 }
 
 const imageError = ref(false)
@@ -221,9 +292,13 @@ onMounted(() => {
     <div class="relative mx-5 h-[180px] rounded-lg overflow-hidden shadow-md">
       <!-- 비활성 상태 오버레이 -->
       <div
-        v-if="!fanCard.isActive"
-        class="absolute inset-0 bg-black bg-opacity-30 z-10 rounded-lg"
+        v-if="!fanCard.isActive || fanCard.membershipStatus === 'CANCELLED'"
+        class="absolute inset-0 bg-black bg-opacity-60 z-10 rounded-lg flex items-center justify-center"
       >
+        <div class="text-center text-white">
+          <p class="text-lg font-bold mb-1">구독 해지됨</p>
+          <p class="text-sm opacity-90">탭하여 추억 보기</p>
+        </div>
       </div>
 
       <img
@@ -259,8 +334,9 @@ onMounted(() => {
       </span>
     </div>
 
-    <!-- 2. 예약 안내 배너 (20px 아래) -->
+    <!-- 2. 예약 안내 배너 (20px 아래) - 조건부 표시 -->
     <div
+      v-if="hasUpcomingMeeting && fanCard.isActive && fanCard.membershipStatus === 'ACTIVE'"
       class="mx-5 mt-5 h-[47px] bg-base-bg rounded-lg shadow-md flex flex-col items-center justify-center text-xs font-semibold text-center"
     >
       예약한 팬미팅 내역이 있어요.<br />
@@ -270,6 +346,14 @@ onMounted(() => {
       >
         바로 확인하기
       </span>
+    </div>
+
+    <!-- 팬미팅 예약 확인 중 로딩 -->
+    <div
+      v-if="isCheckingMeeting"
+      class="mx-5 mt-5 h-[47px] bg-base-bg rounded-lg shadow-md flex items-center justify-center"
+    >
+      <div class="text-subtle-text text-xs">팬미팅 예약 확인 중...</div>
     </div>
 
     <!-- 3. 기본 정보 박스 -->
@@ -325,21 +409,40 @@ onMounted(() => {
     </div>
 
     <!-- 5. 구독 히스토리 -->
-    <div class="mx-5 mt-5 bg-base-bg rounded-lg shadow-md px-[11px] py-4 pl-5">
-      <div class="flex items-center mb-2 gap-2 border-b border-subtle-border pb-2">
+    <div class="mx-5 mt-5 bg-base-bg rounded-lg shadow-md px-[11px] pt-4 pl-5">
+      <div class="flex items-center gap-2 border-b border-subtle-border pb-2">
         <img :src="iconFanzip" class="w-5 h-5" alt="추억" />
         <h3 class="font-semibold text-base">{{ fanCard.nickname }}님와의 추억</h3>
       </div>
       <ul class="divide-y divide-subtle-border text-sm">
-        <li v-for="(item, idx) in fanCard.history" :key="idx" class="py-2 flex gap-4">
-          <img v-if="item.title.includes('결제')" :src="Heart" />
-          <img v-else-if="item.title.includes('예매')" :src="Ticket" />
-          <img v-else-if="item.title.includes('구매')" :src="Cart" />
-          <img v-else-if="item.title.includes('해지')" :src="BrokenHeart" />
-          <div>
-            <p :class="{ 'font-bold': item.bold }">{{ item.title }}</p>
-            <p v-if="item.amount" class="text-base">{{ item.amount.toLocaleString() }}원</p>
-            <p class="text-xs mt-[1px]">{{ item.date }}</p>
+        <li v-for="(item, idx) in fanCard.history" :key="idx" class="py-2 flex gap-4 items-center">
+          <img 
+            v-if="item.title.includes('결제') || item.title.includes('구독')" 
+            :src="Heart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="구독 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('예매')" 
+            :src="Ticket" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="예매 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('구매')" 
+            :src="Cart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="구매 아이콘"
+          />
+          <img 
+            v-else-if="item.title.includes('해지')" 
+            :src="BrokenHeart" 
+            class="w-5 h-5 flex-shrink-0" 
+            alt="해지 아이콘"
+          />
+          <div class="flex-1">
+            <p class="font-semibold">{{ item.title }}</p>
+            <p class="text-xs mt-[1px] text-subtle-text">{{ item.date }}</p>
           </div>
         </li>
       </ul>

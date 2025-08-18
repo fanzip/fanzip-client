@@ -21,13 +21,14 @@ const handleClose = () => {
 }
 
 const ticket = ref({
-  imgUrl: '/src/assets/fancard/YeoDanO.svg', // 시연용 이미지
-  title: '여단오 팬미팅 <여단오와 함께하는 특별한 시간>',
-  location: '서울시 강남구 코엑스 컨벤션센터 A홀',
-  date: '1/15',
-  dayOfWeek: '수',
-  time: '19:00',
-  seat: 'A열 5번',
+  imgUrl: null,
+  title: '팬미팅 정보를 불러오는 중...',
+  description: '',
+  location: '',
+  date: '',
+  dayOfWeek: '',
+  time: '',
+  seat: '',
   qrUrl: '/images/qr.png',
 })
 
@@ -52,8 +53,17 @@ const getCurrentUserId = async () => {
 
 // 고유 모바일 티켓 데이터 로드
 const loadUniqueTicketData = async () => {
-  const { reservationId, seatId, meetingId } = route.params
-  if (!reservationId || !seatId || !meetingId) return
+  // params 방식 또는 query 방식 모두 지원
+  const reservationId = route.params.reservationId || route.query.reservationId
+  const seatId = route.params.seatId || route.query.seatId  
+  const meetingId = route.params.meetingId || route.query.fanMeetingId
+  
+  console.log('🎫 loadUniqueTicketData 파라미터:', { reservationId, seatId, meetingId })
+  
+  if (!reservationId || !seatId || !meetingId) {
+    console.warn('⚠️ 필수 파라미터 누락으로 loadUniqueTicketData 스킵')
+    return
+  }
 
   isUniqueTicket.value = true
   isLoadingTicketData.value = true
@@ -62,9 +72,15 @@ const loadUniqueTicketData = async () => {
     const response = await fancardApi.getMobileTicketData(reservationId, seatId, meetingId)
     ticketData.value = response.data
     
+    console.log('🎫 모바일 티켓 API 응답:', response.data)
+    
     // 티켓 정보 업데이트
     if (response.data.reservation) {
-      updateTicketFromReservation(response.data.reservation)
+      updateTicketFromReservation(
+        response.data.reservation,
+        response.data.influencer,
+        response.data.fancardImageUrl
+      )
     }
   } catch (error) {
     console.error('모바일 티켓 데이터 로드 실패:', error)
@@ -75,7 +91,7 @@ const loadUniqueTicketData = async () => {
 }
 
 // 예약 정보로부터 티켓 정보 업데이트
-const updateTicketFromReservation = (reservation) => {
+const updateTicketFromReservation = (reservation, influencer, fancardImageUrl) => {
   if (!reservation) return
 
   const meetingDate = new Date(reservation.meetingDate)
@@ -91,12 +107,22 @@ const updateTicketFromReservation = (reservation) => {
   ticket.value = {
     ...ticket.value,
     title: reservation.meetingTitle || ticket.value.title,
+    description: reservation.meetingDescription || '',
     location: reservation.venueName || ticket.value.location,
     date: dateStr,
     dayOfWeek: dayOfWeek,
     time: timeStr,
     seat: reservation.seatNumber || ticket.value.seat,
+    imgUrl: fancardImageUrl || ticket.value.imgUrl,
+    influencerName: influencer?.influencerName || '',
   }
+  
+  console.log('🎫 티켓 정보 업데이트:', {
+    title: ticket.value.title,
+    description: ticket.value.description,
+    imgUrl: ticket.value.imgUrl,
+    influencerName: ticket.value.influencerName
+  })
 }
 
 // QR 코드 관련 상태
@@ -164,11 +190,29 @@ const generateQrCode = async () => {
 
     console.log('현재 위치:', currentLocation.value) // 디버깅용
 
-    // 고유 티켓인 경우 route params에서, 아니면 query에서 가져오기
-    const reservationId = isUniqueTicket.value ? route.params.reservationId : (route.query.reservationId || 1)
-    const fanMeetingId = isUniqueTicket.value ? route.params.meetingId : (route.query.fanMeetingId || 1)
+    // 사용자 ID 조회
+    const userId = await getCurrentUserId()
     
-    const userId = await getCurrentUserId() // 사용자 ID 조회
+    // route에서 파라미터 가져오기 (params 또는 query 모두 지원)
+    const reservationId = route.params.reservationId || route.query.reservationId
+    const fanMeetingId = route.params.meetingId || route.params.fanMeetingId || route.query.fanMeetingId
+    
+    console.log('🔍 라우트 파라미터 디버깅:', {
+      'route.params': route.params,
+      'route.query': route.query,
+      'isUniqueTicket': isUniqueTicket.value,
+      'extracted reservationId': reservationId,
+      'extracted fanMeetingId': fanMeetingId
+    })
+    
+    // 필수 파라미터 검증
+    if (!reservationId || !fanMeetingId) {
+      console.error('❌ 필수 파라미터 누락:', { reservationId, fanMeetingId })
+      locationError.value = '예약 정보가 없습니다. 팬카드 상세 페이지에서 다시 시도해주세요.'
+      return
+    }
+    
+    console.log('🎫 QR 생성 파라미터:', { reservationId, fanMeetingId, userId })
     
     const qrRequest = {
       reservationId: parseInt(reservationId),
@@ -286,9 +330,10 @@ onUnmounted(() => {
         >
           이미지를 불러올 수 없습니다
         </div>
-        <div class="mt-5">
-          <p class="font-bold text-xl">{{ ticket.title }}</p>
-          <div class="text-subtle-text text-base flex items-center gap-1">
+        <div class="mt-5 text-center">
+          <h2 class="font-bold text-xl mb-2">{{ ticket.title }}</h2>
+          <p v-if="ticket.description" class="text-base text-black mb-3">{{ ticket.description }}</p>
+          <div class="text-subtle-text text-base flex items-center justify-center gap-1">
             <img src="/src/assets/common/map-pin.svg" alt="" />
             <span>{{ ticket.location }}</span>
           </div>
@@ -306,13 +351,18 @@ onUnmounted(() => {
       </div>
 
       <div class="p-7 flex justify-between items-start">
-        <div class="space-y-5">
-          <p class="text-lg font-medium">{{ ticket.date }}({{ ticket.dayOfWeek }})</p>
-          <p class="text-3xl font-medium">{{ ticket.time }} ~</p>
-          <div class="flex">
-            <p class="font-normal text-base">일반석(</p>
-            <p class="font-bold">{{ ticket.seat }}</p>
-            <p>)</p>
+        <div class="space-y-3">
+          <div>
+            <p class="text-sm text-subtle-text">날짜</p>
+            <p class="text-lg font-medium">{{ ticket.date }}({{ ticket.dayOfWeek }})</p>
+          </div>
+          <div>
+            <p class="text-sm text-subtle-text">시간</p>
+            <p class="text-2xl font-medium">{{ ticket.time }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-subtle-text">내 좌석</p>
+            <p class="text-lg font-bold text-brand-primary">{{ ticket.seat }}</p>
           </div>
         </div>
 
