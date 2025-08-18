@@ -39,13 +39,13 @@
                 />
               </div>
             </div>
-            <h2 class="text-2xl font-bold">공식 팬카드로 팬신뢰 업</h2>
-            <p class="text-subtle-text">팬들을 위한 카드를 만들어주세요!</p>
+            <h2 class="text-xl font-bold">디지털 팬카드로 팬에게 추억을 선물하세요</h2>
+            <p class="text-subtle-text">팬들을 위한 카드를 만들어주세요</p>
           </div>
 
           <!-- 2. 공동구매 (간결 안내) -->
           <div v-else-if="idx === 1" class="w-full max-w-sm space-y-6 text-center">
-            <FeatureBoard :title="'공동구매로 굿즈 판매를 더 쉽게'">
+            <FeatureBoard :title="'공동구매 마켓을 손쉽게 열 수 있어요'">
               <div class="relative h-48 w-full mx-auto">
                 <Polaroid caption="한정 MD" :image="goods" class="rotate-[-4deg] animate-stack-1" />
                 <Polaroid
@@ -55,7 +55,7 @@
                 />
               </div>
             </FeatureBoard>
-            <p class="text-subtle-text text-sm">팬들을 위한 공동구매를 시작해보세요.</p>
+            <p class="text-subtle-text text-sm">공동구매로 수익을 창출해보세요</p>
           </div>
 
           <!-- 3. 지표(막대그래프) — 수익/팬 증가 추이 -->
@@ -80,8 +80,8 @@
                 />
               </div>
             </div>
-            <h2 class="text-2xl font-bold pt-8">수익·팬 증가 추이를 한눈에</h2>
-            <p class="text-subtle-text">그래프로 최근 흐름을 빠르게 파악하세요.</p>
+            <h2 class="text-xl font-bold pt-8">수익·팬 증가 추이를 한눈에</h2>
+            <p class="text-subtle-text">그래프로 최근 흐름을 빠르게 파악하세요</p>
           </div>
 
           <!-- 4. AI 분석 리포트(텍스트만, 친근 톤) -->
@@ -119,11 +119,11 @@
               </div>
             </div>
             <h2 class="text-2xl font-bold pt-8">AI가 가볍게 정리해드려요</h2>
-            <p class="text-subtle-text">핵심만 착—하고 알려주는 친절 리포트.</p>
+            <p class="text-subtle-text">핵심만 알려주는 친절 리포트!</p>
           </div>
 
           <!-- 5. CTA: 심사 신청 -->
-          <div v-else class="w-full max-w-sm space-y-8 text-center">
+          <div v-else class="w-full max-w-sm space-y-4 text-center">
             <div class="relative h-56 w-full mx-auto">
               <div class="absolute inset-0 flex items-center justify-center">
                 <MockCard
@@ -135,18 +135,13 @@
                 />
               </div>
             </div>
-            <h2 class="text-2xl font-bold">지금 인플루언서 심사 신청하기</h2>
+            <h2 class="text-xl font-bold">지금 인플루언서 심사 신청하기</h2>
+            <p class="text-subtle-text pb-4">지금 바로 시작하세요!</p>
             <button
               class="w-full h-12 rounded-full bg-brand-primary text-text-base font-semibold shadow-md animate-bouncein active:opacity-90"
               @click="goApply"
             >
               심사 신청하기
-            </button>
-            <button
-              class="w-full h-12 rounded-full border border-subtle-border text-nav-active font-semibold"
-              @click="complete"
-            >
-              일단 둘러보기
             </button>
           </div>
         </div>
@@ -198,7 +193,7 @@ const goApply = () => {
   try {
     localStorage.setItem('hasSeenInfOnboarding', '1')
   } catch (e) {}
-  router.push('/influencer/apply')
+  router.push('/influencer/review')
 }
 
 /** 공용 카드 */
@@ -273,7 +268,7 @@ const FeatureBoard = defineComponent({
           },
           slots.default ? slots.default() : null,
         ),
-        h('h2', { class: 'text-2xl font-bold' }, props.title || ''),
+        h('h2', { class: 'text-xl font-bold' }, props.title || ''),
       ])
   },
 })
