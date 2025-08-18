@@ -401,7 +401,7 @@ async function handleDetailFiles(files) {
             />
           </template>
         </template>
-        <span v-else class="text-subtle-text">카테고리를 선택하세요</span>
+        <span v-else class="text-subtle-text">카테고리를 선택하세요 (최대 3개)</span>
       </div>
       <img :src="chevronDown" alt="" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4" />
     </button>
@@ -415,7 +415,7 @@ async function handleDetailFiles(files) {
   >
     <div class="w-[calc(100%-40px)] max-w-sm bg-base-bg rounded-xl shadow-xl p-4">
       <div class="flex items-center justify-between mb-3">
-        <p class="font-semibold">카테고리를 선택하세요</p>
+        <p class="font-semibold">카테고리를 선택하세요 (최대 3개)</p>
         <button class="text-sm" @click="categoryModalOpen = false">✕</button>
       </div>
 

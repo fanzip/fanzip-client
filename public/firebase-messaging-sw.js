@@ -3,7 +3,7 @@ importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js')
 
 firebase.initializeApp({
-  apiKey: '...',
+  apiKey: 'AIzaSyB2bwId50fvnuZ_vuq-F1SerhJ3zBxOu5A',
   authDomain: 'fanzip-6a8c8.firebaseapp.com',
   projectId: 'fanzip-6a8c8',
   storageBucket: 'fanzip-6a8c8.firebasestorage.app',
@@ -16,15 +16,15 @@ const messaging = firebase.messaging()
 // 백그라운드 메시지 수신 시 처리
 messaging.onBackgroundMessage((payload) => {
   console.log('[FCM SW] 백그라운드 메시지 수신:', payload)
-  
+
   const notificationTitle = payload.notification.title
   const notificationOptions = {
     body: payload.notification.body,
     icon: '/logo.svg',
     badge: '/logo.svg',
     data: {
-      url: payload.fcmOptions?.link || payload.data?.targetUrl || '/'
-    }
+      url: payload.fcmOptions?.link || payload.data?.targetUrl || '/',
+    },
   }
 
   // Service Worker에서 알림 표시 (백그라운드에서만)
@@ -49,7 +49,7 @@ self.addEventListener('notificationclick', (event) => {
       if (clients.openWindow) {
         return clients.openWindow(url)
       }
-    })
+    }),
   )
 })
 
