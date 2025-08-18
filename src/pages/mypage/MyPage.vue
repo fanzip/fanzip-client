@@ -60,7 +60,7 @@ onMounted(async () => {
         토글
       </button>
     </section>
-
+    g
     <section class="gap-4 flex">
       <div class="flex-1 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
         <p class="text-lg">🔥</p>
@@ -71,13 +71,13 @@ onMounted(async () => {
       <div class="flex-1 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
         <p class="text-lg">💫</p>
         <p class="font-semibold text-sm">팬미팅 참여</p>
-        <p class="font-bold mt-1 text-lg">3회</p>
+        <p class="font-bold mt-1 text-lg">0회</p>
       </div>
 
       <div class="flex-1 rounded-xl p-4 flex flex-col items-center bg-white space-y-1">
         <p class="text-lg">🛍️</p>
         <p class="font-semibold text-sm">공동 구매</p>
-        <p class="font-bold mt-1 text-lg">7회</p>
+        <p class="font-bold mt-1 text-lg">0회</p>
       </div>
     </section>
 
