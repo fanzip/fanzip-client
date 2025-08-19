@@ -61,4 +61,24 @@ const router = createRouter({
     return { top: 0 }
   },
 })
+
+// 로그인 상태에 따른 라우팅 가드
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('access-token')
+  
+  // 루트 경로에 접근할 때 로그인 상태 확인
+  if (to.path === '/') {
+    if (token) {
+      // 로그인되어 있으면 홈페이지로 이동 허용
+      next()
+    } else {
+      // 로그인 안 되어 있으면 로그인 페이지로 리다이렉트
+      next('/login')
+    }
+  } else {
+    // 다른 경로는 기존대로 처리
+    next()
+  }
+})
+
 export default router
