@@ -15,7 +15,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    vueDevTools(),
+    // vueDevTools(),
     VitePWA({
       registerType: 'autoUpdate', // 새 버전 자동 갱신
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
