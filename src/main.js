@@ -1,35 +1,31 @@
 // src/main.js
 import './styles/tailwind.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { initFcm } from '@/fcm-init'   // ✅ 추가: FCM 초기화 함수
-
-
+import { initFcm } from '@/fcm-init'
 
 const app = createApp(App)
-
 app.use(createPinia())
 app.use(router)
-
 app.mount('#app')
 
-
-// SW 등록 → 준비 대기 → (로그인 상태면) FCM 초기화
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
+    // ① PWA(sw.js): vite-plugin-pwa가 루트 스코프('/')에 등록
     const { registerSW } = await import('virtual:pwa-register')
     registerSW({ immediate: true })
 
-    // vite-plugin-pwa가 등록한 SW가 활성화되길 기다림
-    const registration = await navigator.serviceWorker.ready
+    // ② FCM 전용 SW: 별도 스코프('/firebase/')로 명시 등록
+    const fcmReg = await navigator.serviceWorker.register(
+      '/firebase/firebase-messaging-sw.js',
+      { scope: '/firebase/' }
+    )
 
-    // 로그인되어 있으면 FCM 토큰 등록
+    // ③ 로그인 상태면 FCM 초기화 (전용 registration을 객체로 전달)
     if (localStorage.getItem('access-token')) {
-      // initFcm에서 serviceWorkerRegistration을 사용하도록!
-      initFcm(registration).catch(console.error)
+      await initFcm({ registration: fcmReg })
     }
   })
 }
