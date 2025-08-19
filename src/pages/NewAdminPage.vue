@@ -177,7 +177,7 @@
         >
           <div class="text-subtle-text">총 {{ total }}건</div>
           <div class="flex items-center gap-2">
-            <button class="btn h-8 px-3" @click="resetMockData">초기화</button>
+            <button class="btn h-8 px-3" @click="resetMockData">이전</button>
             <span class="text-subtle-text">{{ page }} / {{ totalPages }}</span>
             <button class="btn h-8 px-3" :disabled="page === totalPages" @click="go(page + 1)">
               다음
