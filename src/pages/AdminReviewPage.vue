@@ -103,7 +103,7 @@
             <div class="md:col-span-3">
               <div class="font-semibold">{{ r.nickname }}</div>
               <div class="text-xs text-subtle-text break-words">
-                {{ r.userName }} · {{ r.userEmail }}
+                {{ r.userName }} 
               </div>
             </div>
 
@@ -177,7 +177,7 @@
         >
           <div class="text-subtle-text">총 {{ total }}건</div>
           <div class="flex items-center gap-2">
-            <button class="btn h-8 px-3" :disabled="page === 1" @click="go(page - 1)">이전</button>
+            <button class="btn h-8 px-3" :disabled="page === 1" @click="resetMockData">이전</button>
             <span class="text-subtle-text">{{ page }} / {{ totalPages }}</span>
             <button class="btn h-8 px-3" :disabled="page === totalPages" @click="go(page + 1)">
               다음
@@ -200,9 +200,7 @@
         <div class="space-y-3 text-sm">
           <div><span class="text-subtle-text">닉네임</span> · {{ detail.nickname }}</div>
           <div>
-            <span class="text-subtle-text">사용자</span> · {{ detail.userName }} ({{
-              detail.userEmail
-            }})
+            <span class="text-subtle-text">사용자</span> · {{ detail.userName }}
           </div>
           <div>
             <span class="text-subtle-text">카테고리</span> · {{ categoryLabel(detail.category) }}
