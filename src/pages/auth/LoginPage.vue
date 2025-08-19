@@ -29,7 +29,7 @@ const redirectToKakao = async () => {
 
     <button
       class="kakao-button btn relative w-[265px] h-[36px] bg-[#03C75A] mt-4"
-      @click="router.push('new/reviews')"
+      @click="router.push('/admin/news')"
     >
       <img
         src="@/assets/icons/NaverSymbol.svg"
