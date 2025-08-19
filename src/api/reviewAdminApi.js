@@ -1,7 +1,7 @@
 // 로컬스토리지 기반 간단 목 API (JS)
 // 사용처: 관리자 심사 목록/승인/거절
 
-const STORAGE_KEY = 'mock_reviews_v1_js';
+const STORAGE_KEY = 'mock_reviews_v2_js';
 
 function fmt(date) {
   const d = new Date(date);
