@@ -5,11 +5,6 @@ let booted = false
 let messageHandlerBound = false
 const LAST_KEY = 'last_sent_fcm_token'
 
-/**
- * 로그인 성공 직후 또는 앱 부팅 시(이미 access-token 있으면) 호출
- *  - 앱 SW( vite-plugin-pwa )가 ready 된 registration을 사용해 FCM 토큰 발급
- *  - 성공 시에만 last_sent_fcm_token 저장
- */
 export async function initFcm({ force = false, registration: registrationArg } = {}) {
   try {
     if (booted && !force) return
@@ -20,31 +15,28 @@ export async function initFcm({ force = false, registration: registrationArg } =
     const access = localStorage.getItem('access-token')
     if (!access) { console.warn('[FCM] no access-token, skip'); return }
 
-    // 1) 기존 앱 SW registration 사용 (중복 등록 금지)
+    // 1) SW registration 확보
     const registration =
-      registrationArg ||
-      (await navigator.serviceWorker.ready) // vite-plugin-pwa가 등록한 SW가 활성화될 때까지 대기
+      registrationArg || (await navigator.serviceWorker.ready)
     if (!registration?.active) {
       console.warn('[FCM] SW not active yet, skip'); return
     }
     console.log('[FCM] using SW:', registration.scope)
 
-    // 2) 권한 요청 (이미 granted면 재요청 안 함)
+    // 2) 권한
     let perm = Notification.permission
     if (perm === 'default') perm = await Notification.requestPermission()
     if (perm !== 'granted') { console.warn('[FCM] permission not granted'); return }
 
-    // 3) 토큰 발급 (앱 SW registration을 명시적으로 전달)
+    // 3) 토큰 발급 (SW와 묶어서)
     const vapid = import.meta.env.VITE_FIREBASE_VAPID_KEY
-    console.log('[FCM] DEBUG - VAPID KEY:', vapid)
-    console.log('[FCM] DEBUG - All env vars:', import.meta.env)
     if (!vapid) { console.error('[FCM] VITE_FIREBASE_VAPID_KEY missing'); return }
 
     const token = await requestFcmToken(vapid, registration)
     console.log('[FCM] token:', token)
     if (!token) { console.warn('[FCM] no token retrieved'); return }
 
-    // 4) 서버 등록 (변경 있을 때만; 타임아웃 방지용 AbortController)
+    // 4) 서버 업서트
     const base = import.meta.env.VITE_API_BASE_URL
     if (!base) { console.error('[FCM] VITE_API_BASE_URL missing'); return }
 
@@ -53,30 +45,49 @@ export async function initFcm({ force = false, registration: registrationArg } =
       const ac = new AbortController()
       const t = setTimeout(() => ac.abort(), 7000)
 
-      const res = await fetch(`${base}/api/notifications/token?${qs}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${access}` },
-        signal: ac.signal
-      }).catch((e) => {
-        if (e.name === 'AbortError') throw new Error('register timeout')
-        throw e
-      })
-      clearTimeout(t)
+      console.log('[FCM] 서버 요청 시작:', `${base}/api/notifications/token?${qs}`)
 
-      console.log('[FCM] register status:', res?.status)
-      if (!res || !res.ok) {
-        const text = res ? await res.text().catch(() => '') : ''
-        throw new Error(`register failed ${res?.status ?? 'NO_RES'} ${text}`)
+      try {
+        const res = await fetch(`${base}/api/notifications/token?${qs}`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${access}` },
+          signal: ac.signal
+        })
+        clearTimeout(t)
+
+        console.log('[FCM] 서버 응답 상태:', res.status)
+        console.log('[FCM] 서버 응답 헤더:', [...res.headers.entries()])
+
+        if (!res.ok) {
+          const errorText = await res.text().catch(() => '응답 텍스트 읽기 실패')
+          console.error('[FCM] 서버 에러 응답:', errorText)
+          throw new Error(`register failed ${res.status} ${errorText}`)
+        }
+
+        const responseText = await res.text().catch(() => '')
+        console.log('[FCM] 서버 성공 응답:', responseText)
+
+        localStorage.setItem(LAST_KEY, token)
+        console.log('[FCM] 토큰 localStorage에 저장 완료')
+
+      } catch (e) {
+        console.error('[FCM] 서버 요청 중 에러:', e)
+        if (e.name === 'AbortError') {
+          throw new Error('register timeout')
+        }
+        throw e
       }
-      localStorage.setItem(LAST_KEY, token)
     }
 
-    // 5) 포그라운드 알림 핸들링 (중복 바인딩 방지 + 2초 쓰로틀)
+    // 5) 포그라운드 알림 핸들링
     if (!messageHandlerBound) {
       let lastNotificationTime = 0
       const NOTIFICATION_THROTTLE = 2000
 
       bindForegroundMessage((payload) => {
+        const d = payload?.data || {}
+        const n = payload?.notification || {}
+
         const now = Date.now()
         if (now - lastNotificationTime < NOTIFICATION_THROTTLE) {
           console.log('[FCM] throttled notification')
@@ -84,21 +95,24 @@ export async function initFcm({ force = false, registration: registrationArg } =
         }
         lastNotificationTime = now
 
-        const title = payload.notification?.title || '알림'
-        const body = payload.notification?.body || ''
-        const url = payload.fcmOptions?.link || payload.data?.targetUrl || '/'
+        const title = d.title || n.title || '알림'
+        const body  = d.body  || n.body  || ''
+        const rawUrl = d.targetUrl || payload?.fcmOptions?.link || '/'
+        // 절대 URL 정규화
+        const url = new URL(rawUrl, window.location.origin).href
 
         if (document.visibilityState === 'visible' && Notification.permission === 'granted') {
-          const n = new Notification(title, {
+          const nobj = new Notification(title, {
             body,
             icon: '/logo.svg',
             badge: '/logo.svg',
-            tag: 'fanzip-notification'
+            tag: 'fanzip-notification',
+            data: { url }
           })
-          n.onclick = () => {
+          nobj.onclick = () => {
             window.focus()
-            if (url && url !== '/') window.location.href = url
-            n.close()
+            if (url && url !== window.location.href) window.location.href = url
+            nobj.close()
           }
         } else {
           console.log('[FCM] page hidden or permission not granted; skip foreground Notification')
@@ -114,7 +128,6 @@ export async function initFcm({ force = false, registration: registrationArg } =
   }
 }
 
-/** 테스트/재전송용: 마지막 전송 토큰 리셋 */
 export function resetLastSentFcmToken() {
   localStorage.removeItem(LAST_KEY)
 }

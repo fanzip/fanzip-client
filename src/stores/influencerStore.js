@@ -14,9 +14,7 @@ export const useInfluencerStore = defineStore('influencer', () => {
     profileImage.value = payload.profileImage
     coverImage.value = payload.coverImage
     // fanCardImage가 null이거나 빈 값이면 기존 값 유지
-    if (payload.fanCardImage) {
-      fanCardImage.value = payload.fanCardImage
-    }
+    fanCardImage.value = payload.fanCardImage || ''
     category.value = payload.category || ''
   }
 
