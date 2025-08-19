@@ -1,6 +1,6 @@
 <script setup>
 import authApi from '@/api/authApi'
-
+import router from '@/router'
 const redirectToKakao = async () => {
   try {
     const url = await authApi.getKakaoLoginUrl()
@@ -27,7 +27,10 @@ const redirectToKakao = async () => {
       <span class="block text-center text-black w-full">카카오 로그인</span>
     </button>
 
-    <button class="kakao-button btn relative w-[265px] h-[36px] bg-[#03C75A] mt-4">
+    <button
+      class="kakao-button btn relative w-[265px] h-[36px] bg-[#03C75A] mt-4"
+      @click="router.push('admin/reviews')"
+    >
       <img
         src="@/assets/icons/NaverSymbol.svg"
         class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8"

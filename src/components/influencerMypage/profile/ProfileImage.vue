@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import Ellipse from '@/assets/InfluencerProfile/Ellipse.svg'
+import user2 from '@/assets/InfluencerProfile/user2.svg'
 import PlusIcon from '@/assets/InfluencerProfile/Plus.svg'
 import { useInfluencerStore } from '@/stores/influencerStore'
 import { updateInfluencerProfileImage } from '@/api/influencerApi'
@@ -20,7 +20,7 @@ const onFileChange = async (e) => {
   if (file) {
     const preview = URL.createObjectURL(file)
     influencerStore.setProfileImage(preview)
-    
+
     // API로 이미지 업로드
     await uploadProfileImage(file)
   }
@@ -30,15 +30,15 @@ const uploadProfileImage = async (file) => {
   try {
     isUploading.value = true
     const influencerId = route.params.influencerId
-    
+
     // S3 multipart 업로드
     const updatedImageUrl = await updateInfluencerProfileImage(influencerId, file)
-    
+
     // 백엔드에서 반환된 이미지 URL로 store 업데이트
     if (updatedImageUrl) {
       influencerStore.setProfileImage(updatedImageUrl)
     }
-    
+
     console.log('프로필 이미지 업로드 성공:', updatedImageUrl)
   } catch (error) {
     console.error('프로필 이미지 업로드 실패:', error)
@@ -51,7 +51,7 @@ const uploadProfileImage = async (file) => {
 
 const getValidImageUrl = (imageUrl) => {
   if (!imageUrl || imageUrl.includes('cdn.fanzip.com/profile/new.png')) {
-    return Ellipse // 기본 이미지로 대체
+    return user2 // 기본 이미지로 대체
   }
   return imageUrl
 }
@@ -61,7 +61,7 @@ const handleImageError = (event) => {
     url: event.target.src,
     error: event
   })
-  
+
   // 네트워크 탭에서 상세 에러 확인을 위해 잠시 대기
   fetch(event.target.src)
     .then(response => {
@@ -74,8 +74,8 @@ const handleImageError = (event) => {
     .catch(error => {
       console.error('Fetch 테스트 에러:', error)
     })
-  
-  event.target.src = Ellipse // 에러 시 기본 이미지로 변경
+
+  event.target.src = user2 // 에러 시 기본 이미지로 변경
 }
 </script>
 

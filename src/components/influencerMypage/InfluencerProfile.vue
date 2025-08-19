@@ -1,13 +1,17 @@
 <script setup>
-import profile from '../../assets/influencer/찰스엔터프로필.svg'
-import { getInfluencerProfile } from '@/api/influencerApi'
+import user2 from '@/assets/InfluencerProfile/user2.svg'
 import { useAuthStore } from '@/stores/authStore'
-import { onMounted } from 'vue'
 import { computed } from 'vue'
+
 const authStore = useAuthStore()
 
 const name = computed(() => authStore.influencerUserInfo.influencerName)
-const imageUrl = computed(() => authStore.influencerUserInfo.profileImage)
+
+// 이미지가 없으면 기본 프로필(svg) 보여주도록 fallback
+const imageUrl = computed(() => {
+  const url = authStore.influencerUserInfo.profileImage
+  return url && url.trim() !== '' ? url : user2
+})
 </script>
 
 <template>
