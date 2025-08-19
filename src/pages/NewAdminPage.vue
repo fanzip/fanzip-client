@@ -296,7 +296,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { listReviews, decideReview, ensureMockSeed, resetMock } from '@/api/reviewAdminApi.js'
+import { getReviews, updateReviewStatus, clearAllData } from '@/api/newReviewApi.js'
 
 const USE_MOCK = true // 실서버 붙이면 false 로 변경
 
@@ -348,28 +348,14 @@ function categoryLabel(v) {
 async function fetchReviews() {
   loading.value = true
   try {
-    if (USE_MOCK) {
-      const { items, total: t } = await listReviews({
-        page: page.value,
-        size: size.value,
-        status: filterStatus.value || undefined,
-        q: q.value || undefined,
-      })
-      reviews.value = items
-      total.value = t
-    } else {
-      const params = new URLSearchParams()
-      params.set('page', page.value)
-      params.set('size', size.value)
-      if (filterStatus.value) params.set('status', filterStatus.value)
-      if (q.value) params.set('q', q.value)
-      const res = await fetch(`/api/review/admin/list?${params.toString()}`, {
-        credentials: 'include',
-      })
-      const data = await res.json()
-      reviews.value = Array.isArray(data) ? data : data.items || []
-      total.value = Array.isArray(data) ? data.length : (data.total ?? reviews.value.length)
-    }
+    const { items, total: t } = await getReviews({
+      page: page.value,
+      size: size.value,
+      status: filterStatus.value || undefined,
+      q: q.value || undefined,
+    })
+    reviews.value = items
+    total.value = t
   } catch (e) {
     console.error(e)
     reviews.value = []
