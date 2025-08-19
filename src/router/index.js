@@ -13,7 +13,6 @@ import InfluencerReviewPage from '@/pages/InfluencerReviewPage.vue'
 import ReviewCompletePage from '@/pages/ReviewCompletePage.vue' // 아래 선택 페이지
 import AdminReviewPage from '@/pages/AdminReviewPage.vue'
 import ReviewPendingPage from '@/pages/ReviewPendingPage.vue'
-import NewAdminPage from '@/pages/NewAdminPage.vue'
 
 import authRoutes from './auth'
 import fanMeetingRoutes from './fanMeeting'
@@ -39,7 +38,6 @@ const routes = [
   { path: '/influencer/review', name: 'InfluencerReview', component: InfluencerReviewPage },
   { path: '/review/complete', component: ReviewCompletePage }, // 선택
   { path: '/admin/reviews', component: AdminReviewPage },
-  { path: '/admin/new', component: NewAdminPage },
   { path: '/review/pending', component: ReviewPendingPage },
 
   // 도메인 라우트
