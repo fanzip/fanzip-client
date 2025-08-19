@@ -92,9 +92,10 @@ const marketApi = {
     fd.append('file', file)
     const { data } = await api.post(
       `/api/influencers/${influencerId}/market/images/thumbnail`,
-      fd,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
-    )
+      fd,{
+       headers: {} ,
+      timeout: 6000,
+  })
     return data // { url }
   },
 
@@ -103,7 +104,8 @@ const marketApi = {
     const fd = new FormData()
     for (const f of files) fd.append('files', f) // 컨트롤러 @RequestParam("files")
     const { data } = await api.post(`/api/influencers/${influencerId}/market/images/slide`, fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {},
+      timeout: 6000,
     })
     return data // { urls: [] }
   },
@@ -113,7 +115,8 @@ const marketApi = {
     const fd = new FormData()
     for (const f of files) fd.append('files', f)
     const { data } = await api.post(`/api/influencers/${influencerId}/market/images/detail`, fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {},
+      timeout: 6000,
     })
     return data // { urls: [] }
   },

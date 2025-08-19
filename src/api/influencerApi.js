@@ -42,9 +42,8 @@ export const updateInfluencerProfileImage = async (influencerId, imageData) => {
     formData.append('file', imageData)
 
     const response = await api.post(`${API_BASE_URL}/${influencerId}/profile/image`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: {},
+      timeout: 6000,
     })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {
@@ -60,9 +59,8 @@ export const updateInfluencerFanCardImage = async (influencerId, imageData) => {
     formData.append('file', imageData)
 
     const response = await api.post(`${API_BASE_URL}/${influencerId}/fancard/image`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: {},
+      timeout: 6000,
     })
     return response.data // 업데이트된 이미지 URL 반환
   } catch (error) {

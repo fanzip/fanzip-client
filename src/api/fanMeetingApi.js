@@ -75,7 +75,7 @@ export const fetchFanMeeting = getFanMeetingDetail // 별칭
 // 컨트롤러: POST /api/influencers/{influencerId}/fanmeeting/poster
 // 서버가 응답 바디로 "URL 문자열"을 직접 반환 → { url }로 감싸서 리턴
 
-export const uploadFanMeetingPoster = async (file, influencerId) => { 
+export const uploadFanMeetingPoster = async (file, influencerId) => {
   if (!file) throw new Error('파일이 없습니다.')
   if (!Number.isFinite(Number(influencerId))) throw new Error('influencerId가 올바르지 않습니다.')
 
@@ -85,7 +85,10 @@ export const uploadFanMeetingPoster = async (file, influencerId) => {
   // axios가 multipart boundary를 자동 설정하므로 headers 생략 가능 (명시해도 무방)
   const { data } = await api.post(
     `/api/influencers/${influencerId}/fanmeeting/poster`,
-    fd
+    fd,{
+      headers: {},
+      timeout: 6000,
+    }
   )
   // data가 문자열 URL
 return { url: data }
