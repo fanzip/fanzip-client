@@ -113,14 +113,7 @@ onMounted(async () => {
           price: seat.price,
         }))
 
-      return seatsInRow.length
-        ? seatsInRow
-        : Array.from({ length: 11 }, (_, i) => ({
-            number: i + 1,
-            row: rowLetter,
-            status: 'empty',
-            selected: false,
-          }))
+      return seatsInRow
     })
 
     seatMap.value = groupedSeats
@@ -220,14 +213,7 @@ const refreshSeatData = async () => {
           price: seat.price,
         }))
 
-      return seatsInRow.length
-        ? seatsInRow
-        : Array.from({ length: 11 }, (_, i) => ({
-            number: i + 1,
-            row: rowLetter,
-            status: 'empty',
-            selected: false,
-          }))
+      return seatsInRow
     })
 
     seatMap.value = groupedSeats
