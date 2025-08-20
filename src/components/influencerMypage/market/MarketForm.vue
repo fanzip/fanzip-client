@@ -35,6 +35,7 @@ const props = defineProps({
     default: () => ({
       title: '',
       price: null,
+      discountedPrice: null,
       stock: null,
       shippingFee: null,
       openAt: null,

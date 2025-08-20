@@ -6,8 +6,10 @@ firebase.initializeApp({
   apiKey: 'AIzaSyB2bwId50fvnuZ_vuq-F1SerhJ3zBxOu5A',
   authDomain: 'fanzip-6a8c8.firebaseapp.com',
   projectId: 'fanzip-6a8c8',
+  storageBucket: 'fanzip-6a8c8.firebasestorage.app',
   messagingSenderId: '301381375917',
   appId: '1:301381375917:web:35da5fbba909f40ab5f324',
+  measurementId: 'G-88Q2F5HKJK',
 })
 
 const messaging = firebase.messaging()
