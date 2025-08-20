@@ -10,6 +10,11 @@ export const getFanMeetings = async () => {
   return res.data
 }
 
+export const getInfluencerFanMeetings = async (influencerId) => {
+  const res = await api.get(`/api/influencers/${influencerId}/fan-meetings`)
+  return res.data
+}
+
 export const getSubscribedFanMeetings = async (grade = 'GENERAL') => {
   const res = await api.get('/api/fan-meetings/subscribed', {
     params: { grade }
