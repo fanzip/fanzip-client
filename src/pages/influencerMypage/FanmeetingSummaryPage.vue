@@ -72,25 +72,53 @@ const fetchAIReport = async () => {
 
     const influencerId = route.params.influencerId
     const meetingId = route.query.meetingId
-    const regenerate = route.query.regenerate !== 'false' // 기본값 true
+    const regenerate = route.query.regenerate !== 'false'
 
     if (!influencerId || !meetingId) {
       throw new Error('필수 파라미터가 누락되었습니다.')
     }
 
-    const data = await reportApi.getAIReport(influencerId, meetingId, regenerate)
+    console.log(`AI 리포트 요청: influencerId=${influencerId}, meetingId=${meetingId}, regenerate=${regenerate}`)
 
-    // 데이터 설정
-    averageRating.value = parseFloat(data.averageRating) || 0
-    satisfactionRate.value = parseFloat(data.satisfactionRate) || 0 // 백분율로 변환
+    const data = await reportApi.getAIReport(influencerId, meetingId, regenerate)
+    
+    console.log('백엔드 응답:', data)
+
+    // AIReportSummaryDTO 구조에 맞춰 데이터 매핑
+    averageRating.value = parseFloat(data.averageRating || 0)
+    satisfactionRate.value = parseFloat(data.satisfactionRate || 0)
     totalParticipants.value = data.totalParticipants || 0
     ratingDistribution.value = data.ratingDistribution || {}
     overallSummary.value = data.overallSummary || ''
     positiveFeedbacks.value = data.positiveFeedbacks || []
     negativeFeedbacks.value = data.negativeFeedbacks || []
+
+    console.log('매핑된 데이터:', {
+      averageRating: averageRating.value,
+      satisfactionRate: satisfactionRate.value,
+      totalParticipants: totalParticipants.value,
+      ratingDistribution: ratingDistribution.value
+    })
+
   } catch (err) {
     console.error('AI 리포트 로딩 오류:', err)
-    error.value = err.message || 'AI 리포트를 불러오는데 실패했습니다.'
+    
+    if (err.response) {
+      const status = err.response.status
+      if (status === 400) {
+        error.value = '잘못된 요청입니다. 파라미터를 확인해주세요.'
+      } else if (status === 404) {
+        error.value = '해당 팬미팅의 데이터를 찾을 수 없습니다.'
+      } else if (status === 500) {
+        error.value = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      } else {
+        error.value = `서버 오류 (${status}): ${err.response.data?.message || '알 수 없는 오류'}`
+      }
+    } else if (err.request) {
+      error.value = '네트워크 연결을 확인해주세요.'
+    } else {
+      error.value = err.message || 'AI 리포트를 불러오는데 실패했습니다.'
+    }
   } finally {
     isLoading.value = false
   }
@@ -116,8 +144,28 @@ onMounted(() => {
     <AppHeader type="back-title" title="AI 리포트" />
 
     <!-- 메인 컨텐츠 -->
+    <div v-if="isLoading" class="flex-1 pb-20 flex items-center justify-center">
+      <div class="text-center">
+        <div class="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-subtle-text">AI 리포트를 생성 중입니다...</p>
+      </div>
+    </div>
 
-    <div class="flex-1 pb-20">
+    <div v-else-if="error" class="flex-1 pb-20 flex items-center justify-center">
+      <div class="text-center p-5">
+        <img src="@/assets/InfluencerProfile/Bad.svg" alt="오류" class="w-16 h-16 mx-auto mb-4" />
+        <p class="text-lg font-bold text-black mb-2">오류가 발생했습니다</p>
+        <p class="text-subtle-text mb-4">{{ error }}</p>
+        <button 
+          @click="fetchAIReport"
+          class="bg-brand-primary text-white px-4 py-2 rounded-lg font-medium"
+        >
+          다시 시도
+        </button>
+      </div>
+    </div>
+
+    <div v-else class="flex-1 pb-20">
       <div class="bg-white px-5 pt-20 relative">
         <div class="flex justify-between items-start pb-10">
           <!-- Left Side - Rating -->
