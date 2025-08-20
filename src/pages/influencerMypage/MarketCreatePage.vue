@@ -137,7 +137,7 @@ function buildPayload() {
     description: '',
     price: Number(f.price),
     groupBuyPrice: null,
-    discountedPrice: f.discountedPrice,
+    discountedPrice: Number(f.discountedPrice),
     shippingPrice: Number(f.shippingFee),
     stock: Number(f.stock),
     thumbnailImage: f.thumbnail || null,
