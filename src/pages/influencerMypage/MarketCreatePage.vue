@@ -24,6 +24,7 @@ const form = ref({
   thumbnail: '',
   title: '',
   price: null,
+  discountedPrice: null,
   stock: null,
   shippingFee: null,
   openAt: null, // DTO: generalOpenTime
@@ -136,7 +137,7 @@ function buildPayload() {
     description: '',
     price: Number(f.price),
     groupBuyPrice: null,
-    discountedPrice: null,
+    discountedPrice: f.discountedPrice,
     shippingPrice: Number(f.shippingFee),
     stock: Number(f.stock),
     thumbnailImage: f.thumbnail || null,
@@ -160,6 +161,7 @@ async function submit() {
   try {
     const payload = buildPayload()
     await marketApi.createProduct(payload)
+    console.log('payload', payload)
 
     alert('상품이 등록되었습니다!')
     await router.replace('/influencers-mypage')
