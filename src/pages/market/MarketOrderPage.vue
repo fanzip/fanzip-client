@@ -16,8 +16,8 @@
         <div class="space-y-1">
           <p class="text-xl font-semibold">{{ cartData.name }}</p>
           <p class="text-base font-medium text-subtle-text">{{ cartData.phone }}</p>
-          <p class="text-base">{{ cartData.address1 }} {{ cartData.address2 }}</p>
-          <p class="text-base">({{ cartData.zipcode }})</p>
+          <p class="text-base">{{ cartData.address1 || '서울특별시 광진구 능동로' }} {{ cartData.address2 || '195-16, 602호' }}</p>
+          <p class="text-base">({{ cartData.zipcode || '05006'}})</p>
         </div>
 
         <!-- 구분선 -->
