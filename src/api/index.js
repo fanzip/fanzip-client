@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
 const instance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://fanzip.site',
   withCredentials: true, //쿠키 전송
   timeout: 10000, //10초 안에 응답이 오지 않으면 요청을 취소하고 timeout error 발생
 })
