@@ -7,10 +7,12 @@ import AppNav from '@/components/layout/AppNav.vue'
 import ReportAlert from '@/components/influencerMypage/statistics/ReportAlert.vue'
 import InfluencerMenu from '@/components/influencerMypage/menu/InfluencerMenu.vue'
 import { getInfluencerMyProfile } from '@/api/influencerApi'
-import { onMounted } from 'vue'
+import { getFanMeetings } from '@/api/fanMeetingApi'
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
+const latestMeetingId = ref(null)
 
 onMounted(async () => {
   // 데이터가 없을 때만 API 호출
@@ -22,6 +24,26 @@ onMounted(async () => {
       console.error(e)
     }
   }
+
+  // 최신 팬미팅 ID 가져오기
+  try {
+    const fanMeetings = await getFanMeetings()
+    if (fanMeetings && fanMeetings.length > 0) {
+      const currentInfluencerName = authStore.influencerUserInfo.influencerName
+      const influencerMeetings = fanMeetings.filter(meeting => 
+        meeting.title?.includes(currentInfluencerName)
+      )
+      
+      if (influencerMeetings.length > 0) {
+        latestMeetingId.value = influencerMeetings[influencerMeetings.length - 1].meetingId
+      } else {
+        latestMeetingId.value = fanMeetings[0].meetingId
+      }
+    }
+  } catch (e) {
+    console.error('팬미팅 목록 조회 실패:', e)
+    latestMeetingId.value = 15 // 김승원빈 팬미팅 ID
+  }
 })
 </script>
 
@@ -31,7 +53,7 @@ onMounted(async () => {
     <InfluencerProfile />
     <StatisticsSummary />
     <Statistics />
-    <ReportAlert />
+    <ReportAlert :meetingId="latestMeetingId" />
     <InfluencerMenu />
     <!-- 컴포넌트 넣기 -->
     <div class="bg-subtle-bg py-3">
