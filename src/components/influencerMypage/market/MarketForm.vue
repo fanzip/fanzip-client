@@ -55,6 +55,17 @@ const price = computed({
   get: () => props.modelValue.price ?? null,
   set: (v) => patch({ price: v }),
 })
+const discountedPrice = computed({
+  get: () => props.modelValue.discountedPrice ?? null,
+  set: (v) => patch({ discountedPrice: v }),
+})
+
+// 경고 텍스트용(제출 막지 않음)
+const discountedInvalid = computed(() => {
+  const p = Number(props.modelValue.price)
+  const d = Number(props.modelValue.discountedPrice)
+  return Number.isFinite(p) && Number.isFinite(d) && d > p
+})
 const stock = computed({
   get: () => props.modelValue.stock ?? null,
   set: (v) => patch({ stock: v }),
@@ -248,6 +259,20 @@ async function handleDetailFiles(files) {
       class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
       placeholder="100원 이상부터 가능합니다"
     />
+  </div>
+
+  <div class="px-5">
+    <label class="block font-semibold text-base mb-2 mt-4">할인가격</label>
+    <input
+      v-model="discountedPrice"
+      type="number"
+      min="0"
+      class="w-full h-11 px-4 rounded-xl border border-base-border bg-base-bg text-sm focus:outline-none focus:border-brand-primary"
+      placeholder="미입력 시 할인가 미적용"
+    />
+    <p v-if="discountedInvalid" class="mt-1 text-xs text-red-500">
+      할인가격은 상품가격 이하로 입력하세요.
+    </p>
   </div>
 
   <div class="px-5">

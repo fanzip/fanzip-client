@@ -120,7 +120,7 @@ function goToOrder() {
     ></div>
 
     <!-- 슬라이드 이미지 -->
-    <div class="w-full aspect-square overflow-hidden relative">
+    <div class="w-full aspect-square overflow-hidden relative pb-2">
       <img
         :src="product.detailImagesList[currentSlide]"
         class="w-full h-full object-cover transition-all duration-500"

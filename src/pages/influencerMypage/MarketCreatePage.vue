@@ -26,8 +26,8 @@ const form = ref({
   price: null,
   stock: null,
   shippingFee: null,
-  openAt: null,   // DTO: generalOpenTime
-  closeAt: null,  // 화면용
+  openAt: null, // DTO: generalOpenTime
+  closeAt: null, // 화면용
   descriptionImages: [],
   detailImages: [],
   selectedCategories: [],
@@ -75,15 +75,39 @@ const isValid = computed(() => {
 
 const submitting = ref(false)
 
-// 날짜 → ISO 문자열
-const toLdt = (v) => {
+/**
+ * 날짜 → "KST(LocalDateTime) 문자열"로 변환
+ * - 입력이 Date/문자열 모두 허용
+ * - 브라우저 로컬 타임존이 무엇이든 결과를 '한국시간'으로 보정하여 YYYY-MM-DDTHH:mm:ss 형태로 반환
+ * - 원리:
+ *   - 브라우저 로컬 오프셋(분)을 구하고, KST(+09:00 = 540분)과의 차이(delta)를 더해 KST 시각을 만든 뒤 포맷팅
+ */
+const toKstLocalLdt = (v) => {
   if (!v) return null
-  if (typeof v === 'string') return v.length === 16 ? `${v}:00` : v
-  if (v instanceof Date) {
-    const p = (n) => String(n).padStart(2, '0')
-    return `${v.getFullYear()}-${p(v.getMonth() + 1)}-${p(v.getDate())}T${p(v.getHours())}:${p(v.getMinutes())}:${p(v.getSeconds())}`
-  }
-  return String(v)
+  const normalize = (str) => (typeof str === 'string' && str.length === 16 ? `${str}:00` : str)
+
+  const raw = v instanceof Date ? v : new Date(normalize(v))
+  if (Number.isNaN(raw.getTime())) return null
+
+  const pad = (n) => String(n).padStart(2, '0')
+
+  // 브라우저 로컬 오프셋(분). KST는 +540분
+  const localOffsetMin = -raw.getTimezoneOffset()
+  const KST_MIN = 9 * 60
+  const deltaMin = KST_MIN - localOffsetMin
+
+  // 로컬 시각을 '한국시간'으로 보정
+  const kst = new Date(raw.getTime() + deltaMin * 60 * 1000)
+
+  const yyyy = kst.getFullYear()
+  const MM = pad(kst.getMonth() + 1)
+  const dd = pad(kst.getDate())
+  const HH = pad(kst.getHours())
+  const mm = pad(kst.getMinutes())
+  const ss = pad(kst.getSeconds())
+
+  // ⚠️ 오프셋 없이 LocalDateTime 문자열로 반환 (백엔드가 KST LocalDateTime으로 저장/해석한다고 가정)
+  return `${yyyy}-${MM}-${dd}T${HH}:${mm}:${ss}`
 }
 
 // 업로드 어댑터 (썸네일)
@@ -116,10 +140,13 @@ function buildPayload() {
     shippingPrice: Number(f.shippingFee),
     stock: Number(f.stock),
     thumbnailImage: f.thumbnail || null,
-    categories: (f.selectedCategories || []).map(ko => CATEGORY_CODE[ko]).filter(Boolean),
+    categories: (f.selectedCategories || []).map((ko) => CATEGORY_CODE[ko]).filter(Boolean),
     detailImages: Array.isArray(f.detailImages) ? f.detailImages.filter(Boolean) : [],
-    descriptionImages: Array.isArray(f.descriptionImages) ? f.descriptionImages.filter(Boolean) : [],
-    generalOpenTime: toLdt(f.openAt),
+    descriptionImages: Array.isArray(f.descriptionImages)
+      ? f.descriptionImages.filter(Boolean)
+      : [],
+    // ✅ 한국시간(LocalDateTime)으로 9시간 보정 반영
+    generalOpenTime: toKstLocalLdt(f.openAt),
   }
 }
 
