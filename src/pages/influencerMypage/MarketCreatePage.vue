@@ -77,39 +77,11 @@ const isValid = computed(() => {
 const submitting = ref(false)
 
 /**
- * 날짜 → "KST(LocalDateTime) 문자열"로 변환
+ * 날짜 → ISO-UTC 문자열로 변환 (네트워크 전송 표준화)
  * - 입력이 Date/문자열 모두 허용
- * - 브라우저 로컬 타임존이 무엇이든 결과를 '한국시간'으로 보정하여 YYYY-MM-DDTHH:mm:ss 형태로 반환
- * - 원리:
- *   - 브라우저 로컬 오프셋(분)을 구하고, KST(+09:00 = 540분)과의 차이(delta)를 더해 KST 시각을 만든 뒤 포맷팅
+ * - 결과 예: '2025-08-20T03:00:00.000Z'
  */
-const toKstLocalLdt = (v) => {
-  if (!v) return null
-  const normalize = (str) => (typeof str === 'string' && str.length === 16 ? `${str}:00` : str)
-
-  const raw = v instanceof Date ? v : new Date(normalize(v))
-  if (Number.isNaN(raw.getTime())) return null
-
-  const pad = (n) => String(n).padStart(2, '0')
-
-  // 브라우저 로컬 오프셋(분). KST는 +540분
-  const localOffsetMin = -raw.getTimezoneOffset()
-  const KST_MIN = 9 * 60
-  const deltaMin = KST_MIN - localOffsetMin
-
-  // 로컬 시각을 '한국시간'으로 보정
-  const kst = new Date(raw.getTime() + deltaMin * 60 * 1000)
-
-  const yyyy = kst.getFullYear()
-  const MM = pad(kst.getMonth() + 1)
-  const dd = pad(kst.getDate())
-  const HH = pad(kst.getHours())
-  const mm = pad(kst.getMinutes())
-  const ss = pad(kst.getSeconds())
-
-  // ⚠️ 오프셋 없이 LocalDateTime 문자열로 반환 (백엔드가 KST LocalDateTime으로 저장/해석한다고 가정)
-  return `${yyyy}-${MM}-${dd}T${HH}:${mm}:${ss}`
-}
+const toUtcIso = (v) => (v ? new Date(v).toISOString() : null)
 
 // 업로드 어댑터 (썸네일)
 const uploadThumbnail = async (file) => {
@@ -146,8 +118,7 @@ function buildPayload() {
     descriptionImages: Array.isArray(f.descriptionImages)
       ? f.descriptionImages.filter(Boolean)
       : [],
-    // ✅ 한국시간(LocalDateTime)으로 9시간 보정 반영
-    generalOpenTime: toKstLocalLdt(f.openAt),
+    generalOpenTime: toUtcIso(f.openAt),
   }
 }
 
