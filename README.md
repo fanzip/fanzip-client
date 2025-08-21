@@ -1,35 +1,30 @@
-# fanzip-client
+# fanzip-server
 
-This template should help get you started developing with Vue 3 in Vite.
+---
 
-## Recommended IDE Setup
+## 📝 커밋 컨벤션
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 커밋 메시지는 항상 제목(Title)을 포함하며 `[TYPE] 커밋 내용 #이슈번호` 형식을 따릅니다.
+- `subject`는 현재형, 명령문 형태로 작성합니다.
+- 본문(Body), 꼬리말(Footer)은 필요한 경우에만 작성합니다.
 
-## Customize configuration
+### ✅ Commit Type
 
-See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+| 타입 | 설명 |
+|------|------|
+| feat | 새로운 기능 추가 |
+| fix | 버그 수정 |
+| docs | 문서 수정 | 
+| style | 코드 포맷팅 등 | 
+| refactor | 코드 리팩토링 | 
+| test | 테스트 코드 작성 | 
+| chore | 설정파일, 빌드 관련 | 
 
-```sh
-npm install
-```
+### ✍ 작성 예시
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
+```bash
+[feat] 팬카드 생성 API 추가#12
+[fix] 닉네임 중복 체크 오류 수정  #20
+[refactor] 결제 로직 서비스 분리 #33
 ```
